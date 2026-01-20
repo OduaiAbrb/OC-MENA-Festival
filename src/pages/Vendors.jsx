@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ScrollToTop from '../components/ScrollToTop';
 import './Vendors.css';
 
 const Vendors = () => {
@@ -113,6 +114,7 @@ const Vendors = () => {
           </div>
         </div>
       </section>
+      <ScrollToTop />
     </div>
   );
 };

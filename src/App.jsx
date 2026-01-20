@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
@@ -11,6 +11,18 @@ import Vendors from './pages/Vendors';
 import Sponsors from './pages/Sponsors';
 import Contact from './pages/Contact';
 import './App.css';
+
+// Component to handle scroll to top on route changes
+const RouteChangeHandler = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Scroll to top when route changes
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  return null;
+};
 
 // Wrapper component to manage modal state
 const AppWithModal = () => {
@@ -49,6 +61,7 @@ const AppWithModal = () => {
 
   return (
     <Router>
+      <RouteChangeHandler />
       <Routes>
         <Route path="/" element={
           <div className="app">

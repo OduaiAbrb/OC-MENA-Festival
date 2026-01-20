@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ScrollToTop from '../components/ScrollToTop';
 import './EventSchedule.css';
 
 const EventSchedule = () => {
@@ -150,6 +151,7 @@ const EventSchedule = () => {
           </div>
         </div>
       </section>
+      <ScrollToTop />
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ScrollToTop from '../components/ScrollToTop';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -146,17 +147,7 @@ const LoginPage = () => {
           </div>
         </div>
       </section>
-
-      {/* Scroll to Top Button */}
-      <button 
-        className="scroll-to-top"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        aria-label="Scroll to top"
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M18 15l-6-6-6 6"/>
-        </svg>
-      </button>
+      <ScrollToTop />
     </div>
   );
 };

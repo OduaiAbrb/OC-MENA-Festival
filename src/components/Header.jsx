@@ -15,6 +15,39 @@ const Header = ({ onGetTicketsClick }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleNavClick = (path, e) => {
+    // If we're clicking Home and already on the home page, scroll to top smoothly
+    if (path === '/' && location.pathname === '/') {
+      e.preventDefault();
+      cinematicScrollToTop();
+    }
+    setIsMenuOpen(false);
+  };
+
+  const cinematicScrollToTop = () => {
+    const startPosition = window.pageYOffset;
+    const startTime = performance.now();
+    const duration = 1200; // 1.2 seconds for cinematic effect
+    
+    const easeInOutCubic = (t) => {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
+    
+    const animateScroll = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = easeInOutCubic(progress);
+      
+      window.scrollTo(0, startPosition * (1 - easeProgress));
+      
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      }
+    };
+    
+    requestAnimationFrame(animateScroll);
+  };
+
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Event Schedule', path: '/event-schedule' },
@@ -32,15 +65,13 @@ const Header = ({ onGetTicketsClick }) => {
     <header className={`header ${isScrolled ? 'header-scrolled' : ''}`}>
       <div className="header-container">
         <div className="header-left">
-          <Link to="/" className="logo-link">
-            <div className="logo">
-              <div className="logo-icon">
-                <span className="logo-oc">OC</span>
-              </div>
-              <div className="logo-text-group">
-                <span className="logo-mena">MENA</span>
-                <span className="logo-festival">FESTIVAL</span>
-              </div>
+          <Link to="/" className="logo" onClick={(e) => handleNavClick('/', e)}>
+            <div className="logo-icon">
+              <span className="logo-oc">OC</span>
+            </div>
+            <div className="logo-text-group">
+              <span className="logo-mena">MENA</span>
+              <span className="logo-festival">FESTIVAL</span>
             </div>
           </Link>
         </div>
@@ -53,7 +84,7 @@ const Header = ({ onGetTicketsClick }) => {
                   <Link
                     to={item.path}
                     className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={(e) => handleNavClick(item.path, e)}
                   >
                     {item.name}
                   </Link>
