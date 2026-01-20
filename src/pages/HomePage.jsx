@@ -373,14 +373,15 @@ const HomePage = ({
                         <span>Exclusive Workshops</span>
                       </div>
                     </div>
-                    <div className="premium-price-section">
-                      <div className="price-wrapper">
-                        <span className="currency">$</span>
-                        <span className="amount">35</span>
+                    <div className="premium-pricing-container">
+                      <div className="premium-price-section">
+                        <div className="price-wrapper">
+                          <span className="currency">$</span>
+                          <span className="amount">35</span>
+                        </div>
+                        <div className="price-note">Save $10 vs daily passes</div>
                       </div>
-                      <div className="price-note">Save $10 vs daily passes</div>
-                    </div>
-                    <div className="premium-quantity-selector">
+                      <div className="premium-quantity-selector">
                       <label className="quantity-label">Quantity</label>
                       <div className="quantity-controls">
                         <button 
@@ -430,6 +431,7 @@ const HomePage = ({
                         </button>
                       </div>
                     </div>
+                    </div>
                   </div>
                 </div>
 
@@ -471,14 +473,15 @@ const HomePage = ({
                         <span>Cultural Workshops</span>
                       </div>
                     </div>
-                    <div className="premium-price-section">
-                      <div className="price-wrapper">
-                        <span className="currency">$</span>
-                        <span className="amount">25</span>
+                    <div className="premium-pricing-container">
+                      <div className="premium-price-section">
+                        <div className="price-wrapper">
+                          <span className="currency">$</span>
+                          <span className="amount">25</span>
+                        </div>
+                        <div className="price-note">Save $5 vs daily passes</div>
                       </div>
-                      <div className="price-note">Save $5 vs daily passes</div>
-                    </div>
-                    <div className="premium-quantity-selector">
+                      <div className="premium-quantity-selector">
                       <label className="quantity-label">Quantity</label>
                       <div className="quantity-controls">
                         <button 
@@ -528,6 +531,7 @@ const HomePage = ({
                         </button>
                       </div>
                     </div>
+                    </div>
                   </div>
                 </div>
 
@@ -568,14 +572,15 @@ const HomePage = ({
                         <span>Food & Market Access</span>
                       </div>
                     </div>
-                    <div className="premium-price-section">
-                      <div className="price-wrapper">
-                        <span className="currency">$</span>
-                        <span className="amount">15</span>
+                    <div className="premium-pricing-container">
+                      <div className="premium-price-section">
+                        <div className="price-wrapper">
+                          <span className="currency">$</span>
+                          <span className="amount">15</span>
+                        </div>
+                        <div className="price-note">Single day admission</div>
                       </div>
-                      <div className="price-note">Single day admission</div>
-                    </div>
-                    <div className="premium-quantity-selector">
+                      <div className="premium-quantity-selector">
                       <label className="quantity-label">Quantity</label>
                       <div className="quantity-controls">
                         <button 
@@ -624,6 +629,7 @@ const HomePage = ({
                           </svg>
                         </button>
                       </div>
+                    </div>
                     </div>
                   </div>
                 </div>

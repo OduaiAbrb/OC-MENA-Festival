@@ -106,6 +106,7 @@ const GlobalTicketModal = ({
                       <span>Exclusive Workshops</span>
                     </div>
                   </div>
+                  <div className="premium-pricing-container">
                   <div className="premium-price-section">
                     <div className="price-wrapper">
                       <span className="currency">$</span>
@@ -157,6 +158,7 @@ const GlobalTicketModal = ({
                       </button>
                     </div>
                   </div>
+                  </div>
                 </div>
               </div>
 
@@ -194,6 +196,7 @@ const GlobalTicketModal = ({
                       <span>Cultural Workshops</span>
                     </div>
                   </div>
+                  <div className="premium-pricing-container">
                   <div className="premium-price-section">
                     <div className="price-wrapper">
                       <span className="currency">$</span>
@@ -245,6 +248,7 @@ const GlobalTicketModal = ({
                       </button>
                     </div>
                   </div>
+                  </div>
                 </div>
               </div>
 
@@ -281,6 +285,7 @@ const GlobalTicketModal = ({
                       <span>Food & Market Access</span>
                     </div>
                   </div>
+                  <div className="premium-pricing-container">
                   <div className="premium-price-section">
                     <div className="price-wrapper">
                       <span className="currency">$</span>
@@ -331,6 +336,7 @@ const GlobalTicketModal = ({
                         </svg>
                       </button>
                     </div>
+                  </div>
                   </div>
                 </div>
               </div>

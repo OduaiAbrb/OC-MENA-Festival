@@ -938,6 +938,13 @@
   flex-shrink: 0 !important;
 }
 
+.premium-pricing-container {
+  margin-top: auto !important;
+  margin-bottom: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
 .premium-price-section {
   margin-bottom: 24px !important;
   padding: 16px !important;
@@ -974,7 +981,6 @@
 }
 
 .premium-quantity-selector {
-  margin-top: auto !important;
   margin-bottom: 0 !important;
   padding-top: 20px !important;
 }
