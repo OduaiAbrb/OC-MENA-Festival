@@ -39,8 +39,11 @@
 .header-left .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: white;
+  text-decoration: none;
+  transform: scale(1.2);
+  transform-origin: left center;
 }
 
 .header-left .logo-image {
@@ -51,8 +54,8 @@
 }
 
 .header-left .logo-icon {
-  width: 45px;
-  height: 45px;
+  width: 65px;
+  height: 65px;
   background: linear-gradient(135deg, #FF6B35, #ff8c5a);
   border-radius: 12px;
   display: flex;
@@ -62,34 +65,56 @@
 }
 
 .header-left .logo-oc {
-  font-size: 18px;
+  font-size: 28px;
   font-weight: 800;
   color: white;
   letter-spacing: -1px;
+  text-decoration: none !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .header-left .logo-text-group {
   display: flex;
   flex-direction: column;
-  line-height: 1;
+  line-height: 0.8;
+  text-decoration: none;
 }
 
 .header-left .logo-mena {
-  font-size: 22px;
+  font-size: 32px;
   font-weight: 800;
   background: linear-gradient(135deg, #FF6B35, #FFD700);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: 1px;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  border: none;
 }
 
 .header-left .logo-festival {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
   letter-spacing: 3px;
   text-transform: uppercase;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  border: none;
+}
+
+.header-left .logo-oc,
+.header-left .logo-mena,
+.header-left .logo-festival {
+  text-decoration: none !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Navigation */
