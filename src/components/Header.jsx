@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import ScrollToTop from './ScrollToTop';
+import CartModal from './CartModal';
 import './Header.css';
 
 const Header = ({ onGetTicketsClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
   const location = useLocation();
 
   useEffect(() => {
@@ -22,6 +26,14 @@ const Header = ({ onGetTicketsClick }) => {
       cinematicScrollToTop();
     }
     setIsMenuOpen(false);
+  };
+
+  const handleCartClick = () => {
+    setIsCartOpen(true);
+  };
+
+  const getTotalCartItems = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
   const cinematicScrollToTop = () => {
@@ -95,13 +107,13 @@ const Header = ({ onGetTicketsClick }) => {
         </div>
 
         <div className="header-actions">
-          <button className="icon-btn cart-btn" aria-label="Shopping Cart">
+          <button className="icon-btn cart-btn" onClick={handleCartClick} aria-label="Shopping Cart">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="9" cy="21" r="1"></circle>
               <circle cx="20" cy="21" r="1"></circle>
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
             </svg>
-            <span className="cart-badge">0</span>
+            <span className="cart-badge">{getTotalCartItems()}</span>
           </button>
 
           <Link to="/login" className="icon-btn user-btn" aria-label="User Account">
@@ -134,6 +146,11 @@ const Header = ({ onGetTicketsClick }) => {
       </div>
 
       {isMenuOpen && <div className="menu-overlay" onClick={() => setIsMenuOpen(false)}></div>}
+      <CartModal 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+        cartItems={cartItems}
+      />
     </header>
   );
 };
