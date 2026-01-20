@@ -32,6 +32,20 @@ const Header = () => {
   return (
     <header className={`header ${isScrolled ? 'header-scrolled' : ''}`}>
       <div className="header-container">
+        <div className="header-left">
+          <Link to="/" className="logo-link">
+            <div className="logo">
+              <div className="logo-icon">
+                <span className="logo-oc">OC</span>
+              </div>
+              <div className="logo-text-group">
+                <span className="logo-mena">MENA</span>
+                <span className="logo-festival">FESTIVAL</span>
+              </div>
+            </div>
+          </Link>
+        </div>
+        
         <div className="nav-wrapper">
           <nav className={`nav ${isMenuOpen ? 'nav-open' : ''}`}>
             <ul className="nav-list">
