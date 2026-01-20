@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Header.css';
 
-const Header = () => {
+const Header = ({ onGetTicketsClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -17,7 +17,6 @@ const Header = () => {
 
   const navItems = [
     { name: 'Home', path: '/' },
-    { name: 'Experience', path: '/#experience' },
     { name: 'Event Schedule', path: '/event-schedule' },
     { name: 'Vendors', path: '/vendors' },
     { name: 'Sponsors', path: '/sponsors' },
@@ -81,9 +80,17 @@ const Header = () => {
             </svg>
           </Link>
 
-          <Link to="/#tickets" className="btn-primary get-tickets-btn">
+          <button 
+            onClick={() => {
+              console.log('Header Get Tickets clicked!');
+              if (onGetTicketsClick) {
+                onGetTicketsClick();
+              }
+            }}
+            className="btn-primary get-tickets-btn"
+          >
             Get Tickets
-          </Link>
+          </button>
 
           <button 
             className="menu-toggle"

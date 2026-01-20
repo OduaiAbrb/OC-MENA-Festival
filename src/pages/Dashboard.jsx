@@ -36,32 +36,49 @@ const Dashboard = () => {
   ]);
 
   const [vendorBooth] = useState({
-    boothNumber: 'A-15',
+    boothNumber: 'Awaiting Assignment',
     location: 'Main Exhibition Hall',
     size: '10x10 ft',
     status: 'confirmed',
     package: 'Premium Vendor Package',
     amenities: ['Table', '2 Chairs', 'Power Outlet', 'WiFi', 'Storage'],
     setupDate: 'March 14, 2024',
-    contactPerson: 'Sarah Johnson'
+    setupTime: '8:00 AM - 6:00 PM',
+    teardownDate: 'March 18, 2024',
+    teardownTime: '9:00 AM - 2:00 PM',
+    contactPerson: 'Sarah Johnson',
+    vendorQRCode: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iIzAwN0E0QyIvPgo8cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMzAiIHk9IjMwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiMwMDdBNEMiLz4KPHRleHQgeD0iNTAlIiB5PSI3NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5WZW5kb3IgUVI8L3RleHQ+Cjwvc3ZnPg==',
+    freeTickets: 2,
+    importantInfo: [
+      'Vendor wristbands required for setup access',
+      'All vendors must check in at registration desk',
+      'Parking available in Vendor Lot A',
+      'Security briefing at 7:30 AM on setup day'
+    ]
   });
 
   const [orders] = useState([
     {
       id: 'ORD001',
       date: '2024-01-15',
+      invoiceNumber: 'INV-2024-001',
       items: ['VIP Festival Pass', 'Meet & Greet Ticket'],
       total: '$398',
       status: 'completed',
-      paymentMethod: 'Credit Card'
+      paymentMethod: 'Credit Card',
+      taxAmount: '$31.84',
+      downloadable: true
     },
     {
       id: 'ORD002',
       date: '2024-01-10',
-      items: ['Premium Vendor Booth'],
-      total: '$1,500',
+      invoiceNumber: 'INV-2024-002',
+      items: ['Premium Vendor Booth', '2 Additional Vendor Passes'],
+      total: '$1,800',
       status: 'completed',
-      paymentMethod: 'Bank Transfer'
+      paymentMethod: 'Bank Transfer',
+      taxAmount: '$144.00',
+      downloadable: true
     }
   ]);
 
@@ -88,6 +105,22 @@ const Dashboard = () => {
             </div>
             <div className="ticket-body">
               <h3 className="ticket-event">{ticket.eventName}</h3>
+              
+              {/* Attendee Information */}
+              <div className="attendee-info">
+                <h4>Attendee Information</h4>
+                <div className="attendee-details">
+                  <div className="detail-row">
+                    <span className="label">Name:</span>
+                    <span className="value">{userData.name}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="label">Email:</span>
+                    <span className="value">{userData.email}</span>
+                  </div>
+                </div>
+              </div>
+              
               <div className="ticket-details">
                 <div className="ticket-detail">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -106,10 +139,33 @@ const Dashboard = () => {
                   {ticket.location}
                 </div>
               </div>
+              
               <div className="ticket-footer">
                 <div className="ticket-price">{ticket.price}</div>
                 <div className="ticket-id">ID: {ticket.id}</div>
               </div>
+              
+              {/* Ticket Actions */}
+              <div className="ticket-actions">
+                <button className="action-btn transfer-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                    <polyline points="17 8 23 11 17 14"></polyline>
+                  </svg>
+                  Transfer Ticket
+                </button>
+                <button className="action-btn upgrade-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="12" y1="20" x2="12" y2="10"></line>
+                    <line x1="18" y1="20" x2="18" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="16"></line>
+                  </svg>
+                  Upgrade
+                </button>
+              </div>
+              
               <div className="qr-code">
                 <img src={ticket.qrCode} alt="QR Code" className="qr-image" />
                 <div className="qr-text">Scan for entry</div>
@@ -124,11 +180,29 @@ const Dashboard = () => {
   const renderVendorBooth = () => (
     <div className="dashboard-section">
       <h2 className="section-title">Vendor Booth Information</h2>
+      
+      {/* Vendor QR Code for Setup */}
+      <div className="vendor-qr-section">
+        <h3>Setup Day QR Code</h3>
+        <p>Use this QR code to verify your identity and pick up vendor wristbands on setup day</p>
+        <div className="vendor-qr-card">
+          <img src={vendorBooth.vendorQRCode} alt="Vendor QR Code" className="vendor-qr-image" />
+          <div className="vendor-qr-text">Vendor Setup QR</div>
+        </div>
+      </div>
+      
       <div className="vendor-booth-card">
         <div className="booth-header">
-          <div className="booth-number">Booth {vendorBooth.boothNumber}</div>
+          <div className="booth-number">
+            {vendorBooth.boothNumber === 'Awaiting Assignment' ? (
+              <span className="awaiting-assignment">⏳ Awaiting Booth Assignment</span>
+            ) : (
+              `Booth ${vendorBooth.boothNumber}`
+            )}
+          </div>
           <div className={`booth-status ${vendorBooth.status}`}>{vendorBooth.status}</div>
         </div>
+        
         <div className="booth-body">
           <div className="booth-info-grid">
             <div className="booth-info">
@@ -144,10 +218,28 @@ const Dashboard = () => {
               <p>{vendorBooth.package}</p>
             </div>
             <div className="booth-info">
-              <h4>Setup Date</h4>
-              <p>{vendorBooth.setupDate}</p>
+              <h4>Free Tickets</h4>
+              <p>{vendorBooth.freeTickets} Vendor Passes Included</p>
             </div>
           </div>
+          
+          {/* Setup & Teardown Information */}
+          <div className="schedule-section">
+            <h4>Setup & Teardown Schedule</h4>
+            <div className="schedule-grid">
+              <div className="schedule-item">
+                <div className="schedule-date">{vendorBooth.setupDate}</div>
+                <div className="schedule-time">{vendorBooth.setupTime}</div>
+                <div className="schedule-label">Setup Day</div>
+              </div>
+              <div className="schedule-item">
+                <div className="schedule-date">{vendorBooth.teardownDate}</div>
+                <div className="schedule-time">{vendorBooth.teardownTime}</div>
+                <div className="schedule-label">Teardown Day</div>
+              </div>
+            </div>
+          </div>
+          
           <div className="amenities-section">
             <h4>Included Amenities</h4>
             <div className="amenities-list">
@@ -161,6 +253,24 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
+          
+          {/* Important Information */}
+          <div className="important-info-section">
+            <h4>Important Information</h4>
+            <div className="important-info-list">
+              {vendorBooth.importantInfo.map((info, index) => (
+                <div key={index} className="info-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6B35" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  {info}
+                </div>
+              ))}
+            </div>
+          </div>
+          
           <div className="contact-section">
             <h4>Contact Person</h4>
             <p>{vendorBooth.contactPerson}</p>
@@ -173,12 +283,15 @@ const Dashboard = () => {
 
   const renderOrders = () => (
     <div className="dashboard-section">
-      <h2 className="section-title">Order History</h2>
+      <h2 className="section-title">Order History & Invoices</h2>
       <div className="orders-list">
         {orders.map(order => (
           <div key={order.id} className="order-card">
             <div className="order-header">
-              <div className="order-id">Order #{order.id}</div>
+              <div className="order-info">
+                <div className="order-id">Order #{order.id}</div>
+                <div className="invoice-number">Invoice: {order.invoiceNumber}</div>
+              </div>
               <div className={`order-status ${order.status}`}>{order.status}</div>
             </div>
             <div className="order-body">
@@ -188,9 +301,43 @@ const Dashboard = () => {
                   <div key={index} className="order-item">{item}</div>
                 ))}
               </div>
-              <div className="order-footer">
-                <div className="order-total">{order.total}</div>
-                <div className="order-payment">{order.paymentMethod}</div>
+              <div className="order-financials">
+                <div className="order-breakdown">
+                  <div className="breakdown-row">
+                    <span>Subtotal:</span>
+                    <span>${(parseFloat(order.total.replace('$', '')) - parseFloat(order.taxAmount.replace('$', ''))).toFixed(2)}</span>
+                  </div>
+                  <div className="breakdown-row">
+                    <span>Tax:</span>
+                    <span>{order.taxAmount}</span>
+                  </div>
+                  <div className="breakdown-row total-row">
+                    <span>Total:</span>
+                    <span className="order-total">{order.total}</span>
+                  </div>
+                </div>
+                <div className="order-payment">
+                  <span className="payment-method">{order.paymentMethod}</span>
+                </div>
+              </div>
+              
+              {/* Invoice Actions */}
+              <div className="invoice-actions">
+                <button className="invoice-btn download-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Download Invoice
+                </button>
+                <button className="invoice-btn email-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                  Email Invoice
+                </button>
               </div>
             </div>
           </div>
@@ -203,6 +350,7 @@ const Dashboard = () => {
     <div className="dashboard-section">
       <h2 className="section-title">Account Settings</h2>
       <div className="settings-card">
+        {/* Profile Section */}
         <div className="profile-section">
           <div className="profile-header">
             <div className="profile-avatar">
@@ -217,42 +365,57 @@ const Dashboard = () => {
           </div>
         </div>
         
+        {/* Personal Information */}
         <div className="settings-form">
-          <div className="form-group">
-            <label>Full Name</label>
-            <input type="text" defaultValue={userData.name} />
-          </div>
-          <div className="form-group">
-            <label>Email Address</label>
-            <input type="email" defaultValue={userData.email} />
-          </div>
-          <div className="form-group">
-            <label>Phone Number</label>
-            <input type="tel" placeholder="+971 50 123 4567" />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" placeholder="••••••••" />
-            <button className="change-password-btn">Change Password</button>
-          </div>
-          <div className="form-group">
-            <label>Notification Preferences</label>
-            <div className="checkbox-group">
-              <label className="checkbox-label">
-                <input type="checkbox" defaultChecked />
-                Email notifications
-              </label>
-              <label className="checkbox-label">
-                <input type="checkbox" defaultChecked />
-                SMS notifications
-              </label>
-              <label className="checkbox-label">
-                <input type="checkbox" />
-                Marketing emails
-              </label>
+          <h3>Personal Information</h3>
+          <div className="form-row">
+            <div className="form-group">
+              <label>First Name</label>
+              <input type="text" defaultValue={userData.name.split(' ')[0]} className="form-input" />
+            </div>
+            <div className="form-group">
+              <label>Last Name</label>
+              <input type="text" defaultValue={userData.name.split(' ')[1] || ''} className="form-input" />
             </div>
           </div>
-          <button className="save-settings-btn">Save Changes</button>
+          
+          <div className="form-group">
+            <label>Email Address</label>
+            <input type="email" defaultValue={userData.email} className="form-input" />
+          </div>
+          
+          <div className="form-group">
+            <label>Phone Number</label>
+            <input type="tel" placeholder="+1 (555) 123-4567" className="form-input" />
+          </div>
+        </div>
+        
+        {/* Password Change */}
+        <div className="password-section">
+          <h3>Change Password</h3>
+          <div className="form-group">
+            <label>Current Password</label>
+            <input type="password" className="form-input" placeholder="Enter current password" />
+          </div>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label>New Password</label>
+              <input type="password" className="form-input" placeholder="Enter new password" />
+            </div>
+            <div className="form-group">
+              <label>Confirm New Password</label>
+              <input type="password" className="form-input" placeholder="Confirm new password" />
+            </div>
+          </div>
+          
+          <button className="change-password-btn">Update Password</button>
+        </div>
+        
+        {/* Save Settings */}
+        <div className="settings-actions">
+          <button className="save-settings-btn">Save All Changes</button>
+          <button className="cancel-btn">Cancel</button>
         </div>
       </div>
     </div>

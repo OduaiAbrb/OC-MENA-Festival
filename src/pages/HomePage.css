@@ -544,3 +544,1005 @@
     transform: translateY(0);
   }
 }
+
+/* ===== WORLD-CLASS PREMIUM TICKET MODAL ===== */
+.premium-ticket-modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(1.8) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.8) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 9999 !important;
+  padding: 20px !important;
+  animation: premiumFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@keyframes premiumFadeIn {
+  from {
+    opacity: 0 !important;
+    backdrop-filter: blur(0px) !important;
+  }
+  to {
+    opacity: 1 !important;
+    backdrop-filter: blur(20px) saturate(1.8) !important;
+  }
+}
+
+.premium-ticket-modal {
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    rgba(255, 255, 255, 0.01) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 24px !important;
+  max-width: 1200px !important;
+  width: 100% !important;
+  max-height: 95vh !important;
+  overflow-y: auto !important;
+  box-shadow: 
+    0 32px 64px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  animation: premiumSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  position: relative !important;
+}
+
+.premium-ticket-modal::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(135deg, 
+    rgba(255, 107, 53, 0.05) 0%,
+    rgba(255, 215, 0, 0.02) 50%,
+    transparent 100%) !important;
+  border-radius: 24px !important;
+  pointer-events: none !important;
+}
+
+@keyframes premiumSlideUp {
+  from {
+    opacity: 0 !important;
+    transform: translateY(60px) scale(0.95) !important;
+  }
+  to {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+  }
+}
+
+/* Premium Modal Header */
+.premium-modal-header {
+  padding: 40px 40px 0 40px !important;
+  position: relative !important;
+}
+
+.premium-header-content {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  margin-bottom: 30px !important;
+}
+
+.premium-header-left {
+  flex: 1 !important;
+}
+
+.premium-logo-section {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 20px !important;
+}
+
+.premium-logo-icon {
+  width: 48px !important;
+  height: 48px !important;
+  background: linear-gradient(135deg, #FF6B35, #FFD700) !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 800 !important;
+  font-size: 18px !important;
+  color: white !important;
+  box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3) !important;
+}
+
+.premium-logo-text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.premium-logo-text .logo-mena {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #FFD700 !important;
+  letter-spacing: 1px !important;
+}
+
+.premium-logo-text .logo-festival {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  letter-spacing: 2px !important;
+}
+
+.premium-modal-title {
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  color: white !important;
+  margin: 0 0 8px 0 !important;
+  background: linear-gradient(135deg, #ffffff 0%, #FF6B35 50%, #FFD700 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.premium-modal-subtitle {
+  font-size: 16px !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  margin: 0 !important;
+  font-weight: 400 !important;
+}
+
+.premium-modal-close {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  cursor: pointer !important;
+  padding: 12px !important;
+  border-radius: 12px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  width: 48px !important;
+  height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.premium-modal-close:hover {
+  background: rgba(255, 107, 53, 0.2) !important;
+  border-color: rgba(255, 107, 53, 0.3) !important;
+  color: white !important;
+  transform: scale(1.05) !important;
+}
+
+/* Premium Progress Bar */
+.premium-progress-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  margin-bottom: 40px !important;
+  padding: 0 20px !important;
+}
+
+.progress-step {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 8px !important;
+  position: relative !important;
+}
+
+.step-number {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  transition: all 0.3s ease !important;
+}
+
+.progress-step.active .step-number {
+  background: linear-gradient(135deg, #FF6B35, #FFD700) !important;
+  border-color: transparent !important;
+  color: white !important;
+  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.4) !important;
+  transform: scale(1.1) !important;
+}
+
+.step-label {
+  font-size: 12px !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+  transition: all 0.3s ease !important;
+}
+
+.progress-step.active .step-label {
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.progress-connector {
+  width: 80px !important;
+  height: 2px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  margin: 0 8px !important;
+  position: relative !important;
+  top: -20px !important;
+}
+
+/* Premium Ticket Selection */
+.premium-ticket-selection {
+  padding: 0 40px 40px 40px !important;
+}
+
+.premium-ticket-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  gap: 24px !important;
+  align-items: stretch !important;
+}
+
+.premium-ticket-card {
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 20px !important;
+  padding: 0 !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+
+.premium-ticket-card::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(135deg, 
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    transparent 100%) !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.premium-ticket-card:hover {
+  border-color: rgba(255, 107, 53, 0.4) !important;
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 107, 53, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.04) 100%) !important;
+}
+
+.premium-ticket-card:hover::before {
+  opacity: 1 !important;
+}
+
+.premium-ticket-card.featured {
+  border-color: rgba(255, 215, 0, 0.4) !important;
+  background: linear-gradient(145deg, 
+    rgba(255, 215, 0, 0.08) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.02) 100%) !important;
+}
+
+.premium-ticket-card.featured:hover {
+  border-color: rgba(255, 215, 0, 0.6) !important;
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 215, 0, 0.3),
+    0 0 12px rgba(255, 215, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  background: linear-gradient(145deg, 
+    rgba(255, 215, 0, 0.12) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 100%) !important;
+}
+
+.premium-card-header {
+  padding: 24px 24px 16px 24px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  position: relative !important;
+}
+
+.premium-badge {
+  display: inline-block !important;
+  padding: 6px 12px !important;
+  border-radius: 20px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  margin-bottom: 12px !important;
+}
+
+.featured-badge {
+  background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+  color: #1a1a1a !important;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.4) !important;
+}
+
+.popular-badge {
+  background: linear-gradient(135deg, #4CAF50, #45a049) !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3) !important;
+}
+
+.premium-duration {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  letter-spacing: 1px !important;
+}
+
+.premium-card-body {
+  padding: 24px !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.premium-ticket-title {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: white !important;
+  margin: 0 0 12px 0 !important;
+  line-height: 1.2 !important;
+  flex-shrink: 0 !important;
+}
+
+.premium-ticket-description {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  margin-bottom: 20px !important;
+  flex-shrink: 0 !important;
+}
+
+.premium-features {
+  margin-bottom: 24px !important;
+  flex-shrink: 0 !important;
+}
+
+.feature-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-bottom: 10px !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 13px !important;
+}
+
+.feature-icon {
+  color: #4CAF50 !important;
+  flex-shrink: 0 !important;
+}
+
+.premium-price-section {
+  margin-bottom: 24px !important;
+  padding: 16px !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  flex-shrink: 0 !important;
+}
+
+.price-wrapper {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 4px !important;
+  margin-bottom: 6px !important;
+}
+
+.currency {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #FFD700 !important;
+}
+
+.amount {
+  font-size: 36px !important;
+  font-weight: 800 !important;
+  color: #FFD700 !important;
+  line-height: 1 !important;
+}
+
+.price-note {
+  font-size: 12px !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-style: italic !important;
+}
+
+.premium-quantity-selector {
+  margin-top: auto !important;
+  margin-bottom: 0 !important;
+  padding-top: 20px !important;
+}
+
+.quantity-label {
+  display: block !important;
+  font-size: 13px !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  margin-bottom: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.quantity-controls {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  padding: 4px !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+.quantity-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  cursor: pointer !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  flex-shrink: 0 !important;
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.quantity-btn:hover:not(:disabled) {
+  background: rgba(255, 107, 53, 0.2) !important;
+  color: white !important;
+  transform: scale(1.1) !important;
+}
+
+.quantity-btn:disabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
+}
+
+.premium-quantity-input {
+  background: transparent !important;
+  border: none !important;
+  color: white !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  width: 60px !important;
+  outline: none !important;
+  flex-shrink: 0 !important;
+}
+
+.premium-quantity-input:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 6px !important;
+}
+
+/* Premium Modal Footer */
+.premium-modal-footer {
+  padding: 32px 40px 40px 40px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: linear-gradient(180deg, 
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 100%) !important;
+  border-radius: 0 0 24px 24px !important;
+}
+
+.premium-order-summary {
+  margin-bottom: 24px !important;
+}
+
+.summary-header h4 {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  margin: 0 0 16px 0 !important;
+}
+
+.summary-items {
+  margin-bottom: 16px !important;
+}
+
+.summary-item {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 0 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 14px !important;
+}
+
+.item-price {
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.summary-total {
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding-top: 16px !important;
+}
+
+.total-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 0 !important;
+}
+
+.total-row.main-total {
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+  padding-top: 12px !important;
+  margin-top: 8px !important;
+}
+
+.total-label {
+  font-size: 14px !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 500 !important;
+}
+
+.total-row.main-total .total-label {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: white !important;
+}
+
+.total-value {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.total-amount {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  color: #FFD700 !important;
+}
+
+.premium-modal-actions {
+  display: flex !important;
+  gap: 16px !important;
+  justify-content: flex-end !important;
+}
+
+.premium-btn-secondary {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  padding: 14px 24px !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.premium-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: white !important;
+  transform: translateY(-2px) !important;
+}
+
+.premium-btn-primary {
+  background: linear-gradient(135deg, #FF6B35, #FFD700) !important;
+  border: none !important;
+  color: #1a1a1a !important;
+  padding: 14px 28px !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.3) !important;
+}
+
+.premium-btn-primary:hover:not(.disabled) {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 
+    0 12px 32px rgba(255, 107, 53, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.premium-btn-primary.disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn-arrow {
+  transition: transform 0.2s ease !important;
+}
+
+.premium-btn-primary:hover:not(.disabled) .btn-arrow {
+  transform: translateX(2px) !important;
+}
+
+/* Scrollbar Styling */
+.premium-ticket-modal::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.premium-ticket-modal::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 4px !important;
+}
+
+.premium-ticket-modal::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 4px !important;
+}
+
+.premium-ticket-modal::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Premium Review Order Step */
+.premium-review-order {
+  padding: 0 40px 40px 40px !important;
+}
+
+.review-order-content {
+  max-width: 600px !important;
+  margin: 0 auto !important;
+}
+
+.review-title {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-align: center !important;
+  margin-bottom: 32px !important;
+}
+
+.review-tickets {
+  margin-bottom: 32px !important;
+}
+
+.review-ticket-item {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 20px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  margin-bottom: 16px !important;
+}
+
+.review-ticket-item h4 {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  margin: 0 0 4px 0 !important;
+}
+
+.review-ticket-item p {
+  font-size: 14px !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  margin: 0 !important;
+}
+
+.ticket-price {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #FFD700 !important;
+}
+
+.review-total {
+  padding: 24px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  text-align: center !important;
+}
+
+.review-total .total-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+.review-total .total-amount {
+  color: #FFD700 !important;
+  font-size: 28px !important;
+}
+
+/* Premium Payment Step */
+.premium-payment {
+  padding: 0 40px 40px 40px !important;
+}
+
+.payment-content {
+  max-width: 500px !important;
+  margin: 0 auto !important;
+}
+
+.payment-title {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-align: center !important;
+  margin-bottom: 32px !important;
+}
+
+.payment-form {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+}
+
+.form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.form-row {
+  display: flex !important;
+  gap: 20px !important;
+}
+
+.form-row .form-group {
+  flex: 1 !important;
+}
+
+.form-group label {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.payment-input {
+  padding: 12px 16px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+  color: white !important;
+  font-size: 16px !important;
+  transition: all 0.3s ease !important;
+}
+
+.payment-input:focus {
+  outline: none !important;
+  border-color: #FF6B35 !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.payment-input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.payment-summary {
+  padding: 20px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  margin-top: 20px !important;
+}
+
+.summary-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: white !important;
+}
+
+.payment-total {
+  color: #FFD700 !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .premium-ticket-modal {
+    margin: 10px !important;
+    max-height: 98vh !important;
+    border-radius: 20px !important;
+  }
+  
+  .premium-modal-header {
+    padding: 30px 24px 0 24px !important;
+  }
+  
+  .premium-header-content {
+    flex-direction: column !important;
+    gap: 20px !important;
+    align-items: flex-start !important;
+  }
+  
+  .premium-modal-title {
+    font-size: 24px !important;
+  }
+  
+  .premium-progress-bar {
+    margin-bottom: 30px !important;
+  }
+  
+  .progress-connector {
+    width: 40px !important;
+  }
+  
+  .premium-ticket-selection {
+    padding: 0 24px 30px 24px !important;
+  }
+  
+  .premium-ticket-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  .premium-modal-footer {
+    padding: 24px !important;
+    border-radius: 0 0 20px 20px !important;
+  }
+  
+  .premium-modal-actions {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  
+  .premium-btn-primary,
+  .premium-btn-secondary {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+.total-section {
+  margin-bottom: 25px;
+}
+
+.total-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.total-label {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.total-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFD700;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+}
+
+.modal-actions .btn-primary {
+  background: linear-gradient(135deg, #FF6B35, #ff8c5a);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-actions .btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+.modal-actions .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-actions .btn-secondary {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-actions .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+  .ticket-modal {
+    margin: 10px;
+    max-height: 95vh;
+  }
+  
+  .modal-header {
+    padding: 20px;
+  }
+  
+  .modal-header h2 {
+    font-size: 24px;
+  }
+  
+  .ticket-cards {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .ticket-card-modal {
+    padding: 20px;
+  }
+  
+  .ticket-header-modal h3 {
+    font-size: 18px;
+  }
+  
+  .ticket-price-modal .price {
+    font-size: 28px;
+  }
+  
+  .modal-footer {
+    padding: 20px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .modal-actions .btn-primary,
+  .modal-actions .btn-secondary {
+    width: 100%;
+  }
+}

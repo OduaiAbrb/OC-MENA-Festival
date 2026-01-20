@@ -551,6 +551,92 @@
   letter-spacing: 1px;
 }
 
+/* ===== ATTENDEE INFORMATION ===== */
+.attendee-info {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.attendee-info h4 {
+  font-size: 14px;
+  color: #FF6B35;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.attendee-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-row .label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.detail-row .value {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* ===== TICKET ACTIONS ===== */
+.ticket-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 107, 53, 0.1);
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  border-radius: 8px;
+  color: #FF6B35;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  background: rgba(255, 107, 53, 0.2);
+  border-color: rgba(255, 107, 53, 0.5);
+  transform: translateY(-1px);
+}
+
+.action-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.transfer-btn:hover {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: rgba(76, 175, 80, 0.5);
+  color: #4CAF50;
+}
+
+.upgrade-btn:hover {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.5);
+  color: #2196F3;
+}
+
 /* ===== VENDOR BOOTH SECTION ===== */
 .vendor-booth-card {
   background: rgba(255, 255, 255, 0.03);
@@ -659,9 +745,242 @@
   transition: all 0.3s ease;
 }
 
-.contact-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+/* ===== VENDOR QR SECTION ===== */
+.vendor-qr-section {
+  margin-bottom: 30px;
+  padding: 25px;
+  background: linear-gradient(135deg, rgba(0, 122, 76, 0.1), rgba(0, 122, 76, 0.05));
+  border: 1px solid rgba(0, 122, 76, 0.3);
+  border-radius: 15px;
+  text-align: center;
+}
+
+.vendor-qr-section h3 {
+  font-size: 18px;
+  color: #00A652;
+  margin-bottom: 10px;
+}
+
+.vendor-qr-section p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 20px;
+}
+
+.vendor-qr-card {
+  display: inline-block;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(0, 122, 76, 0.4);
+  border-radius: 12px;
+}
+
+.vendor-qr-image {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.vendor-qr-text {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.awaiting-assignment {
+  color: #FFA500;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===== SCHEDULE SECTION ===== */
+.schedule-section {
+  margin-bottom: 30px;
+}
+
+.schedule-section h4 {
+  font-size: 16px;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.schedule-item {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.schedule-date {
+  font-size: 16px;
+  font-weight: 600;
+  color: #FF6B35;
+  margin-bottom: 5px;
+}
+
+.schedule-time {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 5px;
+}
+
+.schedule-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== IMPORTANT INFO SECTION ===== */
+.important-info-section {
+  margin-bottom: 30px;
+}
+
+.important-info-section h4 {
+  font-size: 16px;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.important-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(255, 107, 53, 0.05);
+  border: 1px solid rgba(255, 107, 53, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+}
+
+.info-item svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ===== INVOICE ACTIONS ===== */
+.invoice-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.invoice-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.invoice-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.invoice-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.download-btn:hover {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: rgba(76, 175, 80, 0.4);
+  color: #4CAF50;
+}
+
+.email-btn:hover {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.4);
+  color: #2196F3;
+}
+
+/* ===== ORDER FINANCIALS ===== */
+.order-financials {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.order-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.breakdown-row span:first-child {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.breakdown-row span:last-child {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.total-row {
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+}
+
+.total-row span:first-child {
+  color: white;
+}
+
+.total-row .order-total {
+  color: #FFD700;
+  font-size: 16px;
+}
+
+.order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.invoice-number {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Courier New', monospace;
 }
 
 /* ===== ORDERS SECTION ===== */

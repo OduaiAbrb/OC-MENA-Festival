@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -12,15 +12,58 @@ import Sponsors from './pages/Sponsors';
 import Contact from './pages/Contact';
 import './App.css';
 
-function App() {
+// Wrapper component to manage modal state
+const AppWithModal = () => {
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [ticketQuantities, setTicketQuantities] = useState({
+    '3day': 0,
+    '2day': 0,
+    '1day': 0
+  });
+
+  const handleTicketQuantityChange = (type, value) => {
+    console.log('handleTicketQuantityChange called with:', type, value);
+    const newValue = Math.max(0, parseInt(value) || 0);
+    console.log('Setting new value:', newValue);
+    setTicketQuantities(prev => ({
+      ...prev,
+      [type]: newValue
+    }));
+  };
+
+  const getTotalPrice = () => {
+    const prices = {
+      '3day': 35,
+      '2day': 25,
+      '1day': 15
+    };
+    return Object.keys(ticketQuantities).reduce((total, type) => {
+      return total + (ticketQuantities[type] * prices[type]);
+    }, 0);
+  };
+
+  const getTotalTickets = () => {
+    return Object.values(ticketQuantities).reduce((total, qty) => total + qty, 0);
+  };
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={
           <div className="app">
-            <Header />
+            <Header onGetTicketsClick={() => setShowTicketModal(true)} />
             <main className="main-content">
-              <HomePage />
+              <HomePage 
+                showTicketModal={showTicketModal}
+                setShowTicketModal={setShowTicketModal}
+                currentStep={currentStep}
+                setCurrentStep={setCurrentStep}
+                ticketQuantities={ticketQuantities}
+                handleTicketQuantityChange={handleTicketQuantityChange}
+                getTotalPrice={getTotalPrice}
+                getTotalTickets={getTotalTickets}
+              />
             </main>
             <Footer />
           </div>
@@ -88,6 +131,10 @@ function App() {
       </Routes>
     </Router>
   );
+}
+
+function App() {
+  return <AppWithModal />;
 }
 
 export default App;
