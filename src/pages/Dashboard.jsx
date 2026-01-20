@@ -4,6 +4,7 @@ import './Dashboard.css';
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState('tickets');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userData, setUserData] = useState({
     name: 'John Doe',
     email: 'john.doe@example.com',
@@ -289,7 +290,17 @@ const Dashboard = () => {
                 </div>
               </div>
             </Link>
+            
+            {/* Mobile Menu Toggle */}
+            <button 
+              className="mobile-menu-toggle"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle Mobile Menu"
+            >
+              <span className={`hamburger ${isMobileMenuOpen ? 'open' : ''}`}></span>
+            </button>
           </div>
+          
           <div className="header-right">
             <div className="user-info">
               <div className="user-avatar">
@@ -314,14 +325,25 @@ const Dashboard = () => {
 
       {/* Main Dashboard */}
       <div className="dashboard-container">
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="mobile-menu-overlay"
+            onClick={() => setIsMobileMenuOpen(false)}
+          ></div>
+        )}
+        
         {/* Sidebar Navigation */}
-        <aside className="dashboard-sidebar">
+        <aside className={`dashboard-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
           <nav className="sidebar-nav">
             <ul className="nav-list">
               <li className="nav-item">
                 <button 
                   className={`nav-btn ${activeSection === 'tickets' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('tickets')}
+                  onClick={() => {
+                    setActiveSection('tickets');
+                    setIsMobileMenuOpen(false);
+                  }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect>
@@ -335,7 +357,10 @@ const Dashboard = () => {
               <li className="nav-item">
                 <button 
                   className={`nav-btn ${activeSection === 'vendor' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('vendor')}
+                  onClick={() => {
+                    setActiveSection('vendor');
+                    setIsMobileMenuOpen(false);
+                  }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -347,7 +372,10 @@ const Dashboard = () => {
               <li className="nav-item">
                 <button 
                   className={`nav-btn ${activeSection === 'orders' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('orders')}
+                  onClick={() => {
+                    setActiveSection('orders');
+                    setIsMobileMenuOpen(false);
+                  }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="9" cy="21" r="1"></circle>
@@ -360,7 +388,10 @@ const Dashboard = () => {
               <li className="nav-item">
                 <button 
                   className={`nav-btn ${activeSection === 'settings' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('settings')}
+                  onClick={() => {
+                    setActiveSection('settings');
+                    setIsMobileMenuOpen(false);
+                  }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="3"></circle>
