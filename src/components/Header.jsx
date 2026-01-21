@@ -102,12 +102,32 @@ const Header = ({ onGetTicketsClick }) => {
                   </Link>
                 </li>
               ))}
+              <li className="nav-item mobile-menu-item">
+                <button className="nav-link mobile-cart-btn" onClick={handleCartClick}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                  </svg>
+                  Cart
+                  <span className="mobile-cart-badge">{getTotalCartItems()}</span>
+                </button>
+              </li>
+              <li className="nav-item mobile-menu-item">
+                <Link to="/login" className="nav-link mobile-user-btn" onClick={(e) => handleNavClick('/login', e)}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  Account
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
 
         <div className="header-actions">
-          <button className="icon-btn cart-btn" onClick={handleCartClick} aria-label="Shopping Cart">
+          <button className="icon-btn cart-btn desktop-only" onClick={handleCartClick} aria-label="Shopping Cart">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="9" cy="21" r="1"></circle>
               <circle cx="20" cy="21" r="1"></circle>
@@ -116,7 +136,7 @@ const Header = ({ onGetTicketsClick }) => {
             <span className="cart-badge">{getTotalCartItems()}</span>
           </button>
 
-          <Link to="/login" className="icon-btn user-btn" aria-label="User Account">
+          <Link to="/login" className="icon-btn user-btn desktop-only" aria-label="User Account" onClick={(e) => handleNavClick('/login', e)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>

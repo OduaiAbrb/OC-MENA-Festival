@@ -336,6 +336,72 @@
     display: none;
   }
 
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-menu-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .mobile-cart-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 0;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.85);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: color 0.3s ease;
+  }
+
+  .mobile-cart-btn:hover {
+    color: #FF6B35;
+  }
+
+  .mobile-cart-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .mobile-cart-badge {
+    background: #FF6B35;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+  }
+
+  .mobile-user-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 0;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .mobile-user-btn:hover {
+    color: #FF6B35;
+  }
+
+  .mobile-user-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+
   .header-actions {
     gap: 10px;
   }
