@@ -11,6 +11,18 @@ const Header = ({ onGetTicketsClick }) => {
   const [cartItems, setCartItems] = useState([]);
   const location = useLocation();
 
+  // Close menu when window is resized above mobile breakpoint
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1170 && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMenuOpen]);
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -61,11 +73,11 @@ const Header = ({ onGetTicketsClick }) => {
   };
 
   const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Event Schedule', path: '/event-schedule' },
-    { name: 'Vendors', path: '/vendors' },
-    { name: 'Sponsors', path: '/sponsors' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'EXPERIENCE', path: '/' },
+    { name: 'EVENT SCHEDULE', path: '/event-schedule' },
+    { name: 'VENDORS', path: '/vendors' },
+    { name: 'SPONSORS', path: '/sponsors' },
+    { name: 'CONTACT', path: '/contact' },
   ];
 
   const isActive = (path) => {
@@ -76,54 +88,50 @@ const Header = ({ onGetTicketsClick }) => {
   return (
     <header className={`header ${isScrolled ? 'header-scrolled' : ''}`}>
       <div className="header-container">
-        <div className="header-left">
-          <Link to="/" className="logo" onClick={(e) => handleNavClick('/', e)}>
-            <div className="logo-icon">
-              <span className="logo-oc">OC</span>
-            </div>
-            <div className="logo-text-group">
-              <span className="logo-mena">MENA</span>
-              <span className="logo-festival">FESTIVAL</span>
-            </div>
-          </Link>
-        </div>
-        
-        <div className="nav-wrapper">
-          <nav className={`nav ${isMenuOpen ? 'nav-open' : ''}`}>
-            <ul className="nav-list">
-              {navItems.map((item) => (
-                <li key={item.name} className="nav-item">
-                  <Link
-                    to={item.path}
-                    className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
-                    onClick={(e) => handleNavClick(item.path, e)}
-                  >
-                    {item.name}
+        <div className="header-center">
+          <div className="header-left">
+            <Link to="/" className="logo" onClick={(e) => handleNavClick('/', e)}>
+              <img src="/logo.png" alt="OC Fair" className="header-logo-img" />
+            </Link>
+          </div>
+          
+          <div className="nav-wrapper">
+            <nav className={`nav ${isMenuOpen ? 'nav-open' : ''}`}>
+              <ul className="nav-list">
+                {navItems.map((item) => (
+                  <li key={item.name} className="nav-item">
+                    <Link
+                      to={item.path}
+                      className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
+                      onClick={(e) => handleNavClick(item.path, e)}
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+                <li className="nav-item mobile-menu-item">
+                  <button className="nav-link mobile-cart-btn" onClick={handleCartClick}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="9" cy="21" r="1"></circle>
+                      <circle cx="20" cy="21" r="1"></circle>
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    Cart
+                    <span className="mobile-cart-badge">{getTotalCartItems()}</span>
+                  </button>
+                </li>
+                <li className="nav-item mobile-menu-item">
+                  <Link to="/login" className="nav-link mobile-user-btn" onClick={(e) => handleNavClick('/login', e)}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Account
                   </Link>
                 </li>
-              ))}
-              <li className="nav-item mobile-menu-item">
-                <button className="nav-link mobile-cart-btn" onClick={handleCartClick}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                  </svg>
-                  Cart
-                  <span className="mobile-cart-badge">{getTotalCartItems()}</span>
-                </button>
-              </li>
-              <li className="nav-item mobile-menu-item">
-                <Link to="/login" className="nav-link mobile-user-btn" onClick={(e) => handleNavClick('/login', e)}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                  Account
-                </Link>
-              </li>
-            </ul>
-          </nav>
+              </ul>
+            </nav>
+          </div>
         </div>
 
         <div className="header-actions">
@@ -143,17 +151,12 @@ const Header = ({ onGetTicketsClick }) => {
             </svg>
           </Link>
 
-          <button 
-            onClick={() => {
-              console.log('Header Get Tickets clicked!');
-              if (onGetTicketsClick) {
-                onGetTicketsClick();
-              }
-            }}
-            className="btn-primary get-tickets-btn"
+          <Link 
+            to="/tickets"
+            className="get-tickets-btn"
           >
             Get Tickets
-          </button>
+          </Link>
 
           <button 
             className="menu-toggle"

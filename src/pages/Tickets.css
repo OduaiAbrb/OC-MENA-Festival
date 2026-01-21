@@ -1,4 +1,4 @@
-/* ===== VENDORS PAGE ===== */
+/* ===== TICKETS PAGE ===== */
 .page-wrapper {
   min-height: 100vh;
   display: flex;
@@ -112,6 +112,7 @@
   );
 }
 
+/* ===== CARD CONTENT ===== */
 .card-title {
   font-size: 32px;
   font-weight: 700;
@@ -125,29 +126,8 @@
   font-size: 14px;
   color: #444444;
   line-height: 1.7;
-  text-align: left;
-  margin-bottom: 20px;
-}
-
-/* ===== VENDOR LIST SECTION ===== */
-.vendor-list-section {
   text-align: center;
-  margin-top: 30px;
-  padding-top: 25px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.section-heading {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 10px;
-  font-family: 'Georgia', serif;
-}
-
-.section-text {
-  font-size: 14px;
-  color: #666666;
+  margin-bottom: 20px;
 }
 
 /* ===== LANTERNS ===== */
@@ -183,10 +163,6 @@
   
   .card-description {
     font-size: 13px;
-  }
-  
-  .section-heading {
-    font-size: 20px;
   }
   
   .lanterns-image {

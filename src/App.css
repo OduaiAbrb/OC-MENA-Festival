@@ -23,9 +23,9 @@ html {
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--darker-bg);
   color: var(--text-light);
   line-height: 1.6;
+  background-color: #000000;
 }
 
 .app {
