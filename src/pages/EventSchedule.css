@@ -63,6 +63,8 @@
   padding: 50px 60px 40px;
   z-index: 10;
   text-align: center;
+  padding-bottom:200px;
+
 }
 
 .torn-paper-card::before {
@@ -214,7 +216,7 @@
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .hero-section {
-    padding-top: 120px;
+    padding-top: 200px;
     padding-bottom: 40px;
   }
   
@@ -264,13 +266,14 @@
 
 @media (max-width: 480px) {
   .hero-section {
-    padding-top: 100px;
+    padding-top: 180px;
     padding-bottom: 30px;
   }
   
   .torn-paper-card {
     padding: 30px 20px 25px;
     width: 95%;
+    padding-bottom:200px;
   }
   
   .card-title {
@@ -313,3 +316,7 @@
     height: 60px;
   }
 }
+
+  .torn-paper-card {
+  padding-bottom:150px !important;
+  }

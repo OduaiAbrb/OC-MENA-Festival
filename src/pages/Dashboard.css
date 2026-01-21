@@ -283,7 +283,7 @@
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .hero-section {
-    padding-top: 120px;
+    padding-top: 200px;
     padding-bottom: 40px;
   }
 
@@ -352,7 +352,7 @@
 
 @media (max-width: 480px) {
   .hero-section {
-    padding-top: 100px;
+    padding-top: 180px;
     padding-bottom: 30px;
   }
 
