@@ -407,6 +407,13 @@
   }
 }
 
+/* Hide mobile menu items on desktop */
+@media (min-width: 901px) {
+  .mobile-menu-item {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .logo-text {
     display: none;
