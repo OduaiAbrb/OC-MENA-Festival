@@ -115,7 +115,7 @@ const Tickets = () => {
               </div>
               <div className="summary-row total">
                 <span>Total Price:</span>
-                <span>$115</span>
+                <span>${getTotalPrice()}</span>
               </div>
               <button className="checkout-btn">
                 Proceed to Checkout
