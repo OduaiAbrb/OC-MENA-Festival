@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import ScrollToTop from './ScrollToTop';
 import CartModal from './CartModal';
 import './Header.css';
 
@@ -8,7 +7,7 @@ const Header = ({ onGetTicketsClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems] = useState([]);
   const location = useLocation();
 
   // Close menu when window is resized above mobile breakpoint
