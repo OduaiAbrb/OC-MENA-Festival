@@ -66,6 +66,7 @@ const Dashboard = () => {
               <p>Order ID: ORD-2024-001</p>
               <p>Date: January 15, 2024</p>
               <p>Total: $150.00</p>
+              
               <p>Status: Completed</p>
             </div>
           </div>
