@@ -1,7 +1,9 @@
 """
 Payment services for Stripe integration.
+Supports both real Stripe and sandbox/demo mode for stakeholder demos.
 """
 import logging
+import uuid
 import stripe
 from django.conf import settings
 from django.db import transaction
@@ -13,11 +15,24 @@ from .models import StripeEvent, PaymentAttempt
 
 logger = logging.getLogger(__name__)
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+# Check if we have real Stripe credentials
+STRIPE_CONFIGURED = bool(settings.STRIPE_SECRET_KEY and settings.STRIPE_SECRET_KEY.startswith('sk_'))
+DEMO_MODE = not STRIPE_CONFIGURED
+
+if STRIPE_CONFIGURED:
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    logger.info("Stripe configured with real credentials")
+else:
+    logger.warning("Stripe not configured - running in DEMO MODE")
 
 
 class StripeService:
     """Service for Stripe payment operations."""
+    
+    @classmethod
+    def is_demo_mode(cls) -> bool:
+        """Check if running in demo mode."""
+        return DEMO_MODE
     
     @classmethod
     def create_payment_intent(
@@ -25,7 +40,12 @@ class StripeService:
         order: Order,
         idempotency_key: str
     ) -> dict:
-        """Create a Stripe PaymentIntent for an order."""
+        """Create a Stripe PaymentIntent for an order (or demo equivalent)."""
+        
+        if DEMO_MODE:
+            return cls._create_demo_payment_intent(order, idempotency_key)
+        
+        # Real Stripe implementation
         try:
             intent = stripe.PaymentIntent.create(
                 amount=order.total_cents,
@@ -55,11 +75,74 @@ class StripeService:
             
             return {
                 'client_secret': intent.client_secret,
-                'payment_intent_id': intent.id
+                'payment_intent_id': intent.id,
+                'demo_mode': False
             }
             
         except stripe.error.StripeError as e:
             logger.error(f"Stripe error creating payment intent: {e}")
+            raise ValueError(str(e))
+    
+    @classmethod
+    def _create_demo_payment_intent(cls, order: Order, idempotency_key: str) -> dict:
+        """Create a demo payment intent for stakeholder demos."""
+        # Generate fake but realistic-looking IDs
+        demo_intent_id = f"pi_demo_{uuid.uuid4().hex[:24]}"
+        demo_client_secret = f"{demo_intent_id}_secret_demo_{uuid.uuid4().hex[:24]}"
+        
+        # Track payment attempt (same as real)
+        PaymentAttempt.objects.create(
+            order=order,
+            stripe_payment_intent_id=demo_intent_id,
+            amount_cents=order.total_cents,
+            currency=order.currency,
+            status=PaymentAttempt.Status.INITIATED
+        )
+        
+        # Update order with demo payment intent
+        order.stripe_payment_intent_id = demo_intent_id
+        order.status = Order.Status.PAYMENT_PENDING
+        order.save(update_fields=['stripe_payment_intent_id', 'status'])
+        
+        logger.info(f"DEMO MODE: Created demo payment intent {demo_intent_id} for order {order.order_number}")
+        
+        return {
+            'client_secret': demo_client_secret,
+            'payment_intent_id': demo_intent_id,
+            'demo_mode': True
+        }
+    
+    @classmethod
+    def confirm_demo_payment(cls, order_id: str) -> dict:
+        """Confirm a demo payment - simulates successful payment."""
+        from apps.tickets.models import Order
+        
+        try:
+            order = Order.objects.get(id=order_id)
+            
+            if not order.stripe_payment_intent_id or not order.stripe_payment_intent_id.startswith('pi_demo_'):
+                raise ValueError("Not a demo payment")
+            
+            # Finalize the order (issues tickets, sends emails, etc.)
+            order = OrderService.finalize_order(order_id, order.stripe_payment_intent_id)
+            
+            # Update payment attempt
+            PaymentAttempt.objects.filter(
+                stripe_payment_intent_id=order.stripe_payment_intent_id
+            ).update(status=PaymentAttempt.Status.SUCCEEDED)
+            
+            logger.info(f"DEMO MODE: Payment confirmed for order {order.order_number}")
+            
+            return {
+                'success': True,
+                'order_number': order.order_number,
+                'message': 'Demo payment successful! Tickets have been issued.'
+            }
+            
+        except Order.DoesNotExist:
+            raise ValueError("Order not found")
+        except Exception as e:
+            logger.error(f"Demo payment confirmation error: {e}")
             raise ValueError(str(e))
     
     @classmethod

@@ -239,6 +239,17 @@ class ApiService {
     });
   }
 
+  async confirmPayment(orderId) {
+    return this.request('/payments/checkout/confirm/', {
+      method: 'POST',
+      body: JSON.stringify({ order_id: orderId }),
+    });
+  }
+
+  async checkDemoMode() {
+    return this.request('/payments/checkout/demo-mode/', { skipAuth: true });
+  }
+
   async getMyOrders() {
     return this.request('/payments/orders/');
   }

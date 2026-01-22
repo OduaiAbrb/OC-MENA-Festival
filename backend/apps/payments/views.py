@@ -95,6 +95,25 @@ class ConfirmPaymentView(APIView):
                 'error': {'message': 'Order not found'}
             }, status=status.HTTP_404_NOT_FOUND)
         
+        # Check if this is a demo payment that needs confirmation
+        if order.stripe_payment_intent_id and order.stripe_payment_intent_id.startswith('pi_demo_'):
+            try:
+                result = StripeService.confirm_demo_payment(str(order.id))
+                return Response({
+                    'success': True,
+                    'data': {
+                        'order_number': result['order_number'],
+                        'status': 'PAID',
+                        'message': result['message'],
+                        'demo_mode': True
+                    }
+                })
+            except ValueError as e:
+                return Response({
+                    'success': False,
+                    'error': {'message': str(e)}
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
         # Just return order status - actual confirmation comes via webhook
         return Response({
             'success': True,
@@ -102,6 +121,22 @@ class ConfirmPaymentView(APIView):
                 'order_number': order.order_number,
                 'status': order.status,
                 'message': 'Payment is being processed' if order.status == Order.Status.PAYMENT_PENDING else 'Payment confirmed'
+            }
+        })
+
+
+class CheckDemoModeView(APIView):
+    """Check if the system is running in demo mode."""
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    
+    @extend_schema(summary="Check demo mode status")
+    def get(self, request):
+        return Response({
+            'success': True,
+            'data': {
+                'demo_mode': StripeService.is_demo_mode(),
+                'message': 'Payment system is in DEMO mode. No real charges will be made.' if StripeService.is_demo_mode() else 'Payment system is LIVE.'
             }
         })
 

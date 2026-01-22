@@ -133,6 +133,108 @@
   margin: 0.5rem 0;
 }
 
+.demo-note {
+  color: #856404;
+  font-style: italic;
+}
+
+/* Demo Banner */
+.demo-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.demo-icon {
+  font-size: 1.5rem;
+}
+
+.demo-banner strong {
+  color: #856404;
+  display: block;
+}
+
+.demo-banner p {
+  margin: 0.25rem 0 0 0;
+  color: #856404;
+  font-size: 0.85rem;
+}
+
+/* Payment Form */
+.checkout-payment h2 {
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.order-summary-mini {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.mini-total {
+  color: #d4af37;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.card-form {
+  margin-bottom: 1.5rem;
+}
+
+.card-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.card-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.card-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.card-input:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.card-input::placeholder {
+  color: #aaa;
+  font-family: inherit;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.form-group.half {
+  flex: 1;
+}
+
 /* Processing Step */
 .checkout-processing {
   text-align: center;
