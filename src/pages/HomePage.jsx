@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -7,6 +8,7 @@ import ScrollToTop from '../components/ScrollToTop';
 import './HomePage.css';
 
 const HomePage = ({ onGetTicketsClick }) => {
+  const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -85,7 +87,7 @@ const HomePage = ({ onGetTicketsClick }) => {
           {/* CTA Buttons */}
           <div className="hero-buttons">
             <Link to="/vendors" className="btn-outline-white">Vendor sign up</Link>
-            <button onClick={onGetTicketsClick} className="btn-primary-red">Get Tickets</button>
+            <Link to="/tickets" className="btn-primary-red">Get Tickets</Link>
           </div>
         </div>
 
