@@ -112,10 +112,8 @@ const Header = ({ onGetTicketsClick }) => {
                 ))}
                 <li className="nav-item mobile-menu-item">
                   <button className="nav-link mobile-cart-btn" onClick={handleCartClick}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="9" cy="21" r="1"></circle>
-                      <circle cx="20" cy="21" r="1"></circle>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M7.5 3.75V6.25H12.5V3.75C12.5 2.37109 11.3789 1.25 10 1.25C8.62109 1.25 7.5 2.37109 7.5 3.75ZM6.25 7.5H3.125C2.78125 7.5 2.5 7.78125 2.5 8.125V16.25C2.5 17.6289 3.62109 18.75 5 18.75H15C16.3789 18.75 17.5 17.6289 17.5 16.25V8.125C17.5 7.78125 17.2188 7.5 16.875 7.5H13.75V10.625C13.75 10.9688 13.4688 11.25 13.125 11.25C12.7812 11.25 12.5 10.9688 12.5 10.625V7.5H7.5V10.625C7.5 10.9688 7.21875 11.25 6.875 11.25C6.53125 11.25 6.25 10.9688 6.25 10.625V7.5ZM6.25 6.25V3.75C6.25 1.67969 7.92969 0 10 0C12.0703 0 13.75 1.67969 13.75 3.75V6.25H16.875C17.9102 6.25 18.75 7.08984 18.75 8.125V16.25C18.75 18.3203 17.0703 20 15 20H5C2.92969 20 1.25 18.3203 1.25 16.25V8.125C1.25 7.08984 2.08984 6.25 3.125 6.25H6.25Z" fill="currentColor"></path>
                     </svg>
                     Cart
                     <span className="mobile-cart-badge">{getTotalCartItems()}</span>
@@ -160,10 +158,8 @@ const Header = ({ onGetTicketsClick }) => {
           </Link>
 
           <button className="icon-btn cart-btn desktop-only" onClick={handleCartClick} aria-label="Shopping Cart">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M7.5 3.75V6.25H12.5V3.75C12.5 2.37109 11.3789 1.25 10 1.25C8.62109 1.25 7.5 2.37109 7.5 3.75ZM6.25 7.5H3.125C2.78125 7.5 2.5 7.78125 2.5 8.125V16.25C2.5 17.6289 3.62109 18.75 5 18.75H15C16.3789 18.75 17.5 17.6289 17.5 16.25V8.125C17.5 7.78125 17.2188 7.5 16.875 7.5H13.75V10.625C13.75 10.9688 13.4688 11.25 13.125 11.25C12.7812 11.25 12.5 10.9688 12.5 10.625V7.5H7.5V10.625C7.5 10.9688 7.21875 11.25 6.875 11.25C6.53125 11.25 6.25 10.9688 6.25 10.625V7.5ZM6.25 6.25V3.75C6.25 1.67969 7.92969 0 10 0C12.0703 0 13.75 1.67969 13.75 3.75V6.25H16.875C17.9102 6.25 18.75 7.08984 18.75 8.125V16.25C18.75 18.3203 17.0703 20 15 20H5C2.92969 20 1.25 18.3203 1.25 16.25V8.125C1.25 7.08984 2.08984 6.25 3.125 6.25H6.25Z" fill="currentColor"></path>
             </svg>
             <span className="cart-badge">{getTotalCartItems()}</span>
           </button>
