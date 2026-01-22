@@ -52,15 +52,7 @@ const Tickets = () => {
 
   const fetchTicketTypes = async () => {
     try {
-      // Show fallback tickets immediately
-      setTicketTypes(fallbackTicketOptions);
-      const initialQuantities = {};
-      fallbackTicketOptions.forEach(ticket => {
-        initialQuantities[ticket.id] = 0;
-      });
-      setTicketQuantities(initialQuantities);
-      
-      // Try to fetch from API in background
+      // Try to fetch from API first
       const response = await api.getTicketTypes();
       
       if (response?.success && response.data?.length > 0) {
@@ -72,15 +64,30 @@ const Tickets = () => {
         });
         setTicketQuantities(apiQuantities);
         setHasRealTickets(true);
+        console.log('Loaded real tickets from API:', response.data.length);
       } else {
-        // Keep fallback if no tickets or sales not open
-        setSalesMessage(response?.message || '');
+        // Use fallback if no tickets or sales not open
+        console.log('Using fallback tickets, API response:', response);
+        setTicketTypes(fallbackTicketOptions);
+        const initialQuantities = {};
+        fallbackTicketOptions.forEach(ticket => {
+          initialQuantities[ticket.id] = 0;
+        });
+        setTicketQuantities(initialQuantities);
+        setSalesMessage(response?.message || 'Ticket sales are currently unavailable.');
         setHasRealTickets(false);
       }
     } catch (err) {
       console.error('Failed to fetch ticket types:', err);
-      setError('Unable to load tickets. Please try again later.');
-      // Keep fallback on error
+      // Use fallback on error
+      setTicketTypes(fallbackTicketOptions);
+      const initialQuantities = {};
+      fallbackTicketOptions.forEach(ticket => {
+        initialQuantities[ticket.id] = 0;
+      });
+      setTicketQuantities(initialQuantities);
+      setError('Unable to connect to ticket system. Showing preview tickets.');
+      setHasRealTickets(false);
     } finally {
       setLoading(false);
     }
@@ -168,6 +175,12 @@ const Tickets = () => {
           {salesMessage && (
             <div className="sales-message" style={{textAlign: 'center', padding: '1rem', backgroundColor: 'rgba(255,193,7,0.1)', borderRadius: '8px', marginBottom: '1rem'}}>
               <p style={{color: '#856404', margin: 0}}>{salesMessage}</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="error-message" style={{textAlign: 'center', padding: '1rem', backgroundColor: 'rgba(220,53,69,0.1)', borderRadius: '8px', marginBottom: '1rem'}}>
+              <p style={{color: '#721c24', margin: 0}}>{error}</p>
             </div>
           )}
 
