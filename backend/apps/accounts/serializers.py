@@ -12,7 +12,7 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, min_length=8)
     confirm_password = serializers.CharField(write_only=True)
-    full_name = serializers.CharField(max_length=255)
+    full_name = serializers.CharField(max_length=255, required=False, allow_blank=True)
     phone = serializers.CharField(max_length=20, required=False, allow_blank=True)
     
     def validate_email(self, value):
@@ -35,7 +35,7 @@ class RegisterSerializer(serializers.Serializer):
         user = User.objects.create_user(
             email=validated_data['email'],
             password=validated_data['password'],
-            full_name=validated_data['full_name'],
+            full_name=validated_data.get('full_name', ''),
             phone=validated_data.get('phone', ''),
             role=UserRole.ATTENDEE
         )
