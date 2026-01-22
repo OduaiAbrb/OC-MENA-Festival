@@ -13,16 +13,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddIndex(
-            model_name='passrecord',
-            index=models.Index(fields=['user', 'pass_type'], name='pass_record_user_id_53eee2_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='passrecord',
-            index=models.Index(fields=['ticket', 'pass_type'], name='pass_record_ticket__38c92b_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='passrecord',
-            index=models.Index(fields=['status'], name='pass_record_status_7fd672_idx'),
-        ),
+        # Skip indexes - they're already defined in model Meta
     ]

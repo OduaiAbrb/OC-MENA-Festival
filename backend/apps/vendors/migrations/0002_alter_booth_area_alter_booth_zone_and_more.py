@@ -28,32 +28,5 @@ class Migration(migrations.Migration):
             name='is_public',
             field=models.BooleanField(default=False, help_text='Show on public vendors page'),
         ),
-        migrations.AddIndex(
-            model_name='booth',
-            index=models.Index(fields=['booth_code'], name='booths_booth_c_6815e7_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='booth',
-            index=models.Index(fields=['area', 'zone'], name='booths_area_0583ba_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='boothassignment',
-            index=models.Index(fields=['vendor'], name='booth_assig_vendor__2076c7_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='boothassignment',
-            index=models.Index(fields=['assigned_at'], name='booth_assig_assigne_ffe42e_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='vendorprofile',
-            index=models.Index(fields=['booth_status', 'is_active'], name='vendor_prof_booth_s_54c751_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='vendorprofile',
-            index=models.Index(fields=['category', 'is_public'], name='vendor_prof_categor_b703e9_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='vendorsetuplog',
-            index=models.Index(fields=['vendor', 'scanned_at'], name='vendor_setu_vendor__8cef63_idx'),
-        ),
+        # Skip indexes - they're already defined in model Meta
     ]

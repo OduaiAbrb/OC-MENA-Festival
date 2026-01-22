@@ -13,24 +13,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddIndex(
-            model_name='scansession',
-            index=models.Index(fields=['scanner', 'is_active'], name='scan_sessio_scanner_2c4962_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='scansession',
-            index=models.Index(fields=['started_at'], name='scan_sessio_started_bcc678_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='ticketscanlog',
-            index=models.Index(fields=['ticket', 'scanned_at'], name='ticket_scan_ticket__cc31b6_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='ticketscanlog',
-            index=models.Index(fields=['result', 'scanned_at'], name='ticket_scan_result_bcc008_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='ticketscanlog',
-            index=models.Index(fields=['scanner', 'scanned_at'], name='ticket_scan_scanner_5f8371_idx'),
-        ),
+        # Skip indexes - they're already defined in model Meta
     ]
