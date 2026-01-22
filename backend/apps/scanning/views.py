@@ -22,6 +22,30 @@ from .services import ScanService
 logger = logging.getLogger(__name__)
 
 
+class QuickScanView(APIView):
+    """Quick scan endpoint for anyone to check ticket status (no auth required)."""
+    permission_classes = []
+    authentication_classes = []
+    
+    @extend_schema(
+        summary="Quick scan ticket QR code",
+        request=ScanValidateSerializer,
+        responses={200: ScanValidationResultSerializer}
+    )
+    def post(self, request):
+        serializer = ScanValidateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        is_valid, result = ScanService.validate_qr(
+            serializer.validated_data['qr_data']
+        )
+        
+        return Response({
+            'success': True,
+            'data': result
+        })
+
+
 class ScanValidateView(APIView):
     """Validate a ticket QR code without marking as used."""
     permission_classes = [IsStaffOrAdmin]

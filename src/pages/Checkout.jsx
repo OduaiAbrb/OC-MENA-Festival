@@ -97,13 +97,40 @@ const Checkout = () => {
   const handlePlaceOrder = async () => {
     if (loading) return;
 
-    if (!formData.email || !formData.firstName || !formData.lastName) {
-      setError('Please fill in all required fields');
+    // Validate required fields
+    if (!formData.email || !formData.firstName || !formData.lastName || 
+        !formData.streetAddress || !formData.city || !formData.state || !formData.zipCode) {
+      setError('Please fill in all required fields (marked with *)');
       return;
     }
 
-    if (selectedPaymentMethod === 'card' && (!cardData.cardNumber || !cardData.expiry || !cardData.cvc)) {
-      setError('Please enter card details');
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    // Validate card details if paying by card
+    if (selectedPaymentMethod === 'card') {
+      if (!cardData.cardNumber || !cardData.expiry || !cardData.cvc) {
+        setError('Please enter complete card details');
+        return;
+      }
+      if (cardData.cardNumber.replace(/\s/g, '').length < 13) {
+        setError('Please enter a valid card number');
+        return;
+      }
+      if (cardData.cvc.length < 3) {
+        setError('Please enter a valid CVC');
+        return;
+      }
+    }
+
+    // Validate cart has items
+    if (!cartItems || cartItems.length === 0) {
+      setError('Your cart is empty. Please add tickets before checking out.');
+      navigate('/tickets');
       return;
     }
 
