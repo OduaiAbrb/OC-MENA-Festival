@@ -57,21 +57,21 @@ const Tickets = () => {
       
       if (response?.success && response.data?.length > 0) {
         setTicketTypes(response.data);
-        // Initialize quantities for each ticket type
+        // Initialize quantities for each ticket type with STRING IDs
         const apiQuantities = {};
         response.data.forEach(ticket => {
-          apiQuantities[ticket.id] = 0;
+          apiQuantities[String(ticket.id)] = 0;
         });
         setTicketQuantities(apiQuantities);
         setHasRealTickets(true);
-        console.log('Loaded real tickets from API:', response.data.length);
+        console.log('Loaded real tickets from API:', response.data.length, apiQuantities);
       } else {
         // Use fallback if no tickets or sales not open
         console.log('Using fallback tickets, API response:', response);
         setTicketTypes(fallbackTicketOptions);
         const initialQuantities = {};
         fallbackTicketOptions.forEach(ticket => {
-          initialQuantities[ticket.id] = 0;
+          initialQuantities[String(ticket.id)] = 0;
         });
         setTicketQuantities(initialQuantities);
         setSalesMessage(response?.message || 'Ticket sales are currently unavailable.');
@@ -83,7 +83,7 @@ const Tickets = () => {
       setTicketTypes(fallbackTicketOptions);
       const initialQuantities = {};
       fallbackTicketOptions.forEach(ticket => {
-        initialQuantities[ticket.id] = 0;
+        initialQuantities[String(ticket.id)] = 0;
       });
       setTicketQuantities(initialQuantities);
       setError('Unable to connect to ticket system. Showing preview tickets.');
@@ -93,36 +93,46 @@ const Tickets = () => {
     }
   };
 
-  const ticketOptions = ticketTypes.map(ticket => ({
-    id: ticket.id,
-    name: ticket.name,
-    savings: ticket.badge_text || ticket.savings || (ticket.price_cents >= 3500 ? 'Save $10 on entry' : ticket.price_cents >= 2500 ? 'Save $5 on entry' : 'STANDARD'),
-    price: ticket.price_cents / 100,
-    originalPrice: ticket.price_cents / 100,
-    slug: ticket.slug
-  }));
+  // Memoize ticket options to prevent re-renders
+  const ticketOptions = React.useMemo(() => {
+    return ticketTypes.map(ticket => ({
+      id: String(ticket.id), // Ensure ID is string for consistent key matching
+      name: ticket.name,
+      savings: ticket.badge_text || ticket.savings || (ticket.price_cents >= 3500 ? 'Save $10 on entry' : ticket.price_cents >= 2500 ? 'Save $5 on entry' : 'STANDARD'),
+      price: ticket.price_cents / 100,
+      originalPrice: ticket.price_cents / 100,
+      slug: ticket.slug
+    }));
+  }, [ticketTypes]);
 
   const handleQuantityChange = (ticketId, change) => {
+    const id = String(ticketId); // Ensure consistent string ID
     setTicketQuantities(prev => {
-      const newQty = Math.max(0, (prev[ticketId] || 0) + change);
+      const currentQty = prev[id] || 0;
+      const newQty = Math.max(0, currentQty + change);
       const updated = {
         ...prev,
-        [ticketId]: newQty
+        [id]: newQty
       };
-      console.log('Cart updated:', updated);
+      console.log('Cart updated:', id, 'from', currentQty, 'to', newQty, updated);
       return updated;
     });
   };
 
   const getTotalPrice = () => {
-    return ticketOptions.reduce((total, ticket) => {
-      return total + ((ticketQuantities[ticket.id] || 0) * ticket.price);
-    }, 0);
+    let total = 0;
+    ticketOptions.forEach(ticket => {
+      const qty = ticketQuantities[ticket.id] || 0;
+      total += qty * ticket.price;
+    });
+    return total;
   };
 
   const getTotalTickets = () => {
-    const total = Object.values(ticketQuantities).reduce((total, qty) => total + (qty || 0), 0);
-    console.log('Total tickets in cart:', total, 'Quantities:', ticketQuantities);
+    let total = 0;
+    Object.values(ticketQuantities).forEach(qty => {
+      total += (qty || 0);
+    });
     return total;
   };
 

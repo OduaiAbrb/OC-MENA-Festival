@@ -34,22 +34,42 @@ const Checkout = () => {
   });
 
   useEffect(() => {
+    console.log('Checkout loaded, location state:', location.state);
+    
     if (!api.isAuthenticated()) {
       localStorage.setItem('pendingCart', JSON.stringify(location.state || {}));
       navigate('/login?redirect=/checkout');
       return;
     }
 
-    if (location.state?.items) {
+    // Try to get cart from location state first
+    if (location.state?.items && location.state.items.length > 0) {
+      console.log('Setting cart from location state:', location.state.items);
       setCartItems(location.state.items);
     } else {
+      // Try localStorage
       const pendingCart = localStorage.getItem('pendingCart');
+      console.log('Pending cart from localStorage:', pendingCart);
       if (pendingCart) {
-        const cart = JSON.parse(pendingCart);
-        setCartItems(cart.items || []);
-        localStorage.removeItem('pendingCart');
+        try {
+          const cart = JSON.parse(pendingCart);
+          if (cart.items && cart.items.length > 0) {
+            console.log('Setting cart from localStorage:', cart.items);
+            setCartItems(cart.items);
+          } else {
+            console.log('No items in localStorage cart, redirecting to tickets');
+            navigate('/tickets');
+            return;
+          }
+        } catch (e) {
+          console.error('Error parsing cart:', e);
+          navigate('/tickets');
+          return;
+        }
       } else {
+        console.log('No cart data found, redirecting to tickets');
         navigate('/tickets');
+        return;
       }
     }
 
@@ -160,7 +180,18 @@ const Checkout = () => {
       }
 
       localStorage.removeItem('pendingCart');
-      navigate('/dashboard', { state: { orderSuccess: true } });
+      
+      // Navigate to success page with order details
+      navigate('/order-success', { 
+        state: { 
+          order: {
+            order_number: confirmResponse.data?.order_number || orderId,
+            total: calculateTotal().toFixed(2),
+            payment_method: selectedPaymentMethod === 'card' ? 'Credit Card' : 'Cash on Delivery',
+            items: cartItems
+          }
+        } 
+      });
     } catch (err) {
       console.error('Order error:', err);
       setError(err.message || 'Failed to process order. Please try again.');
