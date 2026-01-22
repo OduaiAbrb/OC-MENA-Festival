@@ -15,6 +15,7 @@ const Tickets = () => {
   const [loading, setLoading] = useState(true); // eslint-disable-line no-unused-vars
   const [error, setError] = useState(''); // eslint-disable-line no-unused-vars
   const [salesMessage, setSalesMessage] = useState('');
+  const [hasRealTickets, setHasRealTickets] = useState(false);
 
   // Fallback ticket options if API fails or sales not open
   const fallbackTicketOptions = [
@@ -70,9 +71,11 @@ const Tickets = () => {
           apiQuantities[ticket.id] = 0;
         });
         setTicketQuantities(apiQuantities);
+        setHasRealTickets(true);
       } else {
         // Keep fallback if no tickets or sales not open
         setSalesMessage(response?.message || '');
+        setHasRealTickets(false);
       }
     } catch (err) {
       console.error('Failed to fetch ticket types:', err);
@@ -181,6 +184,10 @@ const Tickets = () => {
               <button 
                 className="checkout-btn"
                 onClick={() => {
+                  if (!hasRealTickets) {
+                    setError('Unable to process checkout. Please refresh the page and try again.');
+                    return;
+                  }
                   if (!api.isAuthenticated()) {
                     // Save cart to localStorage and redirect to login
                     localStorage.setItem('pendingCart', JSON.stringify({
