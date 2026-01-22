@@ -73,15 +73,22 @@
   margin-top: 60px;
   padding: 0;
   text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.section-title {
+.section-title,
+.section-heading {
   font-size: 28px;
   font-weight: 600;
   color: #1a1a1a;
   margin-bottom: 15px;
   font-family: sans-serif;
   text-align: center;
+  width: 100%;
+  display: block;
 }
 
 .coming-soon {
