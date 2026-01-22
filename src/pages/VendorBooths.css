@@ -1,0 +1,576 @@
+/* ===== VENDOR BOOTHS PAGE ===== */
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #e8f4f8;
+}
+
+/* ===== HERO SECTION ===== */
+.hero-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 200px;
+  padding-bottom: 60px;
+}
+
+.hero-background-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.hero-gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 30%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.6) 65%,
+    rgba(0, 0, 0, 0.85) 80%,
+    rgba(0, 0, 0, 1) 100%
+  );
+}
+
+/* ===== TORN PAPER CARD ===== */
+.torn-paper-card {
+  position: relative;
+  background: #ffffff;
+  max-width: 1200px;
+  width: 90%;
+  margin: 0 auto;
+  padding: 50px 50px 40px;
+  z-index: 10;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== CARD CONTENT ===== */
+.card-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 15px;
+  font-family: 'Georgia', serif;
+}
+
+.card-description {
+  font-size: 14px;
+  color: #5a6c7d;
+  line-height: 1.7;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ===== BOOTHS CONTAINER ===== */
+.booths-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 25px;
+  margin-bottom: 30px;
+  align-items: stretch;
+}
+
+/* ===== BOOTH CARDS ===== */
+.booth-card {
+  background: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 12px;
+  padding: 25px;
+  text-align: left;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 580px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.booth-card:hover {
+  border-color: #3498db;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+}
+
+.booth-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.booth-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-family: 'Georgia', serif;
+}
+
+.booth-description {
+  font-size: 13px;
+  color: #7f8c8d;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ===== BOOTH DETAILS ===== */
+.booth-details {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.booth-section {
+  margin-bottom: 15px;
+}
+
+.vendor-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  background: transparent;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.booth-card .booth-section div.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000 !important;
+  background: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  margin-bottom: 10px;
+  text-transform: none;
+  letter-spacing: normal;
+  text-align: left;
+}
+
+/* ===== RADIO BUTTONS ===== */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #5a6c7d;
+  cursor: pointer;
+  position: relative;
+  padding-left: 25px;
+}
+
+.radio-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.radio-custom {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 16px;
+  width: 16px;
+  background-color: #ffffff;
+  border: 2px solid #bdc3c7;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.radio-input:checked ~ .radio-custom {
+  background-color: #3498db;
+  border-color: #3498db;
+}
+
+.radio-custom:after {
+  content: "";
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
+}
+
+.radio-input:checked ~ .radio-custom:after {
+  display: block;
+}
+
+/* ===== SIMPLE CHECKBOXES ===== */
+.simple-checkbox {
+  margin: 15px 0;
+  font-size: 13px;
+  color: #5a6c7d;
+}
+
+.simple-checkbox input[type="checkbox"] {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.simple-checkbox label {
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+/* ===== INCLUDES LIST ===== */
+.includes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.includes-list li {
+  font-size: 13px;
+  color: #5a6c7d;
+  padding: 3px 0;
+  position: relative;
+  padding-left: 15px;
+  line-height: 1.4;
+}
+
+.includes-list li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #000000;
+  font-weight: bold;
+}
+
+/* ===== BOOTH PRICING ===== */
+.booth-pricing {
+  margin-top: auto;
+  padding-top: 20px;
+  text-align: center;
+  border-top: 1px solid #e1e8ed;
+}
+
+.booth-price {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 15px;
+}
+
+/* ===== SELECT BUTTON ===== */
+.select-btn {
+  width: 100%;
+  background: transparent;
+  color: #000000;
+  border: 2px solid #000000;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+.select-btn:hover {
+  background: #dc2626;
+  color: white;
+  border-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* ===== SELECTED BOOTH STATE ===== */
+.booth-card.selected {
+  border-color: #22c55e;
+  border-width: 2px;
+  position: relative;
+}
+
+.selected-checkmark {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  background: #22c55e;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.select-btn.selected {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.select-btn.selected:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== REGISTRATION FORM ===== */
+.registration-form {
+  padding: 30px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e1e8ed;
+}
+
+.registration-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.back-btn {
+  background: transparent;
+  color: #3498db;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+  border-radius: 6px;
+}
+
+.back-btn:hover {
+  background: #3498db;
+  color: white;
+}
+
+.registration-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 10px;
+  font-family: 'Georgia', serif;
+}
+
+.registration-subtitle {
+  font-size: 14px;
+  color: #5a6c7d;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #2c3e50;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+.continue-btn {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 20px auto 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.continue-btn:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== IMPORTANT NOTICE BOX ===== */
+.important-notice {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0 auto 20px auto;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.important-notice .notice-text {
+  color: #92400e;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ===== LANTERNS ===== */
+.lanterns-container {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 5;
+}
+
+.lanterns-image {
+  height: 231px;
+  width: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .hero-section {
+    padding-top: 200px;
+    padding-bottom: 40px;
+  }
+  
+  .torn-paper-card {
+    padding: 40px 30px 35px;
+    width: 92%;
+  }
+  
+  .card-title {
+    font-size: 26px;
+  }
+  
+  .card-description {
+    font-size: 13px;
+  }
+  
+  .booths-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .booth-card {
+    padding: 20px;
+    min-height: 500px;
+  }
+  
+  .booth-name {
+    font-size: 16px;
+  }
+  
+  .booth-price {
+    font-size: 24px;
+  }
+  
+  .lanterns-image {
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding-top: 180px;
+    padding-bottom: 30px;
+  }
+  
+  .torn-paper-card {
+    padding: 30px 20px;
+    width: 95%;
+  }
+  
+  .card-title {
+    font-size: 22px;
+  }
+  
+  .card-description {
+    font-size: 12px;
+  }
+  
+  .booths-container {
+    gap: 15px;
+  }
+  
+  .booth-card {
+    padding: 15px;
+    min-height: 450px;
+  }
+  
+  .booth-name {
+    font-size: 15px;
+  }
+  
+  .booth-price {
+    font-size: 22px;
+  }
+  
+  .select-btn {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+  
+  .lanterns-image {
+    height: 60px;
+  }
+}

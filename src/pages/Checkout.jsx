@@ -1,392 +1,329 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import React, { useState } from 'react';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
+import TornPaperWrapper from '../components/TornPaperWrapper';
 import './Checkout.css';
 
 const Checkout = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [paymentStep, setPaymentStep] = useState('review'); // review, payment, processing, success, error
-  const [demoMode, setDemoMode] = useState(false);
-  const [orderId, setOrderId] = useState(null);
-  const [orderNumber, setOrderNumber] = useState('');
-  
-  // Demo card form state
-  const [cardForm, setCardForm] = useState({
-    cardNumber: '',
-    expiry: '',
-    cvc: '',
-    name: ''
+  const [showCouponInput, setShowCouponInput] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('cash');
+  const [formData, setFormData] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    country: 'United States (US)',
+    streetAddress: '',
+    apartment: '',
+    city: '',
+    state: 'California',
+    zipCode: '',
+    phone: ''
   });
 
-  useEffect(() => {
-    // Check if user is authenticated
-    if (!api.isAuthenticated()) {
-      navigate('/login?redirect=/checkout');
-      return;
-    }
-
-    // Check if system is in demo mode
-    checkDemoMode();
-
-    // Get cart from location state or localStorage
-    if (location.state?.items) {
-      setCartItems(location.state.items);
-      setTotal(location.state.total);
-    } else {
-      // Try to get from localStorage (for redirect after login)
-      const pendingCart = localStorage.getItem('pendingCart');
-      if (pendingCart) {
-        const cart = JSON.parse(pendingCart);
-        setCartItems(cart.items);
-        setTotal(cart.total);
-        localStorage.removeItem('pendingCart');
-      } else {
-        // No cart, redirect to tickets
-        navigate('/tickets');
-      }
-    }
-  }, [location, navigate]);
-
-  const checkDemoMode = async () => {
-    try {
-      const response = await api.checkDemoMode();
-      if (response?.success) {
-        setDemoMode(response.data.demo_mode);
-      }
-    } catch (err) {
-      // Default to demo mode if check fails
-      setDemoMode(true);
-    }
-  };
-
-  const generateIdempotencyKey = () => {
-    return `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  };
-
-  const handleCardInputChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    let formattedValue = value;
-
-    // Format card number with spaces
-    if (name === 'cardNumber') {
-      formattedValue = value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim().slice(0, 19);
-    }
-    // Format expiry as MM/YY
-    if (name === 'expiry') {
-      formattedValue = value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').slice(0, 5);
-    }
-    // Limit CVC to 4 digits
-    if (name === 'cvc') {
-      formattedValue = value.replace(/\D/g, '').slice(0, 4);
-    }
-
-    setCardForm(prev => ({ ...prev, [name]: formattedValue }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
-
-  const handleProceedToPayment = async () => {
-    if (cartItems.length === 0) return;
-
-    setLoading(true);
-    setError('');
-
-    try {
-      const idempotencyKey = generateIdempotencyKey();
-      
-      // Format items for API
-      const items = cartItems.map(item => ({
-        ticket_type_id: item.ticket_type_id,
-        quantity: item.quantity
-      }));
-
-      // Create payment intent
-      const response = await api.createPaymentIntent(items, idempotencyKey);
-
-      if (response?.success) {
-        setOrderId(response.data.order_id);
-        setOrderNumber(response.data.order_number);
-        setPaymentStep('payment');
-      } else {
-        throw new Error(response?.error?.message || 'Failed to create order');
-      }
-    } catch (err) {
-      console.error('Order creation error:', err);
-      setError(err.message || 'Failed to create order. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePayment = async () => {
-    // Validate card form
-    if (!cardForm.cardNumber || !cardForm.expiry || !cardForm.cvc || !cardForm.name) {
-      setError('Please fill in all card details');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    setPaymentStep('processing');
-
-    try {
-      // Simulate payment processing delay for realistic demo
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Confirm the payment (works for both demo and real mode)
-      const response = await api.confirmPayment(orderId);
-
-      if (response?.success) {
-        setOrderNumber(response.data.order_number);
-        setPaymentStep('success');
-        localStorage.removeItem('pendingCart');
-      } else {
-        throw new Error(response?.error?.message || 'Payment failed');
-      }
-    } catch (err) {
-      console.error('Payment error:', err);
-      setError(err.message || 'Payment failed. Please try again.');
-      setPaymentStep('error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const renderReview = () => (
-    <div className="checkout-review">
-      <h2>Order Review</h2>
-      
-      {demoMode && (
-        <div className="demo-banner">
-          <span className="demo-icon">🎭</span>
-          <span>DEMO MODE - No real charges will be made</span>
-        </div>
-      )}
-      
-      <div className="cart-items">
-        {cartItems.map((item, index) => (
-          <div key={index} className="cart-item">
-            <div className="item-details">
-              <h3>{item.name}</h3>
-              <p>Quantity: {item.quantity}</p>
-            </div>
-            <div className="item-price">
-              ${(item.price * item.quantity).toFixed(2)}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="order-total">
-        <span>Total:</span>
-        <span className="total-amount">${total.toFixed(2)}</span>
-      </div>
-
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
-
-      <div className="checkout-actions">
-        <button 
-          className="btn-secondary"
-          onClick={() => navigate('/tickets')}
-        >
-          Back to Tickets
-        </button>
-        <button 
-          className="btn-primary"
-          onClick={handleProceedToPayment}
-          disabled={loading || cartItems.length === 0}
-        >
-          {loading ? 'Creating Order...' : 'Continue to Payment'}
-        </button>
-      </div>
-
-      <div className="payment-info">
-        <p>🔒 Secure payment powered by Stripe</p>
-        <p>You will receive your tickets via email after purchase.</p>
-      </div>
-    </div>
-  );
-
-  const renderPaymentForm = () => (
-    <div className="checkout-payment">
-      <h2>Payment Details</h2>
-      
-      {demoMode && (
-        <div className="demo-banner">
-          <span className="demo-icon">🎭</span>
-          <div>
-            <strong>DEMO MODE</strong>
-            <p>Use any test card details. Try: 4242 4242 4242 4242</p>
-          </div>
-        </div>
-      )}
-
-      <div className="order-summary-mini">
-        <span>Order #{orderNumber}</span>
-        <span className="mini-total">${total.toFixed(2)}</span>
-      </div>
-
-      <div className="card-form">
-        <div className="form-group">
-          <label htmlFor="name">Cardholder Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="John Doe"
-            value={cardForm.name}
-            onChange={handleCardInputChange}
-            className="card-input"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="cardNumber">Card Number</label>
-          <input
-            type="text"
-            id="cardNumber"
-            name="cardNumber"
-            placeholder="4242 4242 4242 4242"
-            value={cardForm.cardNumber}
-            onChange={handleCardInputChange}
-            className="card-input"
-            maxLength="19"
-          />
-        </div>
-
-        <div className="form-row">
-          <div className="form-group half">
-            <label htmlFor="expiry">Expiry Date</label>
-            <input
-              type="text"
-              id="expiry"
-              name="expiry"
-              placeholder="MM/YY"
-              value={cardForm.expiry}
-              onChange={handleCardInputChange}
-              className="card-input"
-              maxLength="5"
-            />
-          </div>
-          <div className="form-group half">
-            <label htmlFor="cvc">CVC</label>
-            <input
-              type="text"
-              id="cvc"
-              name="cvc"
-              placeholder="123"
-              value={cardForm.cvc}
-              onChange={handleCardInputChange}
-              className="card-input"
-              maxLength="4"
-            />
-          </div>
-        </div>
-      </div>
-
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
-
-      <div className="checkout-actions">
-        <button 
-          className="btn-secondary"
-          onClick={() => setPaymentStep('review')}
-        >
-          Back
-        </button>
-        <button 
-          className="btn-primary"
-          onClick={handlePayment}
-          disabled={loading}
-        >
-          {loading ? 'Processing...' : `Pay $${total.toFixed(2)}`}
-        </button>
-      </div>
-
-      <div className="payment-info">
-        <p>🔒 Your payment is secure and encrypted</p>
-        {demoMode && <p className="demo-note">This is a demonstration - no real payment will be processed</p>}
-      </div>
-    </div>
-  );
-
-  const renderProcessing = () => (
-    <div className="checkout-processing">
-      <div className="spinner"></div>
-      <h2>Processing your payment...</h2>
-      <p>Please don't close this page.</p>
-    </div>
-  );
-
-  const renderSuccess = () => (
-    <div className="checkout-success">
-      <div className="success-icon">✓</div>
-      <h2>Payment Successful!</h2>
-      <p>Thank you for your purchase. Your tickets have been sent to your email.</p>
-      <div className="success-actions">
-        <button 
-          className="btn-primary"
-          onClick={() => navigate('/dashboard')}
-        >
-          View My Tickets
-        </button>
-        <button 
-          className="btn-secondary"
-          onClick={() => navigate('/')}
-        >
-          Back to Home
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderError = () => (
-    <div className="checkout-error">
-      <div className="error-icon">✕</div>
-      <h2>Payment Failed</h2>
-      <p>{error || 'Something went wrong. Please try again.'}</p>
-      <div className="error-actions">
-        <button 
-          className="btn-primary"
-          onClick={() => setPaymentStep('review')}
-        >
-          Try Again
-        </button>
-        <button 
-          className="btn-secondary"
-          onClick={() => navigate('/tickets')}
-        >
-          Back to Tickets
-        </button>
-      </div>
-    </div>
-  );
 
   return (
     <div className="page-wrapper">
       <AnnouncementBar />
       
-      <section className="checkout-section">
-        <div className="checkout-container">
-          <h1 className="checkout-title">Checkout</h1>
-          
-          {paymentStep === 'review' && renderReview()}
-          {paymentStep === 'payment' && renderPaymentForm()}
-          {paymentStep === 'processing' && renderProcessing()}
-          {paymentStep === 'success' && renderSuccess()}
-          {paymentStep === 'error' && renderError()}
+      <section className="hero-section">
+        <div className="hero-background-wrapper">
+          <img src="/wrapper-image.jpg" alt="OC MENA Festival" className="hero-background-image" />
+          <div className="hero-gradient-overlay"></div>
+        </div>
+
+        <TornPaperWrapper>
+          <div className="checkout-page">
+            {/* Coupon Section */}
+            <div className="coupon-section">
+              <div className="coupon-row">
+                <span className="coupon-text">Have a coupon?</span>
+                <button 
+                  className="coupon-link"
+                  onClick={() => setShowCouponInput(!showCouponInput)}
+                >
+                  Click here to enter your code
+                </button>
+              </div>
+              {showCouponInput && (
+                <div className="coupon-input-row">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    placeholder="Coupon code"
+                    className="coupon-input"
+                  />
+                  <button className="apply-coupon-btn">Apply coupon</button>
+                </div>
+              )}
+            </div>
+
+            {/* Express Payment Bar */}
+            <div className="express-payment">
+              <div className="express-left">
+                <div className="express-card">
+                  <span className="gpay-icon">G Pay</span>
+                  <span className="visa-icon">VISA</span>
+                  <span className="card-number">•••• 2715</span>
+                </div>
+              </div>
+              <div className="express-right">
+                <button className="pay-link-btn">
+                  Pay with <span className="link-icon">⊙</span> link
+                </button>
+              </div>
+            </div>
+
+            {/* OR Divider */}
+            <div className="or-divider">
+              <span>— OR —</span>
+            </div>
+
+            {/* Main Checkout Content */}
+            <div className="checkout-content">
+              {/* Left Column - Billing Details */}
+              <div className="checkout-left">
+                <h2 className="section-title">Billing details</h2>
+                
+                <form className="billing-form">
+                  <div className="form-group">
+                    <label>Email address <span className="required">*</span></label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>First name <span className="required">*</span></label>
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Last name <span className="required">*</span></label>
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Country / Region <span className="required">*</span></label>
+                    <select
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                    >
+                      <option>United States (US)</option>
+                      <option>Canada</option>
+                      <option>Mexico</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Street address <span className="required">*</span></label>
+                    <input
+                      type="text"
+                      name="streetAddress"
+                      value={formData.streetAddress}
+                      onChange={handleInputChange}
+                      placeholder="House number and street name"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      name="apartment"
+                      value={formData.apartment}
+                      onChange={handleInputChange}
+                      placeholder="Apartment, suite, unit, etc. (optional)"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Town / City <span className="required">*</span></label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>State <span className="required">*</span></label>
+                    <select
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                    >
+                      <option>California</option>
+                      <option>Texas</option>
+                      <option>Florida</option>
+                      <option>New York</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>ZIP Code <span className="required">*</span></label>
+                    <input
+                      type="text"
+                      name="zipCode"
+                      value={formData.zipCode}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Phone <span className="required">*</span></label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </form>
+              </div>
+
+              {/* Right Column - Your Order */}
+              <div className="checkout-right">
+                <h2 className="section-title">Your order</h2>
+                
+                <div className="order-table">
+                  <div className="order-header">
+                    <span>Product</span>
+                    <span>Subtotal</span>
+                  </div>
+                  <div className="order-row">
+                    <span>10×10 Food Truck - Fri-Sun (3 days) <strong>× 1</strong></span>
+                    <span>$3,000.00</span>
+                  </div>
+                  <div className="order-row">
+                    <span>Subtotal</span>
+                    <span>$3,000.00</span>
+                  </div>
+                  <div className="order-row">
+                    <span>Shipping</span>
+                    <span>Free shipping</span>
+                  </div>
+                  <div className="order-row order-total">
+                    <span>Total</span>
+                    <span>$3,000.00</span>
+                  </div>
+                </div>
+
+                {/* Payment Methods */}
+                <div className="payment-methods">
+                  <div className="payment-option">
+                    <input
+                      type="radio"
+                      id="cash-delivery"
+                      name="payment-method"
+                      value="cash"
+                      checked={selectedPaymentMethod === 'cash'}
+                      onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                    />
+                    <label htmlFor="cash-delivery">Cash on delivery</label>
+                  </div>
+
+                  {selectedPaymentMethod === 'cash' && (
+                    <div className="payment-info-box">
+                      <div className="info-arrow"></div>
+                      <p>Pay with cash upon delivery.</p>
+                    </div>
+                  )}
+
+                  <div className="payment-option">
+                    <input
+                      type="radio"
+                      id="stripe"
+                      name="payment-method"
+                      value="card"
+                      checked={selectedPaymentMethod === 'card'}
+                      onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                    />
+                    <label htmlFor="stripe">Stripe</label>
+                  </div>
+
+                  {selectedPaymentMethod === 'card' && (
+                    <div className="stripe-test-info">
+                      <div className="info-arrow"></div>
+                      <p>Test mode: use the test VISA card 4242424242424242 with any expiry date and CVC. Other payment methods may redirect to a Stripe test page to authorize payment. More test card numbers are listed here.</p>
+                    </div>
+                  )}
+
+                  {selectedPaymentMethod === 'card' && (
+                    <div className="card-accordion">
+                      <div className="card-accordion-item">
+                        <div className="card-accordion-header">
+                          <div className="card-icon">💳</div>
+                          <span>Card</span>
+                        </div>
+                        <div className="card-accordion-content">
+                          <div className="card-form-grid">
+                            <div className="card-field">
+                              <label>Card number</label>
+                              <input
+                                type="text"
+                                placeholder="1234 1234 1234 1234"
+                                className="card-input"
+                              />
+                            </div>
+                            <div className="card-field">
+                              <label>Expiration date</label>
+                              <input
+                                type="text"
+                                placeholder="MM / YY"
+                                className="card-input"
+                              />
+                            </div>
+                            <div className="card-field">
+                              <label>Security code</label>
+                              <input
+                                type="text"
+                                placeholder="CVC"
+                                className="card-input"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="privacy-notice">
+                  <p>Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.</p>
+                </div>
+
+                <button className="place-order-btn">Place order</button>
+              </div>
+            </div>
+          </div>
+        </TornPaperWrapper>
+
+        <div className="lanterns-container">
+          <img src="/lanterns.png" alt="Festival Lanterns" className="lanterns-image" />
         </div>
       </section>
 

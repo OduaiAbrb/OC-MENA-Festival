@@ -38,9 +38,9 @@ const Tickets = () => {
       id: '1day',
       name: '1-Day Pass',
       slug: '1day',
-      savings: '',
+      savings: 'STANDARD',
       price_cents: 1500,
-      badge_text: ''
+      badge_text: 'STANDARD'
     }
   ];
 
@@ -51,37 +51,33 @@ const Tickets = () => {
 
   const fetchTicketTypes = async () => {
     try {
-      setLoading(true);
-      const response = await api.getTicketTypes();
-      
-      if (response?.success && response.data?.length > 0) {
-        setTicketTypes(response.data);
-        // Initialize quantities for each ticket type
-        const initialQuantities = {};
-        response.data.forEach(ticket => {
-          initialQuantities[ticket.id] = 0;
-        });
-        setTicketQuantities(initialQuantities);
-      } else {
-        // Use fallback if no tickets or sales not open
-        setSalesMessage(response?.message || '');
-        setTicketTypes(fallbackTicketOptions);
-        const initialQuantities = {};
-        fallbackTicketOptions.forEach(ticket => {
-          initialQuantities[ticket.id] = 0;
-        });
-        setTicketQuantities(initialQuantities);
-      }
-    } catch (err) {
-      console.error('Failed to fetch ticket types:', err);
-      setError('Unable to load tickets. Please try again later.');
-      // Use fallback on error
+      // Show fallback tickets immediately
       setTicketTypes(fallbackTicketOptions);
       const initialQuantities = {};
       fallbackTicketOptions.forEach(ticket => {
         initialQuantities[ticket.id] = 0;
       });
       setTicketQuantities(initialQuantities);
+      
+      // Try to fetch from API in background
+      const response = await api.getTicketTypes();
+      
+      if (response?.success && response.data?.length > 0) {
+        setTicketTypes(response.data);
+        // Initialize quantities for each ticket type
+        const apiQuantities = {};
+        response.data.forEach(ticket => {
+          apiQuantities[ticket.id] = 0;
+        });
+        setTicketQuantities(apiQuantities);
+      } else {
+        // Keep fallback if no tickets or sales not open
+        setSalesMessage(response?.message || '');
+      }
+    } catch (err) {
+      console.error('Failed to fetch ticket types:', err);
+      setError('Unable to load tickets. Please try again later.');
+      // Keep fallback on error
     } finally {
       setLoading(false);
     }
@@ -90,7 +86,7 @@ const Tickets = () => {
   const ticketOptions = ticketTypes.map(ticket => ({
     id: ticket.id,
     name: ticket.name,
-    savings: ticket.badge_text || (ticket.price_cents < 3500 ? '' : 'Save $10 on entry'),
+    savings: ticket.badge_text || ticket.savings || (ticket.price_cents >= 3500 ? 'Save $10 on entry' : ticket.price_cents >= 2500 ? 'Save $5 on entry' : 'STANDARD'),
     price: ticket.price_cents / 100,
     originalPrice: ticket.price_cents / 100,
     slug: ticket.slug
@@ -131,7 +127,6 @@ const Tickets = () => {
             {ticketOptions.map(ticket => (
               <div key={ticket.id} className="ticket-card">
                 <div className="ticket-header">
-                  <h3 className="ticket-name">{ticket.name}</h3>
                   <span className={`ticket-savings ${ticket.savings === 'No saving' ? 'no-saving' : ''}`}>{ticket.savings}</span>
                 </div>
                 
