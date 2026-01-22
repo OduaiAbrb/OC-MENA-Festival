@@ -76,14 +76,40 @@ class TicketSerializer(serializers.ModelSerializer):
     owner_email = serializers.CharField(source='owner.email', read_only=True)
     owner_name = serializers.CharField(source='owner.full_name', read_only=True)
     valid_days = serializers.JSONField(source='ticket_type.valid_days', read_only=True)
+    qr_code = serializers.SerializerMethodField()
     
     class Meta:
         model = Ticket
         fields = [
             'id', 'ticket_code', 'owner_email', 'owner_name',
             'ticket_type', 'ticket_type_name', 'valid_days',
-            'status', 'is_comp', 'issued_at', 'used_at'
+            'status', 'is_comp', 'issued_at', 'used_at', 'qr_code'
         ]
+    
+    def get_qr_code(self, obj):
+        """Generate QR code data URL for the ticket."""
+        import qrcode
+        from io import BytesIO
+        import base64
+        
+        # Generate QR code with ticket code
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(obj.ticket_code)
+        qr.make(fit=True)
+        
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Convert to base64 data URL
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+        img_str = base64.b64encode(buffer.getvalue()).decode()
+        
+        return f"data:image/png;base64,{img_str}"
 
 
 class TicketDetailSerializer(TicketSerializer):

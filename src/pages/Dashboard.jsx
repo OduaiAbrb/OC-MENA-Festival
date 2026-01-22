@@ -88,10 +88,16 @@ const Dashboard = () => {
                 <p>No tickets yet. Purchase tickets to get started!</p>
               ) : (
                 tickets.map(ticket => (
-                  <div key={ticket.id} style={{borderBottom: '1px solid #eee', padding: '1rem 0'}}>
+                  <div key={ticket.id} style={{borderBottom: '1px solid #eee', padding: '1rem 0', marginBottom: '1rem'}}>
                     <p><strong>Code:</strong> {ticket.ticket_code}</p>
                     <p><strong>Type:</strong> {ticket.ticket_type_name}</p>
                     <p><strong>Status:</strong> {ticket.status}</p>
+                    {ticket.qr_code && (
+                      <div style={{marginTop: '1rem'}}>
+                        <p><strong>QR Code:</strong></p>
+                        <img src={ticket.qr_code} alt={`QR Code for ${ticket.ticket_code}`} style={{maxWidth: '200px', border: '1px solid #ddd', padding: '10px', backgroundColor: 'white'}} />
+                      </div>
+                    )}
                   </div>
                 ))
               )}
