@@ -87,29 +87,40 @@ class TicketSerializer(serializers.ModelSerializer):
         ]
     
     def get_qr_code(self, obj):
-        """Generate QR code data URL for the ticket."""
-        import qrcode
-        from io import BytesIO
-        import base64
-        
-        # Generate QR code with ticket code
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(obj.ticket_code)
-        qr.make(fit=True)
-        
-        img = qr.make_image(fill_color="black", back_color="white")
-        
-        # Convert to base64 data URL
-        buffer = BytesIO()
-        img.save(buffer, format='PNG')
-        img_str = base64.b64encode(buffer.getvalue()).decode()
-        
-        return f"data:image/png;base64,{img_str}"
+        """Generate QR code data URL for the ticket with scannable validation URL."""
+        try:
+            import qrcode
+            from io import BytesIO
+            import base64
+            from django.conf import settings
+            
+            # QR code contains URL that opens validation page when scanned
+            frontend_url = getattr(settings, 'FRONTEND_URL', 'https://oc-mena-festival.pages.dev')
+            validation_url = f"{frontend_url}/scan?code={obj.ticket_code}"
+            
+            # Generate QR code with validation URL
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(validation_url)
+            qr.make(fit=True)
+            
+            img = qr.make_image(fill_color="black", back_color="white")
+            
+            # Convert to base64 data URL
+            buffer = BytesIO()
+            img.save(buffer, format='PNG')
+            img_str = base64.b64encode(buffer.getvalue()).decode()
+            
+            return f"data:image/png;base64,{img_str}"
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error generating QR code for ticket {obj.ticket_code}: {e}")
+            return None
 
 
 class TicketDetailSerializer(TicketSerializer):
