@@ -74,7 +74,7 @@
   font-size: 14px;
   color: #444444;
   line-height: 1.7;
-  text-align: center;
+  text-align: center !important;
   margin-bottom: 30px;
 }
 
