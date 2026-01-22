@@ -27,7 +27,6 @@ import TermsOfUse from './pages/TermsOfUse';
 import TicketTerms from './pages/TicketTerms';
 import VendorBooths from './pages/VendorBooths';
 import QRScanner from './pages/QRScanner';
-import OrderSuccess from './pages/OrderSuccess';
 import GlobalTicketModal from './components/GlobalTicketModal';
 import './App.css';
 
@@ -109,12 +108,8 @@ const AppWithModal = () => {
             <Route path="/terms-of-use" element={<TermsOfUse />} />
             <Route path="/ticket-terms" element={<TicketTerms />} />
             <Route path="/vendor-booths" element={<VendorBooths />} />
-<<<<<<< Updated upstream
             <Route path="/scan" element={<QRScanner />} />
-            <Route path="/order-success" element={<OrderSuccess />} />
-=======
             <Route path="*" element={<Navigate to="/" replace />} />
->>>>>>> Stashed changes
           </Routes>
         </main>
       </div>

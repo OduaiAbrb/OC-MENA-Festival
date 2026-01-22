@@ -15,6 +15,7 @@ const Checkout = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [cardData, setCardData] = useState({
     cardNumber: '',
     expiry: '',
@@ -181,17 +182,14 @@ const Checkout = () => {
 
       localStorage.removeItem('pendingCart');
       
-      // Navigate to success page with order details
-      navigate('/order-success', { 
-        state: { 
-          order: {
-            order_number: confirmResponse.data?.order_number || orderId,
-            total: calculateTotal().toFixed(2),
-            payment_method: selectedPaymentMethod === 'card' ? 'Credit Card' : 'Cash on Delivery',
-            items: cartItems
-          }
-        } 
-      });
+      // Show success message
+      setSuccessMessage(`Payment successful! Order #${confirmResponse.data.order_number || orderId} confirmed.`);
+      setCartItems([]);
+      
+      // Redirect to dashboard after 3 seconds
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 3000);
     } catch (err) {
       console.error('Order error:', err);
       setError(err.message || 'Failed to process order. Please try again.');
@@ -504,12 +502,27 @@ const Checkout = () => {
                   </div>
                 )}
 
+                {successMessage && (
+                  <div style={{ 
+                    color: '#155724', 
+                    marginBottom: '1rem', 
+                    padding: '1rem', 
+                    background: '#d4edda', 
+                    borderRadius: '4px',
+                    border: '1px solid #c3e6cb',
+                    fontWeight: 'bold',
+                    textAlign: 'center'
+                  }}>
+                    ✓ {successMessage}
+                  </div>
+                )}
+
                 <button 
                   className="place-order-btn"
                   onClick={handlePlaceOrder}
-                  disabled={loading}
+                  disabled={loading || successMessage}
                 >
-                  {loading ? 'Processing...' : 'Place order'}
+                  {loading ? 'Processing...' : successMessage ? 'Redirecting...' : 'Place order'}
                 </button>
               </div>
             </div>

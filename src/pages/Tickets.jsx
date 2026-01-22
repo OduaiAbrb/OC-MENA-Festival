@@ -235,17 +235,27 @@ const Tickets = () => {
                     navigate('/login?redirect=/checkout');
                   } else {
                     // Navigate to checkout with cart data
+                    const cartItems = ticketOptions
+                      .filter(t => ticketQuantities[t.id] > 0)
+                      .map(t => ({ 
+                        id: t.id,
+                        ticket_type_id: t.id, 
+                        name: t.name,
+                        quantity: ticketQuantities[t.id],
+                        price: t.price
+                      }));
+                    
+                    console.log('Navigating to checkout with items:', cartItems);
+                    
+                    // Save to localStorage as backup
+                    localStorage.setItem('pendingCart', JSON.stringify({
+                      items: cartItems,
+                      total: getTotalPrice()
+                    }));
+                    
                     navigate('/checkout', { 
                       state: { 
-                        items: ticketOptions
-                          .filter(t => ticketQuantities[t.id] > 0)
-                          .map(t => ({ 
-                            id: t.id,
-                            ticket_type_id: t.id, 
-                            name: t.name,
-                            quantity: ticketQuantities[t.id],
-                            price: t.price
-                          })),
+                        items: cartItems,
                         total: getTotalPrice()
                       }
                     });
