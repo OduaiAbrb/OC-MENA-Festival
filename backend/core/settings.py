@@ -182,10 +182,13 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'https://oc-mena-festival.vercel.app',
+    'https://fbe5da72.oc-mena-festival.pages.dev',
+    'https://oc-mena-festival.pages.dev',
 ]
 # Allow all Vercel preview and production domains
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.vercel\.app$",
+    r"^https://.*\.oc-mena-festival\.pages\.dev$",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
