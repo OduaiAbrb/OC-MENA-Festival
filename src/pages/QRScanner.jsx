@@ -73,9 +73,7 @@ const QRScanner = () => {
   };
 
   return (
-    <div className="page-wrapper">
-      <AnnouncementBar />
-      
+    <div className="page-wrapper" style={{overflow: 'hidden'}}>
       <section className="scanner-section">
         <div className="scanner-container">
           <h1 className="scanner-title">Ticket Validation</h1>
@@ -146,8 +144,6 @@ const QRScanner = () => {
           )}
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 };
