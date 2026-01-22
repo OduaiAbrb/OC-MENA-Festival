@@ -22,7 +22,6 @@ class Command(BaseCommand):
                 'capacity': 1000,
                 'badge_text': 'BEST VALUE',
                 'is_active': True,
-                'is_available': True,
                 'display_order': 1
             },
             {
@@ -33,7 +32,6 @@ class Command(BaseCommand):
                 'capacity': 800,
                 'badge_text': 'POPULAR',
                 'is_active': True,
-                'is_available': True,
                 'display_order': 2
             },
             {
@@ -44,7 +42,6 @@ class Command(BaseCommand):
                 'capacity': 500,
                 'badge_text': 'STANDARD',
                 'is_active': True,
-                'is_available': True,
                 'display_order': 3
             }
         ]
