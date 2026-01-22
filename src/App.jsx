@@ -30,12 +30,13 @@ import QRScanner from './pages/QRScanner';
 import GlobalTicketModal from './components/GlobalTicketModal';
 import './App.css';
 
-const RouteChangeHandler = () => {
+const RouteChangeHandler = ({ setIsScanPage }) => {
   const location = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location.pathname]);
+    setIsScanPage(location.pathname === '/scan');
+  }, [location.pathname, setIsScanPage]);
 
   return null;
 };
@@ -43,6 +44,7 @@ const RouteChangeHandler = () => {
 const AppWithModal = () => {
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [isScanPage, setIsScanPage] = useState(false);
   const [ticketQuantities, setTicketQuantities] = useState({
     '3day': 0,
     '2day': 0,
@@ -79,9 +81,9 @@ const AppWithModal = () => {
 
   return (
     <Router>
-      <RouteChangeHandler />
+      <RouteChangeHandler setIsScanPage={setIsScanPage} />
       <div className="app">
-        <Header onGetTicketsClick={openTicketModal} />
+        {!isScanPage && <Header onGetTicketsClick={openTicketModal} />}
         <main className="main-content">
           <Routes>
             <Route path="/" element={<HomePage onGetTicketsClick={openTicketModal} />} />

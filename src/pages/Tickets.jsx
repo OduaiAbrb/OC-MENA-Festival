@@ -103,14 +103,26 @@ const Tickets = () => {
     }));
   }, [ticketTypes]);
 
+  // Sync cart when ticketOptions change
+  useEffect(() => {
+    if (ticketOptions.length > 0 && Object.keys(cart).length === 0) {
+      const initialCart = {};
+      ticketOptions.forEach(ticket => {
+        initialCart[ticket.id] = 0;
+      });
+      setCart(initialCart);
+      console.log('Cart initialized:', initialCart);
+    }
+  }, [ticketOptions, cart]);
+
   const handleQuantityChange = (ticketId, change) => {
     const id = String(ticketId);
+    console.log('handleQuantityChange called:', id, change);
     setCart(prevCart => {
-      const newCart = { ...prevCart };
-      const currentQty = newCart[id] || 0;
+      const currentQty = prevCart[id] || 0;
       const newQty = Math.max(0, currentQty + change);
-      newCart[id] = newQty;
-      console.log(`Cart update: ${id} -> ${newQty}`, newCart);
+      const newCart = { ...prevCart, [id]: newQty };
+      console.log(`Cart update: ${id} -> ${newQty}`, JSON.stringify(newCart));
       return newCart;
     });
   };
