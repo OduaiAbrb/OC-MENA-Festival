@@ -84,6 +84,11 @@ const Dashboard = () => {
           <div className="content-section">
             <h2 className="section-title">My Tickets</h2>
             <div className="static-content">
+              <div style={{marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#f0f9ff', borderRadius: '8px', border: '1px solid #0ea5e9'}}>
+                <p style={{margin: 0, color: '#0369a1'}}>
+                  <strong>💡 Tip:</strong> Use the <a href="/scan" style={{color: '#0284c7', textDecoration: 'underline'}}>QR Scanner</a> to validate any ticket code
+                </p>
+              </div>
               {tickets.length === 0 ? (
                 <p>No tickets yet. Purchase tickets to get started!</p>
               ) : (
@@ -96,6 +101,9 @@ const Dashboard = () => {
                       <div style={{marginTop: '1rem'}}>
                         <p><strong>QR Code:</strong></p>
                         <img src={ticket.qr_code} alt={`QR Code for ${ticket.ticket_code}`} style={{maxWidth: '200px', border: '1px solid #ddd', padding: '10px', backgroundColor: 'white'}} />
+                        <p style={{fontSize: '0.9rem', color: '#666', marginTop: '0.5rem'}}>
+                          Scan this code at the event entrance or use the scanner to validate it
+                        </p>
                       </div>
                     )}
                   </div>

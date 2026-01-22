@@ -103,10 +103,15 @@ const Tickets = () => {
   }));
 
   const handleQuantityChange = (ticketId, change) => {
-    setTicketQuantities(prev => ({
-      ...prev,
-      [ticketId]: Math.max(0, (prev[ticketId] || 0) + change)
-    }));
+    setTicketQuantities(prev => {
+      const newQty = Math.max(0, (prev[ticketId] || 0) + change);
+      const updated = {
+        ...prev,
+        [ticketId]: newQty
+      };
+      console.log('Cart updated:', updated);
+      return updated;
+    });
   };
 
   const getTotalPrice = () => {
@@ -116,7 +121,9 @@ const Tickets = () => {
   };
 
   const getTotalTickets = () => {
-    return Object.values(ticketQuantities).reduce((total, qty) => total + qty, 0);
+    const total = Object.values(ticketQuantities).reduce((total, qty) => total + (qty || 0), 0);
+    console.log('Total tickets in cart:', total, 'Quantities:', ticketQuantities);
+    return total;
   };
 
   return (

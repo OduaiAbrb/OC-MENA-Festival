@@ -26,6 +26,7 @@ import Accessibility from './pages/Accessibility';
 import TermsOfUse from './pages/TermsOfUse';
 import TicketTerms from './pages/TicketTerms';
 import VendorBooths from './pages/VendorBooths';
+import QRScanner from './pages/QRScanner';
 import GlobalTicketModal from './components/GlobalTicketModal';
 import './App.css';
 
@@ -107,6 +108,7 @@ const AppWithModal = () => {
             <Route path="/terms-of-use" element={<TermsOfUse />} />
             <Route path="/ticket-terms" element={<TicketTerms />} />
             <Route path="/vendor-booths" element={<VendorBooths />} />
+            <Route path="/scan" element={<QRScanner />} />
           </Routes>
         </main>
       </div>
