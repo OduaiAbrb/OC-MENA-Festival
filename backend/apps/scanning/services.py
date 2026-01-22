@@ -20,31 +20,44 @@ class ScanService:
     @classmethod
     def validate_qr(cls, qr_data: str) -> Tuple[bool, dict]:
         """
-        Validate QR code data without marking ticket as used.
+        Validate QR code data or plain ticket code without marking ticket as used.
         Returns: (is_valid, result_dict)
         """
-        # Verify QR signature
-        is_valid, payload, error = QRCodeService.verify_qr_data(qr_data)
+        ticket_code = qr_data.strip()
         
-        if not is_valid:
-            return False, {
-                'valid': False,
-                'ticket_code': None,
-                'ticket_type': None,
-                'owner_name': None,
-                'status': 'SIGNATURE_INVALID',
-                'message': error or 'Invalid QR code signature',
-                'can_enter': False
-            }
+        # If it looks like a URL, extract the code parameter
+        if 'code=' in ticket_code:
+            try:
+                from urllib.parse import urlparse, parse_qs
+                parsed = urlparse(ticket_code)
+                params = parse_qs(parsed.query)
+                if 'code' in params:
+                    ticket_code = params['code'][0]
+            except:
+                pass
         
-        ticket_code = payload.get('ticket_code')
-        
+        # Try to find ticket by code directly
         try:
             ticket = Ticket.objects.select_related(
                 'ticket_type', 'owner'
             ).get(ticket_code=ticket_code)
         except Ticket.DoesNotExist:
+            # Try signed QR data as fallback
+            is_valid, payload, error = QRCodeService.verify_qr_data(qr_data)
+            if is_valid:
+                ticket_code = payload.get('ticket_code')
+                try:
+                    ticket = Ticket.objects.select_related(
+                        'ticket_type', 'owner'
+                    ).get(ticket_code=ticket_code)
+                except Ticket.DoesNotExist:
+                    pass
+                else:
+                    result = cls._check_ticket_status(ticket, payload)
+                    return result['can_enter'], result
+            
             return False, {
+                'is_valid': False,
                 'valid': False,
                 'ticket_code': ticket_code,
                 'ticket_type': None,
@@ -55,8 +68,9 @@ class ScanService:
             }
         
         # Check ticket status
-        result = cls._check_ticket_status(ticket, payload)
-        return result['can_enter'], result
+        result = cls._check_ticket_status(ticket, {})
+        result['is_valid'] = result.get('can_enter', False) or result.get('status') == 'VALID'
+        return result.get('can_enter', False), result
     
     @classmethod
     def _check_ticket_status(cls, ticket: Ticket, payload: dict) -> dict:

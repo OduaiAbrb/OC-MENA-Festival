@@ -88,11 +88,12 @@ class TicketSerializer(serializers.ModelSerializer):
     
     def get_qr_code(self, obj):
         """Generate QR code data URL for the ticket with scannable validation URL."""
+        import base64
+        from io import BytesIO
+        from django.conf import settings
+        
         try:
             import qrcode
-            from io import BytesIO
-            import base64
-            from django.conf import settings
             
             # QR code contains URL that opens validation page when scanned
             frontend_url = getattr(settings, 'FRONTEND_URL', 'https://oc-mena-festival.pages.dev')
@@ -116,11 +117,23 @@ class TicketSerializer(serializers.ModelSerializer):
             img_str = base64.b64encode(buffer.getvalue()).decode()
             
             return f"data:image/png;base64,{img_str}"
+        except ImportError:
+            # qrcode library not available - use Google Charts API as fallback
+            import urllib.parse
+            frontend_url = getattr(settings, 'FRONTEND_URL', 'https://oc-mena-festival.pages.dev')
+            validation_url = f"{frontend_url}/scan?code={obj.ticket_code}"
+            encoded_url = urllib.parse.quote(validation_url)
+            return f"https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl={encoded_url}"
         except Exception as e:
+            # Last resort - use Google Charts API
+            import urllib.parse
             import logging
             logger = logging.getLogger(__name__)
             logger.error(f"Error generating QR code for ticket {obj.ticket_code}: {e}")
-            return None
+            frontend_url = getattr(settings, 'FRONTEND_URL', 'https://oc-mena-festival.pages.dev')
+            validation_url = f"{frontend_url}/scan?code={obj.ticket_code}"
+            encoded_url = urllib.parse.quote(validation_url)
+            return f"https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl={encoded_url}"
 
 
 class TicketDetailSerializer(TicketSerializer):

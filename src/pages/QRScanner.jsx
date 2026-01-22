@@ -33,7 +33,7 @@ const QRScanner = () => {
     setResult(null);
 
     try {
-      const response = await api.request('/scanning/quick/', {
+      const response = await api.request('/scan/quick/', {
         method: 'POST',
         body: JSON.stringify({ qr_data: code.trim() }),
         skipAuth: true
