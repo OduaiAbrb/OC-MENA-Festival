@@ -27,7 +27,7 @@ const AboutVendors = () => {
               From mouth-watering eats and refreshing drinks to handcrafted goods, apparel, accessories, and cultural merchandise, our vendor village is curated to reflect the creativity, flavors, and traditions of the MENA community — with plenty of surprises along the way.
             </p>
             <p className="card-description">
-              You'll find local favorites, emerging brands, and unique makers offering everything from savory street food and sweet treats to statement pieces, gifts, and lifestyle finds you won't see anywhere else. Whether you're here to eat, shop, browse, or simply soak in the energy, the vendor experience is a core part of the festival vibe.
+              You'll find local favorites, emerging brands, and unique makers offering everything from savory street food and sweet treats to statement pieces and lifestyle finds you won't see anywhere else. Whether you're here to eat, shop, browse, or simply soak in the energy, the vendor experience is a core part of the festival vibe.
             </p>
             <p className="card-description">
               Come hungry, come curious, and come ready to support incredible vendors who help make OC MENA Festival an unforgettable celebration.

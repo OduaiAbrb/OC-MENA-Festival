@@ -11,7 +11,7 @@ import './Tickets.css';
 const Tickets = () => {
   const navigate = useNavigate();
   const [ticketTypes, setTicketTypes] = useState([]);
-  const [ticketQuantities, setTicketQuantities] = useState({});
+  const [cart, setCart] = useState({});
   const [loading, setLoading] = useState(true); // eslint-disable-line no-unused-vars
   const [error, setError] = useState(''); // eslint-disable-line no-unused-vars
   const [salesMessage, setSalesMessage] = useState('');
@@ -57,35 +57,33 @@ const Tickets = () => {
       
       if (response?.success && response.data?.length > 0) {
         setTicketTypes(response.data);
-        // Initialize quantities for each ticket type with STRING IDs
-        const apiQuantities = {};
+        const initialCart = {};
         response.data.forEach(ticket => {
-          apiQuantities[String(ticket.id)] = 0;
+          initialCart[String(ticket.id)] = 0;
         });
-        setTicketQuantities(apiQuantities);
+        setCart(initialCart);
         setHasRealTickets(true);
-        console.log('Loaded real tickets from API:', response.data.length, apiQuantities);
+        console.log('Loaded real tickets from API:', response.data.length);
       } else {
         // Use fallback if no tickets or sales not open
         console.log('Using fallback tickets, API response:', response);
         setTicketTypes(fallbackTicketOptions);
-        const initialQuantities = {};
+        const initialCart = {};
         fallbackTicketOptions.forEach(ticket => {
-          initialQuantities[String(ticket.id)] = 0;
+          initialCart[String(ticket.id)] = 0;
         });
-        setTicketQuantities(initialQuantities);
+        setCart(initialCart);
         setSalesMessage(response?.message || 'Ticket sales are currently unavailable.');
         setHasRealTickets(false);
       }
     } catch (err) {
       console.error('Failed to fetch ticket types:', err);
-      // Use fallback on error
       setTicketTypes(fallbackTicketOptions);
-      const initialQuantities = {};
+      const initialCart = {};
       fallbackTicketOptions.forEach(ticket => {
-        initialQuantities[String(ticket.id)] = 0;
+        initialCart[String(ticket.id)] = 0;
       });
-      setTicketQuantities(initialQuantities);
+      setCart(initialCart);
       setError('Unable to connect to ticket system. Showing preview tickets.');
       setHasRealTickets(false);
     } finally {
@@ -106,34 +104,26 @@ const Tickets = () => {
   }, [ticketTypes]);
 
   const handleQuantityChange = (ticketId, change) => {
-    const id = String(ticketId); // Ensure consistent string ID
-    setTicketQuantities(prev => {
-      const currentQty = prev[id] || 0;
+    const id = String(ticketId);
+    setCart(prevCart => {
+      const newCart = { ...prevCart };
+      const currentQty = newCart[id] || 0;
       const newQty = Math.max(0, currentQty + change);
-      const updated = {
-        ...prev,
-        [id]: newQty
-      };
-      console.log('Cart updated:', id, 'from', currentQty, 'to', newQty, updated);
-      return updated;
+      newCart[id] = newQty;
+      console.log(`Cart update: ${id} -> ${newQty}`, newCart);
+      return newCart;
     });
   };
 
   const getTotalPrice = () => {
-    let total = 0;
-    ticketOptions.forEach(ticket => {
-      const qty = ticketQuantities[ticket.id] || 0;
-      total += qty * ticket.price;
-    });
-    return total;
+    return ticketOptions.reduce((total, ticket) => {
+      const qty = cart[ticket.id] || 0;
+      return total + (qty * ticket.price);
+    }, 0);
   };
 
   const getTotalTickets = () => {
-    let total = 0;
-    Object.values(ticketQuantities).forEach(qty => {
-      total += (qty || 0);
-    });
-    return total;
+    return Object.values(cart).reduce((total, qty) => total + (qty || 0), 0);
   };
 
   return (
@@ -168,12 +158,11 @@ const Tickets = () => {
                   <button 
                     className="quantity-btn"
                     onClick={() => handleQuantityChange(ticket.id, -1)}
-                    disabled={!ticketQuantities[ticket.id] || ticketQuantities[ticket.id] === 0}
+                    disabled={!cart[ticket.id] || cart[ticket.id] === 0}
                   >
                     -
                   </button>
-                  <span className="quantity-display">{ticketQuantities[ticket.id] || 0}</span>
-                 
+                  <div className="quantity-value">{cart[ticket.id] || 0}</div>
                   <button 
                     className="quantity-btn"
                     onClick={() => handleQuantityChange(ticket.id, 1)}
@@ -222,12 +211,12 @@ const Tickets = () => {
                     // Save cart to localStorage and redirect to login
                     localStorage.setItem('pendingCart', JSON.stringify({
                       items: ticketOptions
-                        .filter(t => ticketQuantities[t.id] > 0)
+                        .filter(t => cart[t.id] > 0)
                         .map(t => ({ 
                           id: t.id,
                           ticket_type_id: t.id, 
                           name: t.name,
-                          quantity: ticketQuantities[t.id],
+                          quantity: cart[t.id],
                           price: t.price
                         })),
                       total: getTotalPrice()
@@ -236,12 +225,12 @@ const Tickets = () => {
                   } else {
                     // Navigate to checkout with cart data
                     const cartItems = ticketOptions
-                      .filter(t => ticketQuantities[t.id] > 0)
+                      .filter(t => cart[t.id] > 0)
                       .map(t => ({ 
                         id: t.id,
                         ticket_type_id: t.id, 
                         name: t.name,
-                        quantity: ticketQuantities[t.id],
+                        quantity: cart[t.id],
                         price: t.price
                       }));
                     

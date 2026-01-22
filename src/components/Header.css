@@ -530,19 +530,23 @@
   .mobile-get-tickets-btn {
     display: block;
     width: 100%;
-    padding: 16px 24px;
-    background: #dc2626;
-    color: #ffffff !important;
-    font-size: 18px;
-    font-weight: 600;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    color: #ffffff;
     border: none;
     border-radius: 8px;
-    cursor: pointer;
+    font-size: 18px;
+    font-weight: 700;
     text-align: center;
+    cursor: pointer;
     transition: all 0.3s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 56px;
   }
 
-  .mobile-get-tickets-btn:hover {
+  .mobile-get-tickets-btn:hover,
+  .mobile-get-tickets-btn:active {
     background: #b91c1c;
     transform: translateY(-2px);
   }

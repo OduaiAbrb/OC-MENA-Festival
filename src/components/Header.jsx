@@ -131,15 +131,13 @@ const Header = ({ onGetTicketsClick }) => {
                   </Link>
                 </li>
                 <li className="nav-item mobile-menu-item mobile-get-tickets-item">
-                  <button 
-                    className="nav-link mobile-get-tickets-btn" 
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      onGetTicketsClick && onGetTicketsClick();
-                    }}
+                  <Link 
+                    to="/tickets"
+                    className="mobile-get-tickets-btn" 
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     Get Tickets
-                  </button>
+                  </Link>
                 </li>
               </ul>
             </nav>
