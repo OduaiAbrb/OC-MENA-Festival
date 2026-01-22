@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -97,7 +98,11 @@ const AppWithModal = () => {
 };
 
 function App() {
-  return <AppWithModal />;
+  return (
+    <AuthProvider>
+      <AppWithModal />
+    </AuthProvider>
+  );
 }
 
 export default App;

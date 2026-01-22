@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
 import './SignupPage.css';
 
 const SignupPage = () => {
+  const navigate = useNavigate();
+  const { register, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -13,22 +16,53 @@ const SignupPage = () => {
     password: '',
     confirmPassword: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      setError('Passwords do not match!');
       return;
     }
-    console.log('Signup submitted:', formData);
-    alert('Account created successfully!');
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      const result = await register(
+        formData.email,
+        formData.password,
+        formData.confirmPassword,
+        fullName
+      );
+      
+      if (result?.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result?.error?.message || 'Registration failed');
+      }
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -107,8 +141,10 @@ const SignupPage = () => {
               />
             </div>
 
-            <button type="submit" className="btn-primary submit-btn">
-              Create Account
+            {error && <div className="error-message" style={{color: '#e74c3c', marginBottom: '1rem', textAlign: 'center'}}>{error}</div>}
+
+            <button type="submit" className="btn-primary submit-btn" disabled={loading}>
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
 
             <p className="auth-switch">

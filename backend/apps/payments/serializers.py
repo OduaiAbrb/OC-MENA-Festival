@@ -1,0 +1,22 @@
+"""
+Payment serializers.
+"""
+from rest_framework import serializers
+
+
+class CheckoutItemSerializer(serializers.Serializer):
+    """Serializer for checkout items."""
+    ticket_type_id = serializers.UUIDField()
+    quantity = serializers.IntegerField(min_value=1, max_value=10)
+
+
+class CreatePaymentIntentSerializer(serializers.Serializer):
+    """Serializer for creating a payment intent."""
+    items = CheckoutItemSerializer(many=True, min_length=1)
+    idempotency_key = serializers.CharField(max_length=100)
+
+
+class ConfirmPaymentSerializer(serializers.Serializer):
+    """Serializer for confirming payment."""
+    payment_intent_id = serializers.CharField()
+    order_id = serializers.UUIDField()
