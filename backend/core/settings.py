@@ -181,6 +181,7 @@ CORS_ALLOWED_ORIGINS = [
     FRONTEND_URL,
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'https://oc-mena-festival.vercel.app',
 ]
 # Allow all Vercel preview and production domains
 CORS_ALLOWED_ORIGIN_REGEXES = [
