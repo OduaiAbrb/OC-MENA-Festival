@@ -102,9 +102,9 @@
 }
 
 .ticket-card:hover {
-  border-color: #007bff;
+  border-color: #dc2626;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
 }
 
 .ticket-header {
@@ -141,7 +141,7 @@
 .ticket-price {
   font-size: 28px;
   font-weight: 700;
-  color: #007bff;
+  color: #000000;
   display: block;
   margin-bottom: 5px;
 }
@@ -168,9 +168,9 @@
 .quantity-btn {
   width: 36px;
   height: 36px;
-  border: 2px solid #007bff;
+  border: 2px solid #000000;
   background: white;
-  color: #007bff;
+  color: #000000;
   font-size: 18px;
   font-weight: 600;
   border-radius: 50%;
@@ -182,7 +182,7 @@
 }
 
 .quantity-btn:hover:not(:disabled) {
-  background: #007bff;
+  background: #dc2626;
   color: white;
 }
 
