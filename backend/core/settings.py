@@ -175,30 +175,28 @@ SIMPLE_JWT = {
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
 
-# CORS Settings
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
-
-# Temporarily allow all origins for debugging (REMOVE IN PRODUCTION)
-if DEBUG or ENVIRONMENT == 'development':
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    CORS_ALLOWED_ORIGINS = [
-        FRONTEND_URL,
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-        'https://oc-mena-festival.vercel.app',
-        'https://fbe5da72.oc-mena-festival.pages.dev',
-        'https://oc-mena-festival.pages.dev',
-    ]
-    # Allow all Vercel preview and production domains
-    CORS_ALLOWED_ORIGIN_REGEXES = [
-        r"^https://.*\.vercel\.app$",
-        r"^https://.*\.oc-mena-festival\.pages\.dev$",
-    ]
-
+# CORS Settings - Allow all origins (fix for production)
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ['*']
-CORS_ALLOW_METHODS = ['*']
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
 # Redis Cache
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
