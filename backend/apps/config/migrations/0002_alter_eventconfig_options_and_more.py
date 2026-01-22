@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
             name='eventconfig',
             options={'verbose_name': 'Event Configuration', 'verbose_name_plural': 'Event Configurations'},
         ),
+        # Only add indexes that don't rely on missing columns
         migrations.AddIndex(
             model_name='contactsubmission',
             index=models.Index(fields=['subject', 'is_read'], name='contact_sub_subject_f1e020_idx'),
@@ -21,14 +22,6 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name='contactsubmission',
             index=models.Index(fields=['created_at'], name='contact_sub_created_54b02f_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='scheduleitem',
-            index=models.Index(fields=['day', 'start_time'], name='schedule_it_day_831c7d_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='scheduleitem',
-            index=models.Index(fields=['category', 'is_active'], name='schedule_it_categor_90c8e4_idx'),
         ),
         migrations.AddIndex(
             model_name='sponsor',
