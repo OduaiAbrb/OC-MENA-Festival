@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import AnnouncementBar from '../components/AnnouncementBar';
-import Footer from '../components/Footer';
 import api from '../services/api';
 import './QRScanner.css';
 
