@@ -105,13 +105,13 @@ const Tickets = () => {
   const handleQuantityChange = (ticketId, change) => {
     setTicketQuantities(prev => ({
       ...prev,
-      [ticketId]: Math.max(0, prev[ticketId] + change)
+      [ticketId]: Math.max(0, (prev[ticketId] || 0) + change)
     }));
   };
 
   const getTotalPrice = () => {
     return ticketOptions.reduce((total, ticket) => {
-      return total + (ticketQuantities[ticket.id] * ticket.price);
+      return total + ((ticketQuantities[ticket.id] || 0) * ticket.price);
     }, 0);
   };
 
@@ -151,11 +151,11 @@ const Tickets = () => {
                   <button 
                     className="quantity-btn"
                     onClick={() => handleQuantityChange(ticket.id, -1)}
-                    disabled={ticketQuantities[ticket.id] === 0}
+                    disabled={!ticketQuantities[ticket.id] || ticketQuantities[ticket.id] === 0}
                   >
                     -
                   </button>
-                  <span className="quantity-display">{ticketQuantities[ticket.id]}</span>
+                  <span className="quantity-display">{ticketQuantities[ticket.id] || 0}</span>
                  
                   <button 
                     className="quantity-btn"
