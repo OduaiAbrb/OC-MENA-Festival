@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import CartModal from './CartModal';
 import './Header.css';
@@ -10,8 +10,7 @@ const Header = ({ onGetTicketsClick }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems] = useState([]);
   const location = useLocation();
-  const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   // Close menu when window is resized above mobile breakpoint
   useEffect(() => {
