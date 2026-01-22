@@ -73,6 +73,13 @@ class CreatePaymentIntentView(APIView):
                 'success': False,
                 'error': {'message': str(e)}
             }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response({
+                'success': False,
+                'error': {'message': f'Server error: {str(e)}'}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ConfirmPaymentView(APIView):
