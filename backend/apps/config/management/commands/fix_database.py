@@ -172,7 +172,8 @@ class Command(BaseCommand):
                     order_id UUID NOT NULL UNIQUE,
                     invoice_number VARCHAR(30) UNIQUE NOT NULL,
                     pdf_url VARCHAR(500) DEFAULT '',
-                    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                    pdf_file VARCHAR(100) DEFAULT '',
+                    generated_at TIMESTAMP WITH TIME ZONE
                 )
             ''')
             self.stdout.write(self.style.SUCCESS('✓ invoices recreated'))
