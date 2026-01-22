@@ -12,8 +12,8 @@ const Tickets = () => {
   const navigate = useNavigate();
   const [ticketTypes, setTicketTypes] = useState([]);
   const [ticketQuantities, setTicketQuantities] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true); // eslint-disable-line no-unused-vars
+  const [error, setError] = useState(''); // eslint-disable-line no-unused-vars
   const [salesMessage, setSalesMessage] = useState('');
 
   // Fallback ticket options if API fails or sales not open
@@ -46,6 +46,7 @@ const Tickets = () => {
 
   useEffect(() => {
     fetchTicketTypes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchTicketTypes = async () => {
