@@ -122,11 +122,6 @@ const Dashboard = () => {
           <div className="content-section">
             <h2 className="section-title">My Tickets</h2>
             <div className="static-content">
-              <div style={{marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#f0f9ff', borderRadius: '8px', border: '1px solid #0ea5e9'}}>
-                <p style={{margin: 0, color: '#0369a1'}}>
-                  <strong>💡 Tip:</strong> Use the <a href="/scan" style={{color: '#0284c7', textDecoration: 'underline'}}>QR Scanner</a> to validate any ticket code
-                </p>
-              </div>
               {tickets.length === 0 ? (
                 <p>No tickets yet. <a href="/tickets" style={{color: '#0284c7'}}>Purchase tickets</a> to get started!</p>
               ) : (
