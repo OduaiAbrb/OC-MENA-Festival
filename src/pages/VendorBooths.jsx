@@ -128,7 +128,7 @@ const VendorBooths = () => {
       
       <section className="hero-section">
         <div className="hero-background-wrapper">
-          <img src="/wrapper-image.jpg" alt="OC MENA Festival" className="hero-background-image" />
+          <video src="/background.mp4" alt="OC MENA Festival" className="hero-background-video" autoPlay muted loop playsInline />
           <div className="hero-gradient-overlay"></div>
         </div>
 
@@ -196,6 +196,7 @@ const VendorBooths = () => {
                             onChange={() => handleHalalChange(booth.id)}
                             className="checkbox-input"
                           />
+                          <span className="checkbox-custom"></span>
                           <span>Do you serve Halal food? Yes</span>
                         </label>
                       </div>
@@ -211,6 +212,7 @@ const VendorBooths = () => {
                             onChange={() => handleUpgradeChange(booth.id)}
                             className="checkbox-input"
                           />
+                          <span className="checkbox-custom"></span>
                           <span>{booth.upgradeText}</span>
                         </label>
                       </div>

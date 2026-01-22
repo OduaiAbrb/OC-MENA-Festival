@@ -88,46 +88,6 @@
   );
 }
 
-/* ===== TORN PAPER CARD ===== */
-.torn-paper-card {
-  position: relative;
-  background: #ffffff;
-  max-width: 700px;
-  width: 90%;
-  margin: 0 auto;
-  padding: 50px 60px;
-  z-index: 10;
-  margin-top: 100px;
-}
-
-.torn-paper-card .card-title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a1a1a;
-  text-align: center;
-  margin-bottom: 20px;
-  font-family: 'Georgia', serif;
-}
-
-.torn-paper-card .card-subtitle {
-  font-size: 14px;
-  color: #666666;
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.torn-paper-card .card-subtitle a {
-  color: #0066cc;
-  text-decoration: underline;
-}
-
-.torn-paper-card .card-description {
-  font-size: 15px;
-  color: #333333;
-  line-height: 1.7;
-  text-align: left;
-  margin-bottom: 20px;
-}
 
 /* ===== LANTERNS ===== */
 .lanterns-container {
@@ -144,52 +104,7 @@
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
 
-/* ===== SPONSORS SECTION ===== */
-.sponsors-section {
-  background-color: #000000;
-  padding: 60px 20px;
-  text-align: center;
-}
 
-.sponsors-section h3 {
-  font-size: 24px;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 30px;
-}
-
-.sponsors-logos {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 40px;
-  flex-wrap: wrap;
-  max-width: 800px;
-  margin: 0 auto 30px;
-}
-
-.sponsor-logo {
-  height: 40px;
-  width: auto;
-  filter: brightness(0) invert(1);
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-}
-
-.sponsor-logo:hover {
-  opacity: 1;
-}
-
-.view-all-link {
-  color: white;
-  font-size: 14px;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.view-all-link:hover {
-  color: var(--primary-orange);
-}
 
 /* ===== FOOTER ===== */
 .site-footer {
@@ -361,14 +276,16 @@
 .form-group input,
 .form-group select,
 .form-group textarea {
-  width: 100%;
-  padding: 12px 14px;
+  width: 25%;
+  padding: 8px 12px;
   border: 1px solid #cccccc;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 13px;
   color: #333333;
   background: white;
   transition: border-color 0.3s ease;
+  display: block;
+  margin: 0 auto;
 }
 
 .form-group input:focus,
@@ -391,20 +308,6 @@
 }
 
 @media (max-width: 768px) {
-  .torn-paper-card {
-    padding: 40px 30px;
-    margin-top: 80px;
-  }
-  
-  .torn-paper-card .card-title {
-    font-size: 26px;
-  }
-  
-  .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-  
   .announcement-bar {
     font-size: 12px;
     padding: 8px 15px;
@@ -412,12 +315,4 @@
 }
 
 @media (max-width: 480px) {
-  .torn-paper-card {
-    padding: 30px 20px;
-    width: 90%;
-  }
-  
-  .torn-paper-card .card-title {
-    font-size: 22px;
-  }
 }

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
+import SponsorsSection from '../components/SponsorsSection';
 import ScrollToTop from '../components/ScrollToTop';
 import TornPaperWrapper from '../components/TornPaperWrapper';
 import './SignupPage.css';
@@ -11,11 +12,8 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const { register, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
-    password: '',
-    confirmPassword: ''
+    password: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -37,21 +35,15 @@ const SignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match!');
-      return;
-    }
-
     setLoading(true);
     setError('');
 
     try {
-      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
       const result = await register(
         formData.email,
         formData.password,
-        formData.confirmPassword,
-        fullName
+        formData.password,
+        ''
       );
       
       if (result?.success) {
@@ -72,48 +64,33 @@ const SignupPage = () => {
       
       <section className="hero-section">
         <div className="hero-background-wrapper">
-          <img src="/wrapper-image.jpg" alt="OC MENA Festival" className="hero-background-image" />
+          <video src="/background.mp4" alt="OC MENA Festival" className="hero-background-video" autoPlay muted loop playsInline />
           <div className="hero-gradient-overlay"></div>
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">Create Account</h1>
-          <p className="card-subtitle">Join us for OC MENA Festival 2026!</p>
+          <h1 className="card-title">My Account</h1>
+          
+          <div className="auth-options">
+            <Link to="/login" className="auth-option">
+              Login
+            </Link>
+            <Link to="/signup" className="auth-option active">
+              Register
+              <div className="active-indicator"></div>
+            </Link>
+          </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="firstName">First Name *</label>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="lastName">Last Name *</label>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
             <div className="form-group">
-              <label htmlFor="email">Email *</label>
+              <label htmlFor="email">Email address *</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                placeholder="Enter your email address"
                 required
               />
             </div>
@@ -126,31 +103,22 @@ const SignupPage = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password *</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
+                placeholder="Enter your password"
                 required
               />
             </div>
 
             {error && <div className="error-message" style={{color: '#e74c3c', marginBottom: '1rem', textAlign: 'center'}}>{error}</div>}
 
+            <div className="privacy-notice">
+              <p>
+                Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our <Link to="/privacy-policy" className="privacy-link">privacy policy</Link>.
+              </p>
+            </div>
+
             <button type="submit" className="btn-primary submit-btn" disabled={loading}>
               {loading ? 'Creating Account...' : 'Create Account'}
             </button>
-
-            <p className="auth-switch">
-              Already have an account? <Link to="/login">Sign in</Link>
-            </p>
           </form>
         </TornPaperWrapper>
 
@@ -159,7 +127,12 @@ const SignupPage = () => {
         </div>
       </section>
 
+      {/* Sponsors Section */}
+      <SponsorsSection />
+
+      {/* Footer */}
       <Footer />
+      
       <ScrollToTop />
     </div>
   );

@@ -1,25 +1,8 @@
 .sponsors-section {
   background-color: #000000;
-  padding: 60px 20px;
+  padding: 20px 20px;
   text-align: center;
   position: relative;
-}
-
-.sponsors-section::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100px;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.3) 30%,
-    rgba(0, 0, 0, 0.7) 60%,
-    rgba(0, 0, 0, 1) 100%
-  );
-  pointer-events: none;
 }
 
 .sponsors-section h3 {
@@ -51,21 +34,18 @@
   opacity: 1;
 }
 
-.view-all-link {
+.white-link {
   color: white;
-  font-size: 14px;
   text-decoration: underline;
-  cursor: pointer;
-  transition: color 0.3s ease;
+  font-size: 14px;
+  margin-top: 20px;
+  display: inline-block;
 }
 
-.view-all-link:hover {
-  color: #FF6B35;
-}
 
 @media (max-width: 768px) {
   .sponsors-section {
-    padding: 40px 20px;
+    padding: 15px 20px;
   }
   
   .sponsors-section h3 {

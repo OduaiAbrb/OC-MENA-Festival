@@ -47,23 +47,6 @@
   );
 }
 
-/* ===== TORN PAPER CARD - EventMap Specific ===== */
-.hero-section .torn-paper-card {
-  max-width: 1200px !important; /* Make the entire section much wider */
-  width: 95% !important; /* Take up more screen width */
-  padding: 60px 40px !important;
-}
-
-/* EventMap torn paper images - scale to match larger card */
-.hero-section .torn-paper-top,
-.hero-section .torn-paper-bottom {
-  width: 95% !important;
-  max-width: 1200px !important;
-  height: auto !important;
-  margin: 0 auto !important;
-  display: block !important;
-  object-fit: contain !important;
-}
 
 .card-title {
   font-size: 42px;

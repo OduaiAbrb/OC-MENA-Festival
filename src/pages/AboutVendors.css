@@ -52,7 +52,7 @@
   font-weight: 700;
   color: #1a1a1a;
   margin-bottom: 30px;
-  font-family: 'Georgia', serif;
+  font-family: sans-serif;
   text-align: center;
 }
 
@@ -72,7 +72,7 @@
 .vendor-list-section {
   margin-top: 40px;
   padding: 30px;
-  background: #f9f9f9;
+ 
   border-radius: 12px;
   text-align: center;
 }
@@ -82,7 +82,7 @@
   font-weight: 600;
   color: #1a1a1a;
   margin-bottom: 15px;
-  font-family: 'Georgia', serif;
+  font-family: sans-serif;
 }
 
 .coming-soon {

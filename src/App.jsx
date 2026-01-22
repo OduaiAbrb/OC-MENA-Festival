@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
@@ -109,8 +109,12 @@ const AppWithModal = () => {
             <Route path="/terms-of-use" element={<TermsOfUse />} />
             <Route path="/ticket-terms" element={<TicketTerms />} />
             <Route path="/vendor-booths" element={<VendorBooths />} />
+<<<<<<< Updated upstream
             <Route path="/scan" element={<QRScanner />} />
             <Route path="/order-success" element={<OrderSuccess />} />
+=======
+            <Route path="*" element={<Navigate to="/" replace />} />
+>>>>>>> Stashed changes
           </Routes>
         </main>
       </div>

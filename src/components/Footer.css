@@ -85,40 +85,40 @@
 
 .footer-newsletter-form {
   display: flex;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
+  border: none;
+  border-radius: 25px;
   overflow: hidden;
   max-width: 250px;
+  background: white;
 }
 
 .footer-newsletter-form input {
   flex: 1;
   padding: 10px 12px;
-  background: transparent;
+  background: white;
   border: none;
-  color: white;
+  color: #666666;
   font-size: 13px;
   outline: none;
   min-width: 0;
 }
 
 .footer-newsletter-form input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: #999999;
 }
 
 .footer-newsletter-form button {
   background: transparent;
   border: none;
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
+  color: #666666;
   padding: 10px 15px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .footer-newsletter-form button:hover {
-  background: rgba(255, 255, 255, 0.1);
+  color: #333333;
 }
 
 .footer-bottom {

@@ -477,9 +477,9 @@
 
 /* ===== PRIVACY NOTICE ===== */
 .privacy-notice {
-  background-color: #f8f9fa;
-  padding: 15px;
-  margin-bottom: 20px;
+ 
+padding-top:10px;
+  
 }
 
 .privacy-notice p {
@@ -487,6 +487,7 @@
   color: #666666;
   line-height: 1.6;
   margin: 0;
+  text-align: left;
 }
 
 /* ===== PLACE ORDER BUTTON ===== */

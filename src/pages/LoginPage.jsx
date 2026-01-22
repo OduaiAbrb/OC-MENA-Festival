@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
+import SponsorsSection from '../components/SponsorsSection';
 import ScrollToTop from '../components/ScrollToTop';
 import TornPaperWrapper from '../components/TornPaperWrapper';
 import './LoginPage.css';
@@ -57,24 +58,33 @@ const LoginPage = () => {
       
       <section className="hero-section">
         <div className="hero-background-wrapper">
-          <img src="/wrapper-image.jpg" alt="OC MENA Festival" className="hero-background-image" />
+          <video src="/background.mp4" alt="OC MENA Festival" className="hero-background-video" autoPlay muted loop playsInline />
           <div className="hero-gradient-overlay"></div>
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">Login</h1>
-          <p className="card-subtitle">Welcome back! Please enter your details.</p>
+          <h1 className="card-title">My Account</h1>
+          
+          <div className="auth-options">
+            <Link to="/login" className="auth-option active">
+              Login
+              <div className="active-indicator"></div>
+            </Link>
+            <Link to="/signup" className="auth-option">
+              Register
+            </Link>
+          </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label htmlFor="email">Email *</label>
+              <label htmlFor="email">Username or email address *</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Enter your email"
+                placeholder="Enter your username or email"
                 required
               />
             </div>
@@ -105,10 +115,6 @@ const LoginPage = () => {
             <button type="submit" className="btn-primary submit-btn" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
-
-            <p className="auth-switch">
-              Don't have an account? <Link to="/signup">Sign up</Link>
-            </p>
           </form>
         </TornPaperWrapper>
 
@@ -117,7 +123,12 @@ const LoginPage = () => {
         </div>
       </section>
 
+      {/* Sponsors Section */}
+      <SponsorsSection />
+
+      {/* Footer */}
       <Footer />
+      
       <ScrollToTop />
     </div>
   );

@@ -97,6 +97,7 @@ body {
   font-weight: 700;
   text-align: center;
   margin-bottom: 20px;
+  font-family: sans-serif;
   background: linear-gradient(135deg, var(--primary-orange), var(--gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -109,6 +110,15 @@ body {
   text-align: center;
   max-width: 700px;
   margin: 0 auto 60px;
+}
+
+/* ===== GLOBAL CARD STYLES ===== */
+.card-title {
+  font-family: sans-serif;
+}
+
+.card-description {
+  color: #000000 !important; /* Global black color for all card descriptions */
 }
 
 /* ===== ANIMATIONS ===== */
@@ -145,10 +155,10 @@ body {
 .torn-paper-card {
   position: relative;
   background: #ffffff;
-  max-width: 700px;
-  width: 90%;
+  max-width: 1200px; /* Make the entire section much wider - matching HomePage */
+  width: 70%; /* Much larger - increased from 50% to 70% */
   margin: 0 auto;
-  padding: 50px 60px 40px;
+  padding: 60px 40px 321px; /* Matching HomePage padding with massive bottom gap */
   z-index: 10;
   border: none; /* Ensure no border */
   box-shadow: none; /* Ensure no shadow */
@@ -158,14 +168,14 @@ body {
 .torn-paper-top,
 .torn-paper-bottom {
   display: block;
-  width: 90%; /* MUST match torn-paper-card width */
-  max-width: 700px; /* MUST match torn-paper-card max-width */
-  height: auto;
-  margin: 0 auto;
+  width: 70% !important; /* Match new larger card width */
+  max-width: 1200px !important; /* Matching HomePage max-width */
+  height: auto !important;
+  margin: 0 auto !important;
   background-color: transparent;
   border: none;
   outline: none;
-  object-fit: contain; /* Prevent distortion */
+  object-fit: contain !important; /* Prevent distortion */
 }
 
 .torn-paper-top {
@@ -191,19 +201,91 @@ body {
   overflow: hidden; /* Prevent rendering artifacts */
 }
 
+/* ===== GLOBAL HERO STYLES ===== */
+.hero-background-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-background-image,
+.hero-background-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.hero-gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 60, 80, 0.5) 0%,
+    rgba(0, 60, 80, 0.6) 20%,
+    rgba(0, 60, 80, 0.7) 35%,
+    rgba(0, 60, 80, 0.8) 50%,
+    rgba(0, 60, 80, 0.9) 70%,
+    rgba(0, 0, 0, 1) 85%
+  );
+}
+
+/* HomePage specific - keep dark overlay */
+.home-hero-section .hero-gradient-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.4) 20%,
+    rgba(0, 0, 0, 0.5) 35%,
+    rgba(0, 0, 0, 0.6) 50%,
+    rgba(0, 0, 0, 0.8) 70%,
+    rgba(0, 0, 0, 1) 85%
+  );
+}
+
+/* ===== GLOBAL LANTERNS ===== */
+.lanterns-container {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 5;
+}
+
+.lanterns-image {
+  height: 202px;
+  width: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.lanterns-container {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 5;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1270px) and (min-width: 769px) {
-  /* Medium screens - tablets and small desktops */
+  /* Medium screens - tablets and small desktops - matching HomePage */
   .torn-paper-top,
   .torn-paper-bottom {
-    width: 92%; /* Match the card width for medium screens */
-    max-width: 700px;
+    width: 92% !important; /* Match HomePage medium screen width */
+    max-width: 700px !important; /* Match HomePage medium screen max-width */
   }
   
   .torn-paper-card {
-    width: 92%; /* Slightly wider than mobile, narrower than desktop */
-    max-width: 700px;
-    padding: 40px 40px;
+    width: 92%; /* Match HomePage medium screen width */
+    max-width: 700px; /* Match HomePage medium screen max-width */
+    padding: 40px 40px 321px; /* Match HomePage medium screen padding with massive bottom gap */
     margin: 0 auto;
   }
 }
@@ -221,19 +303,19 @@ body {
     padding: 60px 0;
   }
   
-  /* Torn paper adjustments for mobile */
+  /* Torn paper adjustments for mobile - matching HomePage */
   .torn-paper-top,
   .torn-paper-bottom {
-    width: 90%; /* Match the card width exactly */
-    max-width: none;
+    width: 100% !important; /* Match HomePage mobile width */
+    max-width: none !important; /* Match HomePage mobile max-width */
     object-fit: contain;
   }
   
   .torn-paper-card {
-    width: 90%;
-    max-width: none;
-    padding: 30px 20px;
-    margin: 0 auto;
+    width: 100%; /* Match HomePage mobile width */
+    max-width: none; /* Match HomePage mobile max-width */
+    padding: 40px 0px 321px; /* Match HomePage mobile padding with massive bottom gap - remove side padding */
+    margin: 0;
   }
   
   /* Prevent torn paper expansion on mobile */

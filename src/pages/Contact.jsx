@@ -70,7 +70,7 @@ const Contact = () => {
       {/* Hero Section with Background */}
       <section className="hero-section">
         <div className="hero-background-wrapper">
-          <img src="/wrapper-image.jpg" alt="OC MENA Festival" className="hero-background-image" />
+          <video src="/background.mp4" alt="OC MENA Festival" className="hero-background-video" autoPlay muted loop playsInline />
           <div className="hero-gradient-overlay"></div>
         </div>
 

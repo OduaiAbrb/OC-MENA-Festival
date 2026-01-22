@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: center;
   padding-top: 200px;
-  padding-bottom: 60px;
+  padding-bottom: 10px;
 }
 
 .hero-background-wrapper {
@@ -53,16 +53,6 @@
   );
 }
 
-/* ===== TORN PAPER CARD ===== */
-.torn-paper-card {
-  position: relative;
-  background: #ffffff;
-  max-width: 700px;
-  width: 90%;
-  margin: 0 auto;
-  padding: 50px 50px 40px;
-  z-index: 10;
-}
 
 .card-title {
   font-size: 32px;
@@ -93,6 +83,11 @@
 /* ===== SPONSORSHIP LEVELS ===== */
 .sponsorship-levels {
   margin: 25px 0;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .section-heading {
@@ -100,25 +95,45 @@
   font-weight: 700;
   color: #1a1a1a;
   margin-bottom: 15px;
+  text-align: left;
+  background: transparent !important;
 }
 
 .levels-list {
-  list-style: disc;
-  padding-left: 25px;
-  margin-bottom: 20px;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 0 20px 0;
+  text-align: left;
+  max-width: 250px;
+  background: transparent !important;
+  display: block;
 }
 
 .levels-list li {
   font-size: 14px;
+  font-weight: bold;
   color: #444444;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  background: transparent !important;
+  text-align: left;
+  width: 100%;
+}
+
+.levels-list li::before {
+  content: "• ";
+  margin-right: 2px;
+  font-weight: bold;
 }
 
 /* ===== CTA SECTION ===== */
 .cta-section {
   text-align: center;
   margin-top: 30px;
-  padding-top: 20px;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .cta-text {
@@ -126,6 +141,7 @@
   font-weight: 600;
   color: #1a1a1a;
   margin-bottom: 15px;
+  background: transparent !important;
 }
 
 .btn-primary {
@@ -150,7 +166,7 @@
 .lanterns-container {
   text-align: center;
   margin-top: 0;
-  margin-bottom: 60px;
+  margin-bottom: 10px;
   position: relative;
   z-index: 5;
 }
@@ -165,13 +181,9 @@
 @media (max-width: 768px) {
   .hero-section {
     padding-top: 200px;
-    padding-bottom: 40px;
+    padding-bottom: 10px;
   }
   
-  .torn-paper-card {
-    padding: 40px 30px 35px;
-    width: 92%;
-  }
   
   .card-title {
     font-size: 26px;
@@ -193,13 +205,9 @@
 @media (max-width: 480px) {
   .hero-section {
     padding-top: 180px;
-    padding-bottom: 30px;
+    padding-bottom: 10px;
   }
   
-  .torn-paper-card {
-    padding: 30px 20px;
-    width: 95%;
-  }
   
   .card-title {
     font-size: 22px;
