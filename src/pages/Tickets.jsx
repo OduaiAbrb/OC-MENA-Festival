@@ -186,7 +186,13 @@ const Tickets = () => {
                     localStorage.setItem('pendingCart', JSON.stringify({
                       items: ticketOptions
                         .filter(t => ticketQuantities[t.id] > 0)
-                        .map(t => ({ ticket_type_id: t.id, quantity: ticketQuantities[t.id] })),
+                        .map(t => ({ 
+                          id: t.id,
+                          ticket_type_id: t.id, 
+                          name: t.name,
+                          quantity: ticketQuantities[t.id],
+                          price: t.price
+                        })),
                       total: getTotalPrice()
                     }));
                     navigate('/login?redirect=/checkout');
@@ -197,6 +203,7 @@ const Tickets = () => {
                         items: ticketOptions
                           .filter(t => ticketQuantities[t.id] > 0)
                           .map(t => ({ 
+                            id: t.id,
                             ticket_type_id: t.id, 
                             name: t.name,
                             quantity: ticketQuantities[t.id],
