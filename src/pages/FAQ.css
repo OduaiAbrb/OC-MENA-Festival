@@ -1,0 +1,169 @@
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 200px;
+  overflow: hidden;
+}
+
+.hero-background-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.hero-background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 20%,
+    rgba(0, 0, 0, 0.2) 35%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.8) 70%,
+    rgba(0, 0, 0, 1) 85%
+  );
+}
+
+.card-title {
+  font-size: 42px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 30px;
+  font-family: 'Georgia', serif;
+  text-align: center;
+}
+
+.faq-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-section {
+  margin-bottom: 40px;
+}
+
+.faq-subheading {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  font-family: 'Georgia', serif;
+}
+
+.faq-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faq-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fafafa;
+}
+
+.faq-question {
+  width: 100%;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.faq-question:hover {
+  background: #f0f0f0;
+}
+
+.faq-icon {
+  font-size: 24px;
+  font-weight: 300;
+  color: #666;
+}
+
+.faq-answer {
+  padding: 0 20px 16px;
+  background: #fff;
+}
+
+.faq-answer p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #555;
+  margin: 0;
+}
+
+.lanterns-container {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  margin-top: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.lanterns-image {
+  height: 231px;
+  width: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding-top: 180px;
+  }
+  
+  .card-title {
+    font-size: 32px;
+  }
+  
+  .faq-subheading {
+    font-size: 20px;
+  }
+  
+  .faq-question {
+    font-size: 15px;
+    padding: 14px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-title {
+    font-size: 28px;
+  }
+  
+  .faq-question {
+    font-size: 14px;
+  }
+}

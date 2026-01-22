@@ -57,8 +57,9 @@
   z-index: 10;
   text-align: center;
   color: white;
-  max-width: 700px;
+  max-width: 900px;
   padding: 0 20px;
+  padding-top:70px;
 }
 
 .hero-title {
@@ -69,14 +70,14 @@
 }
 
 .hero-subtitle {
-  font-size: 18px;
+  font-size: 27px;
   color: #ffffff;
   font-weight: 600;
   margin-bottom: 15px;
 }
 
 .hero-description {
-  font-size: 16px;
+  font-size: 23px;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 30px;
@@ -117,98 +118,43 @@
 }
 
 .btn-outline-white {
-  background: transparent;
-  color: white;
+  background: #ffffff;
+  color: #333333;
   padding: 12px 28px;
-  border: 2px solid white;
-  border-radius: 4px;
-  font-size: 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 25px;
+  font-size: 17px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-outline-white:hover {
-  background: white;
-  color: #1a1a1a;
+  background: #f5f5f5;
+  border-color: #d0d0d0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary-red {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #dc2626;
+  color: #ffffff;
   padding: 12px 28px;
-  border: 2px solid #ffffff;
-  border-radius: 4px;
-  font-size: 14px;
+  border: 1px solid #dc2626;
+  border-radius: 25px;
+  font-size: 17px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary-red:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  border-color: rgba(255, 255, 255, 0.9);
-}
-
-/* ===== TORN PAPER CARD ===== */
-.torn-paper-card {
-  position: relative;
-  background: #ffffff;
-  max-width: 700px;
-  width: 90%;
-  margin: 0 auto;
-  padding: 50px 100px 40px;
-  z-index: 10;
-}
-
-.torn-paper-card::before {
-  content: '';
-  position: absolute;
-  top: -12px;
-  left: 0;
-  right: 0;
-  height: 15px;
-  background: #ffffff;
-  clip-path: polygon(
-    0% 100%,
-    0% 60%, 1% 40%, 2% 70%, 3% 35%, 4% 65%, 5% 30%, 6% 55%, 7% 25%, 8% 60%, 9% 35%,
-    10% 70%, 11% 40%, 12% 65%, 13% 30%, 14% 55%, 15% 25%, 16% 60%, 17% 35%, 18% 70%, 19% 40%,
-    20% 65%, 21% 30%, 22% 55%, 23% 25%, 24% 60%, 25% 35%, 26% 70%, 27% 40%, 28% 65%, 29% 30%,
-    30% 55%, 31% 25%, 32% 60%, 33% 35%, 34% 70%, 35% 40%, 36% 65%, 37% 30%, 38% 55%, 39% 25%,
-    40% 60%, 41% 35%, 42% 70%, 43% 40%, 44% 65%, 45% 30%, 46% 55%, 47% 25%, 48% 60%, 49% 35%,
-    50% 70%, 51% 40%, 52% 65%, 53% 30%, 54% 55%, 55% 25%, 56% 60%, 57% 35%, 58% 70%, 59% 40%,
-    60% 65%, 61% 30%, 62% 55%, 63% 25%, 64% 60%, 65% 35%, 66% 70%, 67% 40%, 68% 65%, 69% 30%,
-    70% 55%, 71% 25%, 72% 60%, 73% 35%, 74% 70%, 75% 40%, 76% 65%, 77% 30%, 78% 55%, 79% 25%,
-    80% 60%, 81% 35%, 82% 70%, 83% 40%, 84% 65%, 85% 30%, 86% 55%, 87% 25%, 88% 60%, 89% 35%,
-    90% 70%, 91% 40%, 92% 65%, 93% 30%, 94% 55%, 95% 25%, 96% 60%, 97% 35%, 98% 70%, 99% 40%,
-    100% 60%, 100% 100%
-  );
-}
-
-.torn-paper-card::after {
-  content: '';
-  position: absolute;
-  bottom: -12px;
-  left: 0;
-  right: 0;
-  height: 15px;
-  background: #ffffff;
-  clip-path: polygon(
-    0% 0%,
-    0% 40%, 1% 60%, 2% 30%, 3% 65%, 4% 35%, 5% 70%, 6% 45%, 7% 75%, 8% 40%, 9% 65%,
-    10% 30%, 11% 60%, 12% 35%, 13% 70%, 14% 45%, 15% 75%, 16% 40%, 17% 65%, 18% 30%, 19% 60%,
-    20% 35%, 21% 70%, 22% 45%, 23% 75%, 24% 40%, 25% 65%, 26% 30%, 27% 60%, 28% 35%, 29% 70%,
-    30% 45%, 31% 75%, 32% 40%, 33% 65%, 34% 30%, 35% 60%, 36% 35%, 37% 70%, 38% 45%, 39% 75%,
-    40% 40%, 41% 65%, 42% 30%, 43% 60%, 44% 35%, 45% 70%, 46% 45%, 47% 75%, 48% 40%, 49% 65%,
-    50% 30%, 51% 60%, 52% 35%, 53% 70%, 54% 45%, 55% 75%, 56% 40%, 57% 65%, 58% 30%, 59% 60%,
-    60% 35%, 61% 70%, 62% 45%, 63% 75%, 64% 40%, 65% 65%, 66% 30%, 67% 60%, 68% 35%, 69% 70%,
-    70% 45%, 71% 75%, 72% 40%, 73% 65%, 74% 30%, 75% 60%, 76% 35%, 77% 70%, 78% 45%, 79% 75%,
-    80% 40%, 81% 65%, 82% 30%, 83% 60%, 84% 35%, 85% 70%, 86% 45%, 87% 75%, 88% 40%, 89% 65%,
-    90% 30%, 91% 60%, 92% 35%, 93% 70%, 94% 45%, 95% 75%, 96% 40%, 97% 65%, 98% 30%, 99% 60%,
-    100% 40%, 100% 0%
-  );
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* ===== MAIN CONTENT SECTION ===== */
@@ -217,14 +163,32 @@
   z-index: 10;
   width: 100%;
   display: flex;
-  justify-content: center;
-  margin: 40px 0;
+  flex-direction: column;
+  align-items: center;
+  
 }
 
 .main-card {
   max-width: 100%;
   padding: 50px 20px;
   text-align: center;
+}
+
+.torn-paper-card.main-card {
+  max-width: 1200px; /* Make the entire section much wider */
+  width: 95%; /* Take up more screen width */
+  padding: 60px 40px;
+}
+
+/* Homepage torn paper images - scale to match larger card */
+.main-content-section .torn-paper-top,
+.main-content-section .torn-paper-bottom {
+  width: 95% !important;
+  max-width: 1200px !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  display: block !important;
+  object-fit: contain !important;
 }
 
 /* ===== POSTER SECTION ===== */
@@ -235,9 +199,9 @@
 .poster-image {
   width: 100%;
   height: auto;
-  max-height: 1200px;
+  max-height: 1200px; /* Reduced from 1400px */
   object-fit: contain;
-  padding: 0 40px;
+  padding: 0 20px;
 }
 
 /* ===== WELCOME CONTENT ===== */
@@ -270,28 +234,69 @@
   max-width: 100%;
   width: 100%;
   height: auto;
-  padding: 0 40px;
+  max-height: 500px; /* Reduced from 600px */
+  padding: 0 20px;
+  object-fit: contain;
 }
 
 /* ===== LANTERNS ===== */
 .lanterns-container {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 0;
   margin-bottom: 60px;
   position: relative;
   z-index: 5;
 }
 
 .lanterns-image {
-  height: 100px;
+  height: 231px;
   width: auto;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
 
 /* ===== RESPONSIVE ===== */
+@media (max-width: 1270px) and (min-width: 769px) {
+  /* Medium screens - tablets and small desktops */
+  .torn-paper-card.main-card {
+    max-width: 700px;
+    width: 92%; /* Match App.css medium screen width */
+    padding: 40px 40px;
+    margin: 0 auto;
+  }
+  
+  .main-content-section .torn-paper-top,
+  .main-content-section .torn-paper-bottom {
+    width: 92% !important;
+    max-width: 700px !important;
+  }
+  
+  .poster-image {
+    max-height: 850px; /* Reduced from 1000px */
+    padding: 0 15px;
+  }
+  
+  .oc-sign-image {
+    max-height: 450px; /* Reduced from 500px */
+    padding: 0 15px;
+  }
+}
+
 @media (max-width: 768px) {
   .home-hero-section {
-    padding-top: 180px;
+    padding-top: 220px;
+  }
+  
+  .torn-paper-card.main-card {
+    width: 100%;
+    max-width: none;
+    padding: 30px 0px; /* Remove side padding */
+    margin: 0;
+  }
+  
+  .main-content-section .torn-paper-top,
+  .main-content-section .torn-paper-bottom {
+    width: 100% !important;
+    max-width: none !important;
   }
   
   .hero-title {
@@ -299,11 +304,11 @@
   }
   
   .hero-subtitle {
-    font-size: 16px;
+    font-size: 27px;
   }
   
   .hero-description {
-    font-size: 14px;
+    font-size: 27px;
   }
   
   .countdown-container {
@@ -325,8 +330,22 @@
     text-align: center;
   }
   
-  .poster-card {
-    max-width: 300px;
+  /* Main content section mobile adjustments */
+  .torn-paper-card.main-card {
+    max-width: none;
+    width: 100%; /* Full width on mobile */
+    padding: 40px 0px; /* Remove side padding */
+    margin: 0;
+  }
+  
+  .poster-image {
+    max-height: 700px; /* Reduced from 800px */
+    padding: 0 0px; /* Remove side padding */
+  }
+  
+  .oc-sign-image {
+    max-height: 350px; /* Reduced from 400px */
+    padding: 0 0px; /* Remove side padding */
   }
   
   .welcome-title {
@@ -351,8 +370,26 @@
     font-size: 12px;
   }
   
-  .poster-card {
-    max-width: 280px;
-    padding: 15px;
+  /* Additional mobile adjustments for smaller screens */
+  .torn-paper-card.main-card {
+    padding: 30px 0px; /* Remove side padding */
+    width: 100%; /* Full width on small mobile */
+    margin: 0;
+  }
+  
+  .main-content-section .torn-paper-top,
+  .main-content-section .torn-paper-bottom {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  
+  .poster-image {
+    max-height: 550px; /* Reduced from 600px */
+    padding: 0 0px; /* Remove side padding */
+  }
+  
+  .oc-sign-image {
+    max-height: 280px; /* Reduced from 300px */
+    padding: 0 0px; /* Remove side padding */
   }
 }

@@ -3,6 +3,7 @@ import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
 import ScrollToTop from '../components/ScrollToTop';
+import TornPaperWrapper from '../components/TornPaperWrapper';
 import './EventSchedule.css';
 
 const EventSchedule = () => {
@@ -27,7 +28,7 @@ const EventSchedule = () => {
         </div>
 
         {/* Torn Paper Card */}
-        <div className="torn-paper-card">
+        <TornPaperWrapper>
           <h1 className="card-title">Event Schedule</h1>
           <p className="card-description" style={{ textAlign: 'center' }}>
             The countdown is on. Our full lineup of performances, experiences, and special moments will be announced soon. Get ready to plan your day, discover new favorites, and catch every unforgettable moment at OC MENA Festival.
@@ -49,7 +50,7 @@ const EventSchedule = () => {
               </button>
             </form>
           </div>
-        </div>
+        </TornPaperWrapper>
 
         {/* Lanterns */}
         <div className="lanterns-container">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
+import TornPaperWrapper from '../components/TornPaperWrapper';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -128,7 +129,7 @@ const Dashboard = () => {
           <div className="hero-gradient-overlay"></div>
         </div>
 
-        <div className="dashboard-container">
+        <TornPaperWrapper>
           <div className="dashboard-page-header">
             <h1 className="dashboard-title">My Account</h1>
             <button 
@@ -161,7 +162,7 @@ const Dashboard = () => {
               {renderContent()}
             </main>
           </div>
-        </div>
+        </TornPaperWrapper>
 
         <div className="lanterns-container">
           <img src="/lanterns.png" alt="Festival Lanterns" className="lanterns-image" />

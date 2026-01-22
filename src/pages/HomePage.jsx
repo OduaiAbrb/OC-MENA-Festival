@@ -83,6 +83,7 @@ const HomePage = ({ onGetTicketsClick }) => {
 
         {/* Everything in One Torn Paper Card */}
         <div className="main-content-section">
+          <img src="/paper-torn-top.png" alt="Torn paper top" className="torn-paper-top" />
           <div className="torn-paper-card main-card">
             {/* Poster */}
             <div className="poster-section">
@@ -102,6 +103,7 @@ const HomePage = ({ onGetTicketsClick }) => {
               <img src="/oc-sign-palm-trees-c-768x512.png" alt="Orange County" className="oc-sign-image" />
             </div>
           </div>
+          <img src="/paper-torn-bottom.png" alt="Torn paper bottom" className="torn-paper-bottom" />
         </div>
 
         {/* Lanterns */}

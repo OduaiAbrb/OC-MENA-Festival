@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
+import TornPaperWrapper from '../components/TornPaperWrapper';
 import './SignupPage.css';
 
 const SignupPage = () => {
@@ -41,7 +42,7 @@ const SignupPage = () => {
           <div className="hero-gradient-overlay"></div>
         </div>
 
-        <div className="torn-paper-card auth-card">
+        <TornPaperWrapper>
           <h1 className="card-title">Create Account</h1>
           <p className="card-subtitle">Join us for OC MENA Festival 2026!</p>
 
@@ -115,7 +116,7 @@ const SignupPage = () => {
               Already have an account? <Link to="/login">Sign in</Link>
             </p>
           </form>
-        </div>
+        </TornPaperWrapper>
 
         <div className="lanterns-container">
           <img src="/lanterns.png" alt="Festival Lanterns" className="lanterns-image" />

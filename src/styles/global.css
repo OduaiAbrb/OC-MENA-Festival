@@ -100,46 +100,6 @@
   margin-top: 100px;
 }
 
-/* Top torn edge - wavy effect */
-.torn-paper-card::before {
-  content: '';
-  position: absolute;
-  top: -15px;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: #ffffff;
-  clip-path: polygon(
-    0% 100%,
-    0% 50%, 2% 60%, 4% 45%, 6% 55%, 8% 40%, 10% 50%, 12% 35%, 14% 55%, 16% 45%, 18% 60%,
-    20% 40%, 22% 55%, 24% 35%, 26% 50%, 28% 40%, 30% 55%, 32% 45%, 34% 60%, 36% 35%, 38% 50%,
-    40% 45%, 42% 60%, 44% 40%, 46% 55%, 48% 35%, 50% 50%, 52% 40%, 54% 55%, 56% 45%, 58% 60%,
-    60% 35%, 62% 50%, 64% 40%, 66% 55%, 68% 45%, 70% 60%, 72% 35%, 74% 50%, 76% 40%, 78% 55%,
-    80% 45%, 82% 60%, 84% 35%, 86% 50%, 88% 40%, 90% 55%, 92% 45%, 94% 60%, 96% 40%, 98% 55%,
-    100% 50%, 100% 100%
-  );
-}
-
-/* Bottom torn edge - wavy effect */
-.torn-paper-card::after {
-  content: '';
-  position: absolute;
-  bottom: -15px;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: #ffffff;
-  clip-path: polygon(
-    0% 0%,
-    0% 50%, 2% 40%, 4% 55%, 6% 45%, 8% 60%, 10% 50%, 12% 65%, 14% 45%, 16% 55%, 18% 40%,
-    20% 60%, 22% 45%, 24% 65%, 26% 50%, 28% 60%, 30% 45%, 32% 55%, 34% 40%, 36% 65%, 38% 50%,
-    40% 55%, 42% 40%, 44% 60%, 46% 45%, 48% 65%, 50% 50%, 52% 60%, 54% 45%, 56% 55%, 58% 40%,
-    60% 65%, 62% 50%, 64% 60%, 66% 45%, 68% 55%, 70% 40%, 72% 65%, 74% 50%, 76% 60%, 78% 45%,
-    80% 55%, 82% 40%, 84% 65%, 86% 50%, 88% 60%, 90% 45%, 92% 55%, 94% 40%, 96% 60%, 98% 45%,
-    100% 50%, 100% 0%
-  );
-}
-
 .torn-paper-card .card-title {
   font-size: 32px;
   font-weight: 700;
@@ -172,14 +132,14 @@
 /* ===== LANTERNS ===== */
 .lanterns-container {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 0;
   margin-bottom: 60px;
   position: relative;
   z-index: 5;
 }
 
 .lanterns-image {
-  height: 100px;
+  height: 231px;
   width: auto;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
@@ -454,7 +414,7 @@
 @media (max-width: 480px) {
   .torn-paper-card {
     padding: 30px 20px;
-    width: 95%;
+    width: 90%;
   }
   
   .torn-paper-card .card-title {

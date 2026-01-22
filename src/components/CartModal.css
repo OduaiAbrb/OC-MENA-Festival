@@ -245,13 +245,14 @@
 }
 
 .cart-actions .btn-primary {
-  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  background: #dc2626;
   color: white;
 }
 
 .cart-actions .btn-primary:hover {
+  background: #b91c1c;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
 }
 
 .cart-actions .btn-secondary {

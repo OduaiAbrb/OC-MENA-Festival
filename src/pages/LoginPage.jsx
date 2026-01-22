@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
+import TornPaperWrapper from '../components/TornPaperWrapper';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -34,7 +35,7 @@ const LoginPage = () => {
           <div className="hero-gradient-overlay"></div>
         </div>
 
-        <div className="torn-paper-card auth-card">
+        <TornPaperWrapper>
           <h1 className="card-title">Login</h1>
           <p className="card-subtitle">Welcome back! Please enter your details.</p>
 
@@ -81,7 +82,7 @@ const LoginPage = () => {
               Don't have an account? <Link to="/signup">Sign up</Link>
             </p>
           </form>
-        </div>
+        </TornPaperWrapper>
 
         <div className="lanterns-container">
           <img src="/lanterns.png" alt="Festival Lanterns" className="lanterns-image" />

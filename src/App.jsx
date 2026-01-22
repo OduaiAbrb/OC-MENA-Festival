@@ -10,6 +10,19 @@ import Sponsors from './pages/Sponsors';
 import Contact from './pages/Contact';
 import Tickets from './pages/Tickets';
 import Dashboard from './pages/Dashboard';
+import About from './pages/About';
+import WhatIsMena from './pages/WhatIsMena';
+import FAQ from './pages/FAQ';
+import FestivalInfo from './pages/FestivalInfo';
+import SponsorsInfo from './pages/SponsorsInfo';
+import AboutVendors from './pages/AboutVendors';
+import MapsDirections from './pages/MapsDirections';
+import EventMap from './pages/EventMap';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import CPRANotice from './pages/CPRANotice';
+import Accessibility from './pages/Accessibility';
+import TermsOfUse from './pages/TermsOfUse';
+import TicketTerms from './pages/TicketTerms';
 import GlobalTicketModal from './components/GlobalTicketModal';
 import './App.css';
 
@@ -76,6 +89,19 @@ const AppWithModal = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/tickets" element={<Tickets />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/what-is-mena" element={<WhatIsMena />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/festival-info" element={<FestivalInfo />} />
+            <Route path="/sponsors-info" element={<SponsorsInfo />} />
+            <Route path="/about-vendors" element={<AboutVendors />} />
+            <Route path="/maps-directions" element={<MapsDirections />} />
+            <Route path="/event-map" element={<EventMap />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/cpra-notice" element={<CPRANotice />} />
+            <Route path="/accessibility" element={<Accessibility />} />
+            <Route path="/terms-of-use" element={<TermsOfUse />} />
+            <Route path="/ticket-terms" element={<TicketTerms />} />
           </Routes>
         </main>
       </div>

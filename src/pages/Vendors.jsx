@@ -3,6 +3,7 @@ import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
 import ScrollToTop from '../components/ScrollToTop';
+import TornPaperWrapper from '../components/TornPaperWrapper';
 import './Vendors.css';
 
 const Vendors = () => {
@@ -16,7 +17,7 @@ const Vendors = () => {
           <div className="hero-gradient-overlay"></div>
         </div>
 
-        <div className="torn-paper-card">
+        <TornPaperWrapper>
           <h1 className="card-title">About Our Vendors</h1>
           
           <p className="card-description">
@@ -39,7 +40,7 @@ const Vendors = () => {
             <h3 className="section-heading">Vendor List</h3>
             <p className="section-text">We'll release the list of vendors as the event date nears</p>
           </div>
-        </div>
+        </TornPaperWrapper>
 
         <div className="lanterns-container">
           <img src="/lanterns.png" alt="Festival Lanterns" className="lanterns-image" />

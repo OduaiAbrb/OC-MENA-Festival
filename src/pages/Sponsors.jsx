@@ -4,6 +4,7 @@ import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
 import ScrollToTop from '../components/ScrollToTop';
+import TornPaperWrapper from '../components/TornPaperWrapper';
 import './Sponsors.css';
 
 const Sponsors = () => {
@@ -19,7 +20,7 @@ const Sponsors = () => {
         </div>
 
         {/* Torn Paper Card */}
-        <div className="torn-paper-card">
+        <TornPaperWrapper>
           <h1 className="card-title">Sponsors</h1>
           
           <p className="card-description">
@@ -49,7 +50,7 @@ const Sponsors = () => {
             <p className="cta-text">Ready to become a sponsor?</p>
             <Link to="/contact" className="btn-primary">Inquire Now</Link>
           </div>
-        </div>
+        </TornPaperWrapper>
 
         {/* Lanterns */}
         <div className="lanterns-container">

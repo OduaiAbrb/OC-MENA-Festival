@@ -68,54 +68,6 @@
   max-width: 550px;
 }
 
-.torn-paper-card::before {
-  content: '';
-  position: absolute;
-  top: -12px;
-  left: 0;
-  right: 0;
-  height: 15px;
-  background: #ffffff;
-  clip-path: polygon(
-    0% 100%,
-    0% 60%, 1% 40%, 2% 70%, 3% 35%, 4% 65%, 5% 30%, 6% 55%, 7% 25%, 8% 60%, 9% 35%,
-    10% 70%, 11% 40%, 12% 65%, 13% 30%, 14% 55%, 15% 25%, 16% 60%, 17% 35%, 18% 70%, 19% 40%,
-    20% 65%, 21% 30%, 22% 55%, 23% 25%, 24% 60%, 25% 35%, 26% 70%, 27% 40%, 28% 65%, 29% 30%,
-    30% 55%, 31% 25%, 32% 60%, 33% 35%, 34% 70%, 35% 40%, 36% 65%, 37% 30%, 38% 55%, 39% 25%,
-    40% 60%, 41% 35%, 42% 70%, 43% 40%, 44% 65%, 45% 30%, 46% 55%, 47% 25%, 48% 60%, 49% 35%,
-    50% 70%, 51% 40%, 52% 65%, 53% 30%, 54% 55%, 55% 25%, 56% 60%, 57% 35%, 58% 70%, 59% 40%,
-    60% 65%, 61% 30%, 62% 55%, 63% 25%, 64% 60%, 65% 35%, 66% 70%, 67% 40%, 68% 65%, 69% 30%,
-    70% 55%, 71% 25%, 72% 60%, 73% 35%, 74% 70%, 75% 40%, 76% 65%, 77% 30%, 78% 55%, 79% 25%,
-    80% 60%, 81% 35%, 82% 70%, 83% 40%, 84% 65%, 85% 30%, 86% 55%, 87% 25%, 88% 60%, 89% 35%,
-    90% 70%, 91% 40%, 92% 65%, 93% 30%, 94% 55%, 95% 25%, 96% 60%, 97% 35%, 98% 70%, 99% 40%,
-    100% 60%, 100% 100%
-  );
-}
-
-.torn-paper-card::after {
-  content: '';
-  position: absolute;
-  bottom: -12px;
-  left: 0;
-  right: 0;
-  height: 15px;
-  background: #ffffff;
-  clip-path: polygon(
-    0% 0%,
-    0% 40%, 1% 60%, 2% 30%, 3% 65%, 4% 35%, 5% 70%, 6% 45%, 7% 75%, 8% 40%, 9% 65%,
-    10% 30%, 11% 60%, 12% 35%, 13% 70%, 14% 45%, 15% 75%, 16% 40%, 17% 65%, 18% 30%, 19% 60%,
-    20% 35%, 21% 70%, 22% 45%, 23% 75%, 24% 40%, 25% 65%, 26% 30%, 27% 60%, 28% 35%, 29% 70%,
-    30% 45%, 31% 75%, 32% 40%, 33% 65%, 34% 30%, 35% 60%, 36% 35%, 37% 70%, 38% 45%, 39% 75%,
-    40% 40%, 41% 65%, 42% 30%, 43% 60%, 44% 35%, 45% 70%, 46% 45%, 47% 75%, 48% 40%, 49% 65%,
-    50% 30%, 51% 60%, 52% 35%, 53% 70%, 54% 45%, 55% 75%, 56% 40%, 57% 65%, 58% 30%, 59% 60%,
-    60% 35%, 61% 70%, 62% 45%, 63% 75%, 64% 40%, 65% 65%, 66% 30%, 67% 60%, 68% 35%, 69% 70%,
-    70% 45%, 71% 75%, 72% 40%, 73% 65%, 74% 30%, 75% 60%, 76% 35%, 77% 70%, 78% 45%, 79% 75%,
-    80% 40%, 81% 65%, 82% 30%, 83% 60%, 84% 35%, 85% 70%, 86% 45%, 87% 75%, 88% 40%, 89% 65%,
-    90% 30%, 91% 60%, 92% 35%, 93% 70%, 94% 45%, 95% 75%, 96% 40%, 97% 65%, 98% 30%, 99% 60%,
-    100% 40%, 100% 0%
-  );
-}
-
 .card-title {
   font-size: 32px;
   font-weight: 700;
@@ -161,7 +113,9 @@
 .form-group input,
 .form-group select,
 .form-group textarea {
-  width: 100%;
+  width: 50%;
+  margin: 0 auto;
+  display: block;
   padding: 12px 14px;
   border: 1px solid #cccccc;
   border-radius: 4px;
@@ -193,21 +147,22 @@
 }
 
 .submit-btn {
-  width: 100%;
+  background: #dc2626 !important;
+  width: 50%;
+  margin: 10px auto 0;
+  display: block;
   padding: 14px 30px;
-  background-color: #A91D3A;
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: 10px;
 }
 
 .submit-btn:hover {
-  background-color: #8a1730;
+  background: #b91c1c !important;
 }
 
 /* ===== LANTERNS ===== */
@@ -220,7 +175,7 @@
 }
 
 .lanterns-image {
-  height: 100px;
+  height: 231px;
   width: auto;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
@@ -241,6 +196,16 @@
     font-size: 26px;
   }
   
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 90%;
+  }
+  
+  .submit-btn {
+    width: 90%;
+  }
+  
   .lanterns-image {
     height: 80px;
   }
@@ -259,6 +224,16 @@
   
   .card-title {
     font-size: 22px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 90%;
+  }
+  
+  .submit-btn {
+    width: 90%;
   }
   
   .lanterns-image {

@@ -3,6 +3,7 @@ import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
 import ScrollToTop from '../components/ScrollToTop';
+import TornPaperWrapper from '../components/TornPaperWrapper';
 import './Tickets.css';
 
 const Tickets = () => {
@@ -63,7 +64,7 @@ const Tickets = () => {
           <div className="hero-gradient-overlay"></div>
         </div>
 
-        <div className="torn-paper-card">
+        <TornPaperWrapper>
           <h1 className="card-title">Tickets</h1>
           <p className="card-description">Choose your festival experience</p>
           
@@ -122,7 +123,7 @@ const Tickets = () => {
               </button>
             </div>
           )}
-        </div>
+        </TornPaperWrapper>
 
         <div className="lanterns-container">
           <img src="/lanterns.png" alt="Festival Lanterns" className="lanterns-image" />

@@ -1,0 +1,140 @@
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 200px;
+  overflow: hidden;
+}
+
+.hero-background-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.hero-background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 20%,
+    rgba(0, 0, 0, 0.2) 35%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.8) 70%,
+    rgba(0, 0, 0, 1) 85%
+  );
+}
+
+/* ===== TORN PAPER CARD - EventMap Specific ===== */
+.hero-section .torn-paper-card {
+  max-width: 1200px !important; /* Make the entire section much wider */
+  width: 95% !important; /* Take up more screen width */
+  padding: 60px 40px !important;
+}
+
+/* EventMap torn paper images - scale to match larger card */
+.hero-section .torn-paper-top,
+.hero-section .torn-paper-bottom {
+  width: 95% !important;
+  max-width: 1200px !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
+.card-title {
+  font-size: 42px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 30px;
+  font-family: 'Georgia', serif;
+  text-align: center;
+}
+
+.card-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.card-description {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.event-map-container {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.event-map-image {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.lanterns-container {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  margin-top: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.lanterns-image {
+  height: 231px;
+  width: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding-top: 180px;
+  }
+  
+  .card-title {
+    font-size: 32px;
+  }
+  
+  .card-description {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-title {
+    font-size: 28px;
+  }
+  
+  .card-description {
+    font-size: 14px;
+  }
+}

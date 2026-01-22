@@ -3,6 +3,7 @@ import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
 import ScrollToTop from '../components/ScrollToTop';
+import TornPaperWrapper from '../components/TornPaperWrapper';
 import './Contact.css';
 
 const Contact = () => {
@@ -48,7 +49,7 @@ const Contact = () => {
         </div>
 
         {/* Torn Paper Card */}
-        <div className="torn-paper-card contact-card">
+        <TornPaperWrapper>
           <h1 className="card-title">Contact</h1>
           <p className="card-subtitle">
             Please fill out the form below or email us at <a href="mailto:info@ocmenafestival.com">info@ocmenafestival.com</a>
@@ -133,7 +134,7 @@ const Contact = () => {
               Send Message
             </button>
           </form>
-        </div>
+        </TornPaperWrapper>
 
         {/* Lanterns */}
         <div className="lanterns-container">

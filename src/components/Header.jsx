@@ -13,7 +13,7 @@ const Header = ({ onGetTicketsClick }) => {
   // Close menu when window is resized above mobile breakpoint
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 1170 && isMenuOpen) {
+      if (window.innerWidth > 1300 && isMenuOpen) {
         setIsMenuOpen(false);
       }
     };
@@ -128,20 +128,29 @@ const Header = ({ onGetTicketsClick }) => {
                     Account
                   </Link>
                 </li>
+                <li className="nav-item mobile-menu-item mobile-get-tickets-item">
+                  <button 
+                    className="nav-link mobile-get-tickets-btn" 
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      onGetTicketsClick && onGetTicketsClick();
+                    }}
+                  >
+                    Get Tickets
+                  </button>
+                </li>
               </ul>
             </nav>
           </div>
         </div>
 
         <div className="header-actions">
-          <button className="icon-btn cart-btn desktop-only" onClick={handleCartClick} aria-label="Shopping Cart">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-            <span className="cart-badge">{getTotalCartItems()}</span>
-          </button>
+          <Link 
+            to="/tickets"
+            className="get-tickets-btn"
+          >
+            Get Tickets
+          </Link>
 
           <Link to="/login" className="icon-btn user-btn desktop-only" aria-label="User Account" onClick={(e) => handleNavClick('/login', e)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -150,12 +159,14 @@ const Header = ({ onGetTicketsClick }) => {
             </svg>
           </Link>
 
-          <Link 
-            to="/tickets"
-            className="get-tickets-btn"
-          >
-            Get Tickets
-          </Link>
+          <button className="icon-btn cart-btn desktop-only" onClick={handleCartClick} aria-label="Shopping Cart">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span className="cart-badge">{getTotalCartItems()}</span>
+          </button>
 
           <button 
             className="menu-toggle"

@@ -40,7 +40,7 @@ body {
 
 /* ===== BUTTONS ===== */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-orange), #ff8c5a);
+  background: #dc2626;
   color: white;
   padding: 14px 32px;
   border: none;
@@ -51,12 +51,13 @@ body {
   transition: all 0.3s ease;
   text-decoration: none;
   display: inline-block;
-  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
 }
 
 .btn-primary:hover {
+  background: #b91c1c;
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(255, 107, 53, 0.5);
+  box-shadow: 0 6px 25px rgba(220, 38, 38, 0.5);
 }
 
 .btn-secondary {
@@ -140,7 +141,73 @@ body {
   }
 }
 
+/* ===== TORN PAPER CARD ===== */
+.torn-paper-card {
+  position: relative;
+  background: #ffffff;
+  max-width: 700px;
+  width: 90%;
+  margin: 0 auto;
+  padding: 50px 60px 40px;
+  z-index: 10;
+  border: none; /* Ensure no border */
+  box-shadow: none; /* Ensure no shadow */
+}
+
+/* ===== TORN PAPER IMAGES ===== */
+.torn-paper-top,
+.torn-paper-bottom {
+  display: block;
+  width: 90%; /* MUST match torn-paper-card width */
+  max-width: 700px; /* MUST match torn-paper-card max-width */
+  height: auto;
+  margin: 0 auto;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  object-fit: contain; /* Prevent distortion */
+}
+
+.torn-paper-top {
+  margin-bottom: -5px; /* Slight overlap for seamless effect */
+  z-index: 11;
+  position: relative;
+}
+
+.torn-paper-bottom {
+  margin-top: -5px; /* Slight overlap for seamless effect */
+  z-index: 11;
+  position: relative;
+}
+
+/* ===== TORN PAPER WRAPPER ===== */
+.torn-paper-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden; /* Prevent rendering artifacts */
+}
+
 /* ===== RESPONSIVE ===== */
+@media (max-width: 1270px) and (min-width: 769px) {
+  /* Medium screens - tablets and small desktops */
+  .torn-paper-top,
+  .torn-paper-bottom {
+    width: 92%; /* Match the card width for medium screens */
+    max-width: 700px;
+  }
+  
+  .torn-paper-card {
+    width: 92%; /* Slightly wider than mobile, narrower than desktop */
+    max-width: 700px;
+    padding: 40px 40px;
+    margin: 0 auto;
+  }
+}
+
 @media (max-width: 768px) {
   .section-title {
     font-size: 32px;
@@ -153,4 +220,30 @@ body {
   .section {
     padding: 60px 0;
   }
+  
+  /* Torn paper adjustments for mobile */
+  .torn-paper-top,
+  .torn-paper-bottom {
+    width: 90%; /* Match the card width exactly */
+    max-width: none;
+    object-fit: contain;
+  }
+  
+  .torn-paper-card {
+    width: 90%;
+    max-width: none;
+    padding: 30px 20px;
+    margin: 0 auto;
+  }
+  
+  /* Prevent torn paper expansion on mobile */
+  .torn-paper-wrapper {
+    overflow-x: hidden;
+  }
+  
+  /* Add padding-top to account for fixed header on mobile */
+  .hero-section {
+    padding-top: 250px !important;
+  }
 }
+
