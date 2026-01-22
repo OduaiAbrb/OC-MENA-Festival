@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -8,7 +7,6 @@ import ScrollToTop from '../components/ScrollToTop';
 import './HomePage.css';
 
 const HomePage = ({ onGetTicketsClick }) => {
-  const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
