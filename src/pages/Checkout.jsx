@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import TornPaperWrapper from '../components/TornPaperWrapper';
+import api from '../services/api';
 import './Checkout.css';
 
 const Checkout = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [couponCode, setCouponCode] = useState('');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('cash');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [cardData, setCardData] = useState({
+    cardNumber: '',
+    expiry: '',
+    cvc: ''
+  });
   const [formData, setFormData] = useState({
     email: '',
     firstName: '',
@@ -21,12 +33,112 @@ const Checkout = () => {
     phone: ''
   });
 
+  useEffect(() => {
+    if (!api.isAuthenticated()) {
+      localStorage.setItem('pendingCart', JSON.stringify(location.state || {}));
+      navigate('/login?redirect=/checkout');
+      return;
+    }
+
+    if (location.state?.items) {
+      setCartItems(location.state.items);
+    } else {
+      const pendingCart = localStorage.getItem('pendingCart');
+      if (pendingCart) {
+        const cart = JSON.parse(pendingCart);
+        setCartItems(cart.items || []);
+        localStorage.removeItem('pendingCart');
+      } else {
+        navigate('/tickets');
+      }
+    }
+
+    const user = api.getUser();
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        email: user.email || '',
+        firstName: user.full_name?.split(' ')[0] || '',
+        lastName: user.full_name?.split(' ').slice(1).join(' ') || '',
+        phone: user.phone || ''
+      }));
+    }
+  }, [location, navigate]);
+
+  const calculateTotal = () => {
+    return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleCardInputChange = (e) => {
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (name === 'cardNumber') {
+      formattedValue = value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim().slice(0, 19);
+    }
+    if (name === 'expiry') {
+      formattedValue = value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').slice(0, 5);
+    }
+    if (name === 'cvc') {
+      formattedValue = value.replace(/\D/g, '').slice(0, 4);
+    }
+
+    setCardData(prev => ({ ...prev, [name]: formattedValue }));
+  };
+
+  const handlePlaceOrder = async () => {
+    if (loading) return;
+
+    if (!formData.email || !formData.firstName || !formData.lastName) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    if (selectedPaymentMethod === 'card' && (!cardData.cardNumber || !cardData.expiry || !cardData.cvc)) {
+      setError('Please enter card details');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const items = cartItems.map(item => ({
+        ticket_type_id: item.id,
+        quantity: item.quantity
+      }));
+
+      const idempotencyKey = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const intentResponse = await api.createPaymentIntent(items, idempotencyKey);
+
+      if (!intentResponse?.success) {
+        throw new Error(intentResponse?.error?.message || 'Failed to create payment intent');
+      }
+
+      const orderId = intentResponse.data.order_id;
+
+      const confirmResponse = await api.confirmPayment(orderId);
+
+      if (!confirmResponse?.success) {
+        throw new Error(confirmResponse?.error?.message || 'Payment failed');
+      }
+
+      localStorage.removeItem('pendingCart');
+      navigate('/dashboard', { state: { orderSuccess: true } });
+    } catch (err) {
+      console.error('Order error:', err);
+      setError(err.message || 'Failed to process order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -214,13 +326,15 @@ const Checkout = () => {
                     <span>Product</span>
                     <span>Subtotal</span>
                   </div>
-                  <div className="order-row">
-                    <span>10×10 Food Truck - Fri-Sun (3 days) <strong>× 1</strong></span>
-                    <span>$3,000.00</span>
-                  </div>
+                  {cartItems.map((item, index) => (
+                    <div key={index} className="order-row">
+                      <span>{item.name} <strong>× {item.quantity}</strong></span>
+                      <span>${(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))}
                   <div className="order-row">
                     <span>Subtotal</span>
-                    <span>$3,000.00</span>
+                    <span>${calculateTotal().toFixed(2)}</span>
                   </div>
                   <div className="order-row">
                     <span>Shipping</span>
@@ -228,7 +342,7 @@ const Checkout = () => {
                   </div>
                   <div className="order-row order-total">
                     <span>Total</span>
-                    <span>$3,000.00</span>
+                    <span>${calculateTotal().toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -285,7 +399,10 @@ const Checkout = () => {
                               <label>Card number</label>
                               <input
                                 type="text"
-                                placeholder="1234 1234 1234 1234"
+                                name="cardNumber"
+                                value={cardData.cardNumber}
+                                onChange={handleCardInputChange}
+                                placeholder="4242 4242 4242 4242"
                                 className="card-input"
                               />
                             </div>
@@ -293,6 +410,9 @@ const Checkout = () => {
                               <label>Expiration date</label>
                               <input
                                 type="text"
+                                name="expiry"
+                                value={cardData.expiry}
+                                onChange={handleCardInputChange}
                                 placeholder="MM / YY"
                                 className="card-input"
                               />
@@ -301,7 +421,10 @@ const Checkout = () => {
                               <label>Security code</label>
                               <input
                                 type="text"
-                                placeholder="CVC"
+                                name="cvc"
+                                value={cardData.cvc}
+                                onChange={handleCardInputChange}
+                                placeholder="123"
                                 className="card-input"
                               />
                             </div>
@@ -316,7 +439,19 @@ const Checkout = () => {
                   <p>Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.</p>
                 </div>
 
-                <button className="place-order-btn">Place order</button>
+                {error && (
+                  <div style={{ color: 'red', marginBottom: '1rem', padding: '0.5rem', background: '#fee', borderRadius: '4px' }}>
+                    {error}
+                  </div>
+                )}
+
+                <button 
+                  className="place-order-btn"
+                  onClick={handlePlaceOrder}
+                  disabled={loading}
+                >
+                  {loading ? 'Processing...' : 'Place order'}
+                </button>
               </div>
             </div>
           </div>
