@@ -239,10 +239,13 @@ class ApiService {
     });
   }
 
-  async confirmPayment(orderId) {
+  async confirmPayment(orderId, paymentIntentId) {
     return this.request('/payments/checkout/confirm/', {
       method: 'POST',
-      body: JSON.stringify({ order_id: orderId }),
+      body: JSON.stringify({ 
+        order_id: orderId,
+        payment_intent_id: paymentIntentId
+      }),
     });
   }
 

@@ -124,8 +124,9 @@ const Checkout = () => {
       }
 
       const orderId = intentResponse.data.order_id;
+      const paymentIntentId = intentResponse.data.payment_intent_id;
 
-      const confirmResponse = await api.confirmPayment(orderId);
+      const confirmResponse = await api.confirmPayment(orderId, paymentIntentId);
 
       if (!confirmResponse?.success) {
         throw new Error(confirmResponse?.error?.message || 'Payment failed');
