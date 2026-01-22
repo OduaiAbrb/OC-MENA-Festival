@@ -10,6 +10,7 @@ import Vendors from './pages/Vendors';
 import Sponsors from './pages/Sponsors';
 import Contact from './pages/Contact';
 import Tickets from './pages/Tickets';
+import Checkout from './pages/Checkout';
 import Dashboard from './pages/Dashboard';
 import GlobalTicketModal from './components/GlobalTicketModal';
 import './App.css';
@@ -76,6 +77,7 @@ const AppWithModal = () => {
             <Route path="/sponsors" element={<Sponsors />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/tickets" element={<Tickets />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </main>

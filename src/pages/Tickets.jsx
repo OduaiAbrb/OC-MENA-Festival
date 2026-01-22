@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -6,35 +8,91 @@ import ScrollToTop from '../components/ScrollToTop';
 import './Tickets.css';
 
 const Tickets = () => {
-  const [ticketQuantities, setTicketQuantities] = useState({
-    '3day': 0,
-    '2day': 0,
-    '1day': 0
-  });
+  const navigate = useNavigate();
+  const [ticketTypes, setTicketTypes] = useState([]);
+  const [ticketQuantities, setTicketQuantities] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [salesMessage, setSalesMessage] = useState('');
 
-  const ticketOptions = [
+  // Fallback ticket options if API fails or sales not open
+  const fallbackTicketOptions = [
     {
       id: '3day',
       name: '3-Day Pass',
+      slug: '3day',
       savings: 'Save $10 on entry',
-      price: 35,
-      originalPrice: 45
+      price_cents: 3500,
+      badge_text: 'BEST VALUE'
     },
     {
       id: '2day',
       name: '2-Day Pass',
+      slug: '2day',
       savings: 'Save $5 on entry',
-      price: 25,
-      originalPrice: 30
+      price_cents: 2500,
+      badge_text: 'POPULAR'
     },
     {
       id: '1day',
       name: '1-Day Pass',
-      savings: 'No saving',
-      price: 15,
-      originalPrice: 15
+      slug: '1day',
+      savings: '',
+      price_cents: 1500,
+      badge_text: ''
     }
   ];
+
+  useEffect(() => {
+    fetchTicketTypes();
+  }, []);
+
+  const fetchTicketTypes = async () => {
+    try {
+      setLoading(true);
+      const response = await api.getTicketTypes();
+      
+      if (response?.success && response.data?.length > 0) {
+        setTicketTypes(response.data);
+        // Initialize quantities for each ticket type
+        const initialQuantities = {};
+        response.data.forEach(ticket => {
+          initialQuantities[ticket.id] = 0;
+        });
+        setTicketQuantities(initialQuantities);
+      } else {
+        // Use fallback if no tickets or sales not open
+        setSalesMessage(response?.message || '');
+        setTicketTypes(fallbackTicketOptions);
+        const initialQuantities = {};
+        fallbackTicketOptions.forEach(ticket => {
+          initialQuantities[ticket.id] = 0;
+        });
+        setTicketQuantities(initialQuantities);
+      }
+    } catch (err) {
+      console.error('Failed to fetch ticket types:', err);
+      setError('Unable to load tickets. Please try again later.');
+      // Use fallback on error
+      setTicketTypes(fallbackTicketOptions);
+      const initialQuantities = {};
+      fallbackTicketOptions.forEach(ticket => {
+        initialQuantities[ticket.id] = 0;
+      });
+      setTicketQuantities(initialQuantities);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const ticketOptions = ticketTypes.map(ticket => ({
+    id: ticket.id,
+    name: ticket.name,
+    savings: ticket.badge_text || (ticket.price_cents < 3500 ? '' : 'Save $10 on entry'),
+    price: ticket.price_cents / 100,
+    originalPrice: ticket.price_cents / 100,
+    slug: ticket.slug
+  }));
 
   const handleQuantityChange = (ticketId, change) => {
     setTicketQuantities(prev => ({
@@ -107,6 +165,12 @@ const Tickets = () => {
             ))}
           </div>
 
+          {salesMessage && (
+            <div className="sales-message" style={{textAlign: 'center', padding: '1rem', backgroundColor: 'rgba(255,193,7,0.1)', borderRadius: '8px', marginBottom: '1rem'}}>
+              <p style={{color: '#856404', margin: 0}}>{salesMessage}</p>
+            </div>
+          )}
+
           {getTotalTickets() > 0 && (
             <div className="ticket-summary">
               <div className="summary-row">
@@ -115,9 +179,38 @@ const Tickets = () => {
               </div>
               <div className="summary-row total">
                 <span>Total Price:</span>
-                <span>${getTotalPrice()}</span>
+                <span>${getTotalPrice().toFixed(2)}</span>
               </div>
-              <button className="checkout-btn">
+              <button 
+                className="checkout-btn"
+                onClick={() => {
+                  if (!api.isAuthenticated()) {
+                    // Save cart to localStorage and redirect to login
+                    localStorage.setItem('pendingCart', JSON.stringify({
+                      items: ticketOptions
+                        .filter(t => ticketQuantities[t.id] > 0)
+                        .map(t => ({ ticket_type_id: t.id, quantity: ticketQuantities[t.id] })),
+                      total: getTotalPrice()
+                    }));
+                    navigate('/login?redirect=/checkout');
+                  } else {
+                    // Navigate to checkout with cart data
+                    navigate('/checkout', { 
+                      state: { 
+                        items: ticketOptions
+                          .filter(t => ticketQuantities[t.id] > 0)
+                          .map(t => ({ 
+                            ticket_type_id: t.id, 
+                            name: t.name,
+                            quantity: ticketQuantities[t.id],
+                            price: t.price
+                          })),
+                        total: getTotalPrice()
+                      }
+                    });
+                  }
+                }}
+              >
                 Proceed to Checkout
               </button>
             </div>

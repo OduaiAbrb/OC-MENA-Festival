@@ -175,8 +175,22 @@ SIMPLE_JWT = {
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
 
-# CORS Settings - Allow all origins (fix for production)
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS Settings - Production secure configuration
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+
+CORS_ALLOWED_ORIGINS = [
+    FRONTEND_URL,
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'https://oc-mena-festival.pages.dev',
+    'https://ocmenafestival.com',
+    'https://www.ocmenafestival.com',
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.oc-mena-festival\.pages\.dev$",
+]
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept',
