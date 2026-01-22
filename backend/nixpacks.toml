@@ -1,12 +1,4 @@
-# Use Python provider
-providers = ["python"]
-
-[phases.setup]
-nixPkgs = ["python312", "postgresql", "gcc"]
-
-[phases.install]
-cmds = ["python -m pip install --upgrade pip", "python -m pip install -r requirements.txt"]
-
+# Let NIXPACKS auto-detect Python from requirements.txt
 [phases.build]
 cmds = ["python manage.py collectstatic --noinput || true"]
 
