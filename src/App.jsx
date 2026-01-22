@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -9,6 +10,7 @@ import Vendors from './pages/Vendors';
 import Sponsors from './pages/Sponsors';
 import Contact from './pages/Contact';
 import Tickets from './pages/Tickets';
+import Checkout from './pages/Checkout';
 import Dashboard from './pages/Dashboard';
 import About from './pages/About';
 import WhatIsMena from './pages/WhatIsMena';
@@ -88,6 +90,7 @@ const AppWithModal = () => {
             <Route path="/sponsors" element={<Sponsors />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/tickets" element={<Tickets />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/about" element={<About />} />
             <Route path="/what-is-mena" element={<WhatIsMena />} />
@@ -123,7 +126,11 @@ const AppWithModal = () => {
 };
 
 function App() {
-  return <AppWithModal />;
+  return (
+    <AuthProvider>
+      <AppWithModal />
+    </AuthProvider>
+  );
 }
 
 export default App;

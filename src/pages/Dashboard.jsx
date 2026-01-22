@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
@@ -6,10 +9,43 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
   const [activeSection, setActiveSection] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [tickets, setTickets] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const userName = 'First Last';
+  const userName = user?.full_name || 'Guest';
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    loadDashboardData();
+  }, [isAuthenticated, navigate]);
+
+  const loadDashboardData = async () => {
+    try {
+      const [ticketsRes, ordersRes] = await Promise.all([
+        api.getMyTickets(),
+        api.getMyOrders()
+      ]);
+      if (ticketsRes?.success) setTickets(ticketsRes.data);
+      if (ordersRes?.success) setOrders(ordersRes.data);
+    } catch (err) {
+      console.error('Failed to load dashboard data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard' },
@@ -23,27 +59,42 @@ const Dashboard = () => {
   ];
 
   const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="content-section">
+          <p>Loading...</p>
+        </div>
+      );
+    }
+
     switch (activeSection) {
       case 'dashboard':
         return (
           <div className="content-section">
             <h2 className="section-title">Hello {userName}</h2>
-            <p className="section-subtitle">(not {userName}? Log out)</p>
+            <p className="section-subtitle">(<span onClick={handleLogout} style={{cursor: 'pointer', textDecoration: 'underline'}}>not {userName}? Log out</span>)</p>
             <div className="dashboard-buttons">
-              <button className="action-button">View booth details</button>
-              <button className="action-button">View tickets</button>
+              <button className="action-button" onClick={() => setActiveSection('tickets')}>View tickets ({tickets.length})</button>
+              <button className="action-button" onClick={() => setActiveSection('orders')}>View orders ({orders.length})</button>
             </div>
           </div>
         );
       case 'tickets':
         return (
           <div className="content-section">
-            <h2 className="section-title">Tickets</h2>
+            <h2 className="section-title">My Tickets</h2>
             <div className="static-content">
-              <p>Ticket ID: TKT-2024-001</p>
-              <p>Event: OC MENA Festival</p>
-              <p>Type: 3-Day Pass</p>
-              <p>Status: Active</p>
+              {tickets.length === 0 ? (
+                <p>No tickets yet. Purchase tickets to get started!</p>
+              ) : (
+                tickets.map(ticket => (
+                  <div key={ticket.id} style={{borderBottom: '1px solid #eee', padding: '1rem 0'}}>
+                    <p><strong>Code:</strong> {ticket.ticket_code}</p>
+                    <p><strong>Type:</strong> {ticket.ticket_type_name}</p>
+                    <p><strong>Status:</strong> {ticket.status}</p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         );
@@ -52,10 +103,11 @@ const Dashboard = () => {
           <div className="content-section">
             <h2 className="section-title">Vendor Booth</h2>
             <div className="static-content">
-              <p>Booth ID: BOOTH-001</p>
-              <p>Location: Section A</p>
-              <p>Size: 10x10 ft</p>
-              <p>Status: Confirmed</p>
+              {user?.role === 'VENDOR' ? (
+                <p>View your vendor dashboard for booth details.</p>
+              ) : (
+                <p>This section is for vendors only.</p>
+              )}
             </div>
           </div>
         );
@@ -64,11 +116,18 @@ const Dashboard = () => {
           <div className="content-section">
             <h2 className="section-title">Orders</h2>
             <div className="static-content">
-              <p>Order ID: ORD-2024-001</p>
-              <p>Date: January 15, 2024</p>
-              <p>Total: $150.00</p>
-              
-              <p>Status: Completed</p>
+              {orders.length === 0 ? (
+                <p>No orders yet.</p>
+              ) : (
+                orders.map(order => (
+                  <div key={order.id} style={{borderBottom: '1px solid #eee', padding: '1rem 0'}}>
+                    <p><strong>Order:</strong> {order.order_number}</p>
+                    <p><strong>Status:</strong> {order.status}</p>
+                    <p><strong>Total:</strong> ${order.total}</p>
+                    <p><strong>Date:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         );
@@ -77,9 +136,9 @@ const Dashboard = () => {
           <div className="content-section">
             <h2 className="section-title">Downloads</h2>
             <div className="static-content">
-              <p>Festival Guide - PDF</p>
-              <p>Vendor Handbook - PDF</p>
-              <p>Map & Schedule - PDF</p>
+              <p>Festival Guide - Coming Soon</p>
+              <p>Vendor Handbook - Coming Soon</p>
+              <p>Map & Schedule - Coming Soon</p>
             </div>
           </div>
         );
@@ -88,8 +147,7 @@ const Dashboard = () => {
           <div className="content-section">
             <h2 className="section-title">Addresses</h2>
             <div className="static-content">
-              <p>Primary Address: 123 Main St, Orange County, CA 92801</p>
-              <p>Billing Address: Same as primary</p>
+              <p>Address management coming soon.</p>
             </div>
           </div>
         );
@@ -98,20 +156,18 @@ const Dashboard = () => {
           <div className="content-section">
             <h2 className="section-title">Account details</h2>
             <div className="static-content">
-              <p>Name: {userName}</p>
-              <p>Email: user@example.com</p>
-              <p>Phone: (555) 123-4567</p>
-              <p>Member Since: January 2024</p>
+              <p><strong>Name:</strong> {user?.full_name}</p>
+              <p><strong>Email:</strong> {user?.email}</p>
+              <p><strong>Phone:</strong> {user?.phone || 'Not set'}</p>
+              <p><strong>Role:</strong> {user?.role}</p>
             </div>
           </div>
         );
       case 'logout':
+        handleLogout();
         return (
           <div className="content-section">
-            <h2 className="section-title">Log out</h2>
-            <div className="static-content">
-              <p>You have been logged out successfully.</p>
-            </div>
+            <h2 className="section-title">Logging out...</h2>
           </div>
         );
       default:

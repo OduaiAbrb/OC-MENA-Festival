@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../services/api';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -15,26 +16,51 @@ const Contact = () => {
     subject: 'Sponsor Inquiry',
     message: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message! We will get back to you soon.');
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      subject: 'Sponsor Inquiry',
-      message: ''
-    });
+    setLoading(true);
+    setError('');
+
+    try {
+      const result = await api.submitContact({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message
+      });
+
+      if (result?.success) {
+        setSuccess(true);
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          subject: 'Sponsor Inquiry',
+          message: ''
+        });
+      } else {
+        setError(result?.error?.message || 'Failed to send message');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -130,8 +156,11 @@ const Contact = () => {
               ></textarea>
             </div>
 
-            <button type="submit" className="btn-primary submit-btn">
-              Send Message
+            {error && <div className="error-message" style={{color: '#e74c3c', marginBottom: '1rem', textAlign: 'center'}}>{error}</div>}
+            {success && <div className="success-message" style={{color: '#27ae60', marginBottom: '1rem', textAlign: 'center'}}>Thank you! We'll get back to you soon.</div>}
+
+            <button type="submit" className="btn-primary submit-btn" disabled={loading}>
+              {loading ? 'Sending...' : 'Send Message'}
             </button>
           </form>
         </TornPaperWrapper>

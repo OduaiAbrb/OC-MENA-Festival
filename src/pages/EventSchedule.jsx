@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../services/api';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -8,12 +9,36 @@ import './EventSchedule.css';
 
 const EventSchedule = () => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Newsletter signup:', email);
-    setEmail('');
-    alert('Thank you for subscribing! We\'ll notify you when the lineup is announced.');
+    setLoading(true);
+    setError('');
+    
+    try {
+      // Submit as a contact form with newsletter subject
+      const result = await api.submitContact({
+        first_name: 'Newsletter',
+        last_name: 'Subscriber',
+        email: email,
+        subject: 'GENERAL_QUESTION',
+        message: 'Newsletter signup - wants to be notified when lineup is announced.'
+      });
+
+      if (result?.success) {
+        setSuccess(true);
+        setEmail('');
+      } else {
+        setError(result?.error?.message || 'Failed to subscribe');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to subscribe. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,19 +61,27 @@ const EventSchedule = () => {
 
           <div className="newsletter-section">
             <h3 className="newsletter-heading">Subscribe to our newsletter to stay informed!</h3>
-            <form onSubmit={handleSubmit} className="newsletter-form">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@email.com"
-                required
-                className="newsletter-input"
-              />
-              <button type="submit" className="btn-primary newsletter-btn">
-                Sign Up
-              </button>
-            </form>
+            {success ? (
+              <div className="success-message" style={{color: '#27ae60', textAlign: 'center', padding: '1rem'}}>
+                Thank you for subscribing! We'll notify you when the lineup is announced.
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="newsletter-form">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="email@email.com"
+                  required
+                  className="newsletter-input"
+                  disabled={loading}
+                />
+                <button type="submit" className="btn-primary newsletter-btn" disabled={loading}>
+                  {loading ? 'Signing up...' : 'Sign Up'}
+                </button>
+              </form>
+            )}
+            {error && <div className="error-message" style={{color: '#e74c3c', textAlign: 'center', marginTop: '0.5rem'}}>{error}</div>}
           </div>
         </TornPaperWrapper>
 

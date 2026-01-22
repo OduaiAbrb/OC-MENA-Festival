@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import CartModal from './CartModal';
 import './Header.css';
 
@@ -9,6 +10,7 @@ const Header = ({ onGetTicketsClick }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems] = useState([]);
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   // Close menu when window is resized above mobile breakpoint
   useEffect(() => {
@@ -120,12 +122,12 @@ const Header = ({ onGetTicketsClick }) => {
                   </button>
                 </li>
                 <li className="nav-item mobile-menu-item">
-                  <Link to="/login" className="nav-link mobile-user-btn" onClick={(e) => handleNavClick('/login', e)}>
+                  <Link to={isAuthenticated ? "/dashboard" : "/login"} className="nav-link mobile-user-btn" onClick={(e) => handleNavClick(isAuthenticated ? '/dashboard' : '/login', e)}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    Account
+                    {isAuthenticated ? 'Dashboard' : 'Account'}
                   </Link>
                 </li>
                 <li className="nav-item mobile-menu-item mobile-get-tickets-item">
@@ -152,7 +154,7 @@ const Header = ({ onGetTicketsClick }) => {
             Get Tickets
           </Link>
 
-          <Link to="/login" className="icon-btn user-btn desktop-only" aria-label="User Account" onClick={(e) => handleNavClick('/login', e)}>
+          <Link to={isAuthenticated ? "/dashboard" : "/login"} className="icon-btn user-btn desktop-only" aria-label="User Account" onClick={(e) => handleNavClick(isAuthenticated ? '/dashboard' : '/login', e)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>

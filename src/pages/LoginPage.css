@@ -114,8 +114,9 @@
 
 .form-options {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 20px;
   margin-bottom: 20px;
 }
 
@@ -215,6 +216,6 @@
   .form-options {
     flex-direction: column;
     gap: 10px;
-    align-items: flex-start;
+    align-items: center;
   }
 }

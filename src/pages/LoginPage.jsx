@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
@@ -7,22 +8,47 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './LoginPage.css';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // Redirect if already logged in
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login submitted:', formData);
-    alert('Login functionality coming soon!');
+    setLoading(true);
+    setError('');
+
+    try {
+      const result = await login(formData.email, formData.password);
+      if (result?.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result?.error?.message || 'Login failed');
+      }
+    } catch (err) {
+      setError(err.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -74,8 +100,10 @@ const LoginPage = () => {
               <Link to="/forgot-password" className="forgot-link">Forgot password?</Link>
             </div>
 
-            <button type="submit" className="btn-primary submit-btn">
-              Sign In
+            {error && <div className="error-message" style={{color: '#e74c3c', marginBottom: '1rem', textAlign: 'center'}}>{error}</div>}
+
+            <button type="submit" className="btn-primary submit-btn" disabled={loading}>
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
 
             <p className="auth-switch">
