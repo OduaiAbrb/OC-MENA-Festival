@@ -168,12 +168,14 @@ const Checkout = () => {
           // Convert vendor booth to ticket type ID based on booth type and days
           const boothDetails = item.boothDetails || {};
           const days = boothDetails.days || '3days';
-          const isFood = item.ticket_type_id?.includes('food');
+          const boothType = item.ticket_type_id || '';
           
           // Map to vendor booth ticket type slug
           let slug;
-          if (isFood) {
-            slug = days === '3days' ? 'food-3day' : 'food-2day';
+          if (boothType.includes('food-truck')) {
+            slug = days === '3days' ? 'food-truck-3day' : 'food-truck-2day';
+          } else if (boothType.includes('food-booth') || boothType.includes('food')) {
+            slug = days === '3days' ? 'food-booth-3day' : 'food-booth-2day';
           } else {
             slug = days === '3days' ? 'bazaar-3day' : 'bazaar-2day';
           }

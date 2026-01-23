@@ -12,32 +12,48 @@ def create_vendor_booth_ticket_types(apps, schema_editor):
         {
             'name': 'Bazaar Vendor Booth - 3 Days',
             'slug': 'bazaar-3day',
-            'description': 'Bazaar vendor booth access for all three days (Friday-Sunday)',
-            'price_cents': 30000,  # $300
+            'description': '10x10 Bazaar booth access for all three days (Friday-Sunday)',
+            'price_cents': 100000,  # $1000
             'quantity_available': 50,
             'is_active': True,
         },
         {
             'name': 'Bazaar Vendor Booth - 2 Days',
             'slug': 'bazaar-2day',
-            'description': 'Bazaar vendor booth access for two days (Saturday-Sunday)',
-            'price_cents': 21000,  # $210 (30% discount)
+            'description': '10x10 Bazaar booth access for two days (Saturday-Sunday)',
+            'price_cents': 70000,  # $700 (30% discount)
             'quantity_available': 30,
             'is_active': True,
         },
         {
-            'name': 'Food Vendor Booth - 3 Days',
-            'slug': 'food-3day',
-            'description': 'Food vendor booth access for all three days (Friday-Sunday)',
-            'price_cents': 50000,  # $500
+            'name': 'Food Truck - 3 Days',
+            'slug': 'food-truck-3day',
+            'description': '10x10 Food truck space for all three days (Friday-Sunday)',
+            'price_cents': 300000,  # $3000
+            'quantity_available': 20,
+            'is_active': True,
+        },
+        {
+            'name': 'Food Truck - 2 Days',
+            'slug': 'food-truck-2day',
+            'description': '10x10 Food truck space for two days (Saturday-Sunday)',
+            'price_cents': 210000,  # $2100 (30% discount)
+            'quantity_available': 15,
+            'is_active': True,
+        },
+        {
+            'name': 'Food Booth - 3 Days',
+            'slug': 'food-booth-3day',
+            'description': '10x10 Food booth access for all three days (Friday-Sunday)',
+            'price_cents': 175000,  # $1750
             'quantity_available': 30,
             'is_active': True,
         },
         {
-            'name': 'Food Vendor Booth - 2 Days',
-            'slug': 'food-2day',
-            'description': 'Food vendor booth access for two days (Saturday-Sunday)',
-            'price_cents': 35000,  # $350 (30% discount)
+            'name': 'Food Booth - 2 Days',
+            'slug': 'food-booth-2day',
+            'description': '10x10 Food booth access for two days (Saturday-Sunday)',
+            'price_cents': 122500,  # $1225 (30% discount)
             'quantity_available': 20,
             'is_active': True,
         },
@@ -52,7 +68,7 @@ def create_vendor_booth_ticket_types(apps, schema_editor):
 def reverse_migration(apps, schema_editor):
     """Remove vendor booth ticket types."""
     TicketType = apps.get_model('tickets', 'TicketType')
-    slugs = ['bazaar-3day', 'bazaar-2day', 'food-3day', 'food-2day']
+    slugs = ['bazaar-3day', 'bazaar-2day', 'food-truck-3day', 'food-truck-2day', 'food-booth-3day', 'food-booth-2day']
     TicketType.objects.filter(slug__in=slugs).delete()
 
 
