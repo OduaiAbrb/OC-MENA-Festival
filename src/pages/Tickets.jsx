@@ -58,8 +58,18 @@ const Tickets = () => {
       try {
         const response = await api.getTicketTypes();
         if (response?.success && response.data?.length > 0) {
+          // Filter out vendor booth tickets - only show customer tickets
+          const customerTickets = response.data.filter(ticket => {
+            const name = ticket.name.toLowerCase();
+            return !name.includes('vendor') && 
+                   !name.includes('booth') && 
+                   !name.includes('bazaar') && 
+                   !name.includes('food truck') &&
+                   !name.includes('food booth');
+          });
+          
           // Map backend tickets to our format
-          const mappedTickets = response.data.map(ticket => ({
+          const mappedTickets = customerTickets.map(ticket => ({
             id: ticket.id, // This is the UUID
             name: ticket.name,
             slug: ticket.slug,
