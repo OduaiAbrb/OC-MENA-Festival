@@ -17,6 +17,12 @@ const Scanner = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check if user is authenticated and has staff permissions
+    if (!api.isAuthenticated()) {
+      navigate('/login?redirect=/scanner');
+      return;
+    }
+
     startCamera();
     return () => {
       stopCamera();
@@ -24,7 +30,7 @@ const Scanner = () => {
         clearInterval(scanningIntervalRef.current);
       }
     };
-  }, []);
+  }, [navigate]);
 
   const startCamera = async () => {
     try {
@@ -88,26 +94,36 @@ const Scanner = () => {
     lastScanRef.current = now;
     
     try {
-      const result = await api.quickScan(qrData);
+      // Use authenticated validate endpoint instead of quick-scan
+      const result = await api.validateScan(qrData);
       
-      if (result?.success) {
-        // Navigate to success page with ticket data
+      if (result?.success && result?.data?.can_enter) {
+        // Valid ticket - navigate to success page
         navigate('/success', { 
           state: { 
             ticketData: result.data,
             checkInTime: new Date().toLocaleString(),
             passType: result.data?.ticket_type || 'N/A',
-            daysLeft: result.data?.days_remaining || 'N/A'
+            holderName: result.data?.owner_name || 'N/A',
+            status: result.data?.status || 'VALID'
           } 
         });
       } else {
-        setError(result?.error?.message || 'Invalid ticket');
-        setTimeout(() => setError(''), 3000);
+        // Show specific error message from backend
+        const errorMsg = result?.data?.message || result?.error?.message || 'Invalid ticket';
+        setError(errorMsg);
+        setTimeout(() => setError(''), 4000);
       }
     } catch (err) {
       console.error('Scan error:', err);
-      setError('Failed to validate ticket');
-      setTimeout(() => setError(''), 3000);
+      if (err.response?.status === 401) {
+        setError('Authentication required. Please log in as staff.');
+      } else if (err.response?.status === 403) {
+        setError('Access denied. Staff permission required.');
+      } else {
+        setError('Failed to validate ticket. Check connection.');
+      }
+      setTimeout(() => setError(''), 4000);
     } finally {
       setScanning(false);
     }
@@ -149,12 +165,6 @@ const Scanner = () => {
       }
     };
   }, [videoReady, captureFrame]);
-
-  const handleCheckTicket = async () => {
-    // For testing: simulate a valid ticket scan
-    const testQRData = 'TEST_TICKET_' + Date.now();
-    await handleScanQR(testQRData);
-  };
 
   return (
     <div className="scanner-page">
@@ -204,14 +214,6 @@ const Scanner = () => {
             title="Toggle Flashlight"
           >
             {flashlightOn ? '🔦 Flashlight On' : '🔦 Toggle Flashlight'}
-          </button>
-
-          <button
-            className="btn-check-ticket"
-            onClick={handleCheckTicket}
-            disabled={scanning}
-          >
-            {scanning ? 'Checking...' : 'Test Scan'}
           </button>
         </div>
 
