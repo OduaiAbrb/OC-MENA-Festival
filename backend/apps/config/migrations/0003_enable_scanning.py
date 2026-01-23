@@ -49,7 +49,7 @@ def reverse_migration(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('config', '0001_initial'),
+        ('config', '0002_alter_eventconfig_options_and_more'),
     ]
 
     operations = [
