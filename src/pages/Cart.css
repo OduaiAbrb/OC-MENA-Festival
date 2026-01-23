@@ -356,6 +356,110 @@
   font-size: 13px;
 }
 
+/* ===== COUPON MESSAGE ===== */
+.coupon-message {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+  padding: 12px 20px;
+  border-radius: 4px;
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* ===== ADDRESS MODAL ===== */
+.address-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.address-modal {
+  background: white;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.address-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.address-modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  color: #333;
+}
+
+.address-modal-content {
+  padding: 20px;
+}
+
+.address-modal-content p {
+  margin: 0 0 15px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.address-modal-content p:last-child {
+  margin-bottom: 0;
+}
+
+.address-modal-footer {
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-ok-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-ok-btn:hover {
+  background: #b91c1c;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .cart-table-wrapper {

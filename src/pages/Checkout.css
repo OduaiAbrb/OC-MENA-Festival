@@ -214,14 +214,19 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .checkout-left {
   padding-right: 30px;
+  width: 100%;
 }
 
 .checkout-right {
   padding-left: 30px;
+  width: 100%;
 }
 
 /* ===== SECTION TITLE ===== */

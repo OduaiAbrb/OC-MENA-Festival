@@ -9,6 +9,8 @@ const Cart = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [couponCode, setCouponCode] = useState('');
+  const [couponMessage, setCouponMessage] = useState('');
+  const [showAddressModal, setShowAddressModal] = useState(false);
 
   useEffect(() => {
     loadCart();
@@ -66,9 +68,35 @@ const Cart = () => {
     return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   };
 
+  const handleApplyCoupon = () => {
+    if (!couponCode.trim()) {
+      setCouponMessage('Please enter a coupon code');
+      return;
+    }
+    // TODO: Integrate with backend coupon API
+    setCouponMessage('Coupon functionality will be available soon');
+    setTimeout(() => setCouponMessage(''), 3000);
+  };
+
   const handleUpdateCart = () => {
     // Cart is already updated in real-time, this is just for UI feedback
-    alert('Cart updated!');
+    const total = calculateSubtotal();
+    localStorage.setItem('cart', JSON.stringify({
+      items: cartItems,
+      total: total
+    }));
+    window.dispatchEvent(new CustomEvent('cartUpdated', { 
+      detail: { items: cartItems, total: total } 
+    }));
+    alert('Cart updated successfully!');
+  };
+
+  const handleChangeAddress = () => {
+    setShowAddressModal(true);
+  };
+
+  const closeAddressModal = () => {
+    setShowAddressModal(false);
   };
 
   const handleProceedToCheckout = () => {
@@ -179,7 +207,7 @@ const Cart = () => {
                   onChange={(e) => setCouponCode(e.target.value)}
                   className="coupon-input"
                 />
-                <button className="apply-coupon-btn">Apply coupon</button>
+                <button className="apply-coupon-btn" onClick={handleApplyCoupon}>Apply coupon</button>
               </div>
               <button className="update-cart-btn" onClick={handleUpdateCart}>Update cart</button>
             </div>
@@ -198,7 +226,7 @@ const Cart = () => {
                   <div className="shipping-info">
                     <p>Free shipping</p>
                     <p className="shipping-location">Shipping to <strong>CA</strong>.</p>
-                    <button className="change-address-btn">Change address</button>
+                    <button className="change-address-btn" onClick={handleChangeAddress}>Change address</button>
                   </div>
                 </div>
                 
@@ -225,6 +253,30 @@ const Cart = () => {
                 </div>
               </div>
             </div>
+
+            {couponMessage && (
+              <div className="coupon-message">
+                {couponMessage}
+              </div>
+            )}
+
+            {showAddressModal && (
+              <div className="address-modal-overlay" onClick={closeAddressModal}>
+                <div className="address-modal" onClick={(e) => e.stopPropagation()}>
+                  <div className="address-modal-header">
+                    <h3>Change Shipping Address</h3>
+                    <button className="modal-close-btn" onClick={closeAddressModal}>×</button>
+                  </div>
+                  <div className="address-modal-content">
+                    <p>Address management will be available in your account settings.</p>
+                    <p>Current shipping location: <strong>California (CA)</strong></p>
+                  </div>
+                  <div className="address-modal-footer">
+                    <button className="modal-ok-btn" onClick={closeAddressModal}>OK</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </TornPaperWrapper>
       </section>
