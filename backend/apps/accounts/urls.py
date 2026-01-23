@@ -13,4 +13,7 @@ urlpatterns = [
     path('password/change/', views.ChangePasswordView.as_view(), name='change-password'),
     path('password/reset/', views.PasswordResetRequestView.as_view(), name='password-reset-request'),
     path('password/reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
+    # Address management
+    path('addresses/', views.UserAddressListView.as_view(), name='address-list'),
+    path('addresses/<uuid:address_id>/', views.UserAddressDetailView.as_view(), name='address-detail'),
 ]

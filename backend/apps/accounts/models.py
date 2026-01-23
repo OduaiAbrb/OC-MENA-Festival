@@ -137,3 +137,58 @@ class AuditLog(models.Model):
     
     def __str__(self):
         return f"{self.actor} - {self.action_type} - {self.target_type}:{self.target_id}"
+
+
+class UserAddress(models.Model):
+    """
+    User shipping/billing addresses for merchandise and future orders.
+    """
+    class AddressType(models.TextChoices):
+        SHIPPING = 'SHIPPING', 'Shipping'
+        BILLING = 'BILLING', 'Billing'
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='addresses'
+    )
+    
+    label = models.CharField(max_length=50, blank=True, help_text='e.g., Home, Work')
+    address_type = models.CharField(max_length=20, choices=AddressType.choices, default=AddressType.SHIPPING)
+    
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    street_address = models.CharField(max_length=255)
+    street_address_2 = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=20)
+    country = models.CharField(max_length=100, default='United States')
+    phone = models.CharField(max_length=20, blank=True)
+    
+    is_default = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'user_addresses'
+        ordering = ['-is_default', '-created_at']
+        indexes = [
+            models.Index(fields=['user', 'address_type']),
+            models.Index(fields=['user', 'is_default']),
+        ]
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.label or self.address_type}"
+    
+    def save(self, *args, **kwargs):
+        # If setting as default, unset other defaults for same type
+        if self.is_default:
+            UserAddress.objects.filter(
+                user=self.user,
+                address_type=self.address_type,
+                is_default=True
+            ).exclude(pk=self.pk).update(is_default=False)
+        super().save(*args, **kwargs)

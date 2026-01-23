@@ -17,6 +17,7 @@ from .serializers import (
     SponsorSerializer,
     ScheduleItemSerializer,
     ContactSubmissionSerializer,
+    NewsletterSubscribeSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -168,4 +169,37 @@ Message:
         return Response({
             'success': True,
             'message': 'Thank you for your message! We will get back to you soon.'
+        }, status=status.HTTP_201_CREATED)
+
+
+class NewsletterSubscribeView(APIView):
+    """Newsletter subscription endpoint."""
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    
+    @extend_schema(
+        summary="Subscribe to newsletter",
+        request=NewsletterSubscribeSerializer,
+        responses={
+            201: {"type": "object", "properties": {"success": {"type": "boolean"}, "message": {"type": "string"}}}
+        }
+    )
+    def post(self, request):
+        serializer = NewsletterSubscribeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Get IP address
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        ip_address = x_forwarded_for.split(',')[0] if x_forwarded_for else request.META.get('REMOTE_ADDR')
+        
+        subscriber, created = serializer.save()
+        if ip_address:
+            subscriber.ip_address = ip_address
+            subscriber.save(update_fields=['ip_address'])
+        
+        logger.info(f"Newsletter subscription: {subscriber.email} (new={created})")
+        
+        return Response({
+            'success': True,
+            'message': 'Thank you for subscribing to our newsletter!'
         }, status=status.HTTP_201_CREATED)

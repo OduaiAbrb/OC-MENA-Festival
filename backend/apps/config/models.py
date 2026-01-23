@@ -162,3 +162,27 @@ class ContactSubmission(models.Model):
     
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.subject}"
+
+
+class NewsletterSubscriber(models.Model):
+    """
+    Newsletter email subscribers.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField(unique=True, db_index=True)
+    first_name = models.CharField(max_length=100, blank=True)
+    is_active = models.BooleanField(default=True)
+    source = models.CharField(max_length=50, default='website', help_text='Where they subscribed from')
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    subscribed_at = models.DateTimeField(default=timezone.now)
+    unsubscribed_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        db_table = 'newsletter_subscribers'
+        indexes = [
+            models.Index(fields=['email']),
+            models.Index(fields=['is_active', 'subscribed_at']),
+        ]
+    
+    def __str__(self):
+        return self.email

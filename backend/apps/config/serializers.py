@@ -2,7 +2,7 @@
 Config serializers.
 """
 from rest_framework import serializers
-from .models import EventConfig, Sponsor, ScheduleItem, ContactSubmission
+from .models import EventConfig, Sponsor, ScheduleItem, ContactSubmission, NewsletterSubscriber
 
 
 class PublicConfigSerializer(serializers.ModelSerializer):
@@ -57,3 +57,27 @@ class ContactSubmissionSerializer(serializers.ModelSerializer):
             'Other': 'OTHER',
         }
         return subject_map.get(value, value)
+
+
+class NewsletterSubscribeSerializer(serializers.Serializer):
+    """Serializer for newsletter subscription."""
+    email = serializers.EmailField()
+    first_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    source = serializers.CharField(max_length=50, required=False, default='website')
+    
+    def validate_email(self, value):
+        return value.lower()
+    
+    def create(self, validated_data):
+        email = validated_data['email']
+        # Update or create subscriber
+        subscriber, created = NewsletterSubscriber.objects.update_or_create(
+            email=email,
+            defaults={
+                'first_name': validated_data.get('first_name', ''),
+                'source': validated_data.get('source', 'website'),
+                'is_active': True,
+                'unsubscribed_at': None,
+            }
+        )
+        return subscriber, created

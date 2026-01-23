@@ -4,7 +4,7 @@ Account serializers for authentication and user management.
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
-from .models import User, UserRole
+from .models import User, UserRole, UserAddress
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -118,3 +118,28 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         if data['new_password'] != data['confirm_password']:
             raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
         return data
+
+
+class UserAddressSerializer(serializers.ModelSerializer):
+    """Serializer for user addresses."""
+    
+    class Meta:
+        model = UserAddress
+        fields = [
+            'id', 'label', 'address_type', 'first_name', 'last_name',
+            'street_address', 'street_address_2', 'city', 'state',
+            'postal_code', 'country', 'phone', 'is_default', 'created_at'
+        ]
+        read_only_fields = ['id', 'created_at']
+
+
+class UserAddressCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating/updating addresses."""
+    
+    class Meta:
+        model = UserAddress
+        fields = [
+            'label', 'address_type', 'first_name', 'last_name',
+            'street_address', 'street_address_2', 'city', 'state',
+            'postal_code', 'country', 'phone', 'is_default'
+        ]

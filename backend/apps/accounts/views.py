@@ -19,7 +19,10 @@ from .serializers import (
     ChangePasswordSerializer,
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
+    UserAddressSerializer,
+    UserAddressCreateSerializer,
 )
+from .models import UserAddress
 from .services import PasswordResetService, AuditService
 
 logger = logging.getLogger(__name__)
@@ -276,4 +279,66 @@ class PasswordResetConfirmView(APIView):
         return Response({
             'success': True,
             'message': 'Password has been reset successfully'
+        })
+
+
+class UserAddressListView(APIView):
+    """List and create user addresses."""
+    permission_classes = [IsAuthenticated]
+    
+    @extend_schema(summary="List my addresses", responses={200: UserAddressSerializer(many=True)})
+    def get(self, request):
+        addresses = UserAddress.objects.filter(user=request.user)
+        return Response({
+            'success': True,
+            'data': UserAddressSerializer(addresses, many=True).data
+        })
+    
+    @extend_schema(summary="Create address", request=UserAddressCreateSerializer)
+    def post(self, request):
+        serializer = UserAddressCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        address = serializer.save(user=request.user)
+        return Response({
+            'success': True,
+            'message': 'Address created',
+            'data': UserAddressSerializer(address).data
+        }, status=status.HTTP_201_CREATED)
+
+
+class UserAddressDetailView(APIView):
+    """Get, update, delete a user address."""
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self, request, address_id):
+        from django.shortcuts import get_object_or_404
+        return get_object_or_404(UserAddress, id=address_id, user=request.user)
+    
+    @extend_schema(summary="Get address", responses={200: UserAddressSerializer})
+    def get(self, request, address_id):
+        address = self.get_object(request, address_id)
+        return Response({
+            'success': True,
+            'data': UserAddressSerializer(address).data
+        })
+    
+    @extend_schema(summary="Update address", request=UserAddressCreateSerializer)
+    def patch(self, request, address_id):
+        address = self.get_object(request, address_id)
+        serializer = UserAddressCreateSerializer(address, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+            'success': True,
+            'message': 'Address updated',
+            'data': UserAddressSerializer(address).data
+        })
+    
+    @extend_schema(summary="Delete address")
+    def delete(self, request, address_id):
+        address = self.get_object(request, address_id)
+        address.delete()
+        return Response({
+            'success': True,
+            'message': 'Address deleted'
         })
