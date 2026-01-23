@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -17,6 +18,7 @@ const LoginPage = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Redirect if already logged in
   React.useEffect(() => {
@@ -63,9 +65,10 @@ const LoginPage = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">My Account</h1>
+          <h1 className="card-title" style={{ paddingBottom: '30px' }}>My Account</h1>
+          <style>{".card-title { font-size: 36px !important; }"}</style>
           
-          <div className="auth-options">
+          <div className="auth-options" style={{ paddingBottom: '30px' }}>
             <Link to="/login" className="auth-option active">
               Login
               <div className="active-indicator"></div>
@@ -74,6 +77,8 @@ const LoginPage = () => {
               Register
             </Link>
           </div>
+
+          <h2 className="login-heading" style={{ textAlign: 'center', fontSize: '32px', fontWeight: '700', color: '#1a1a1a', marginBottom: '30px' }}>Login</h2>
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
@@ -93,8 +98,9 @@ const LoginPage = () => {
               />
             </div>
 
-            <div className="form-group">
+            <div className="form-group password-group">
               <label htmlFor="password">Password *</label>
+<<<<<<< Updated upstream
               <input
                 type="password"
                 id="password"
@@ -105,6 +111,26 @@ const LoginPage = () => {
                 autoComplete="current-password"
                 required
               />
+=======
+              <div className="password-input-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+>>>>>>> Stashed changes
             </div>
 
             <div className="form-options">

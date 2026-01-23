@@ -76,12 +76,12 @@ const EventSchedule = () => {
                   required
                   className="newsletter-input"
                   disabled={loading}
-                  style={{ width: '100%', maxWidth: '300px', padding: '14px 16px', border: '2px solid #e0e0e0', borderRadius: '4px', fontSize: '14px', outline: 'none', transition: 'all 0.3s ease', fontFamily: 'inherit' }}
+                  style={{ width: '100%', maxWidth: '450px', padding: '14px 16px', border: '2px solid #808080', borderRadius: '4px', fontSize: '14px', outline: 'none', transition: 'all 0.3s ease', fontFamily: 'inherit' }}
                 />
                 <button type="submit" className="btn-primary newsletter-btn" disabled={loading} style={{ 
                   backgroundColor: '#dc2626', 
                   color: '#ffffff', 
-                  padding: '12px 28px', 
+                  padding: '12px 45px', 
                   border: '1px solid #dc2626', 
                   borderRadius: '25px', 
                   fontSize: '15px', 
@@ -90,7 +90,9 @@ const EventSchedule = () => {
                   textDecoration: 'none', 
                   transition: 'all 0.3s ease', 
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                  fontFamily: 'inherit'
+                  fontFamily: 'inherit',
+                  width: '100%',
+                  maxWidth: '450px'
                 }}>
                   {loading ? 'Signing up...' : 'Sign Up'}
                 </button>

@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   background-color: #e8f4f8;
+  font-family: 'Inter' !important;
 }
 
 /* ===== HERO SECTION ===== */
@@ -57,10 +58,9 @@
 .card-title {
   font-size: 32px;
   font-weight: 700;
-  color: #2c3e50;
+  color: #333;
   text-align: center;
   margin-bottom: 15px;
-  font-family: 'Georgia', serif;
 }
 
 .card-description {
@@ -69,6 +69,20 @@
   line-height: 1.7;
   text-align: left;
   margin-bottom: 20px;
+}
+.torn-paper-card .card-description {
+    font-size:16.8px !important;
+}
+
+/* ===== BOOTHS TITLE ===== */
+.booths-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #3a4c5d;
+  text-align: left;
+  margin-bottom: 0;
+  margin-top: 0;
+  font-family: 'Inter' !important;
 }
 
 /* ===== BOOTHS CONTAINER ===== */
@@ -109,14 +123,15 @@
 .booth-name {
   font-size: 18px;
   font-weight: 600;
-  color: #2c3e50;
+  text-align:left;
+  color: #000;
   margin-bottom: 8px;
-  font-family: 'Georgia', serif;
 }
 
 .booth-description {
-  font-size: 13px;
+  font-size: 15px;
   color: #7f8c8d;
+  text-align:left;
   line-height: 1.4;
   margin: 0;
 }
@@ -126,11 +141,11 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  
 }
 
 .booth-section {
-  margin-bottom: 15px;
+  margin-bottom: 8px;
 }
 
 .vendor-section-title {
@@ -186,14 +201,14 @@
   height: 16px;
   width: 16px;
   background-color: #ffffff;
-  border: 2px solid #bdc3c7;
+  border: 2px solid #999999;
   border-radius: 50%;
   transition: all 0.3s ease;
 }
 
 .radio-input:checked ~ .radio-custom {
-  background-color: #3498db;
-  border-color: #3498db;
+  background-color: #6d6a6a;
+  border-color: #6d6a6a;
 }
 
 .radio-custom:after {
@@ -206,7 +221,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: white;
+  background: #6d6a6a;
 }
 
 .radio-input:checked ~ .radio-custom:after {
@@ -217,7 +232,7 @@
 .checkbox-label {
   display: flex;
   align-items: center;
-  font-size: 13px;
+  font-size: 15px;
   color: #5a6c7d;
   cursor: pointer;
   position: relative;
@@ -233,8 +248,8 @@
 }
 
 .checkbox-input:checked ~ .checkbox-custom {
-  background-color: #3498db;
-  border-color: #3498db;
+  background-color: #6d6a6a;
+  border-color: #6d6a6a;
 }
 
 .checkbox-custom {
@@ -245,26 +260,17 @@
   height: 16px;
   width: 16px;
   background-color: #ffffff;
-  border: 2px solid #bdc3c7;
+  border: 2px solid #999999;
   border-radius: 3px;
   transition: all 0.3s ease;
 }
 
 .checkbox-custom:after {
-  content: "";
-  position: absolute;
   display: none;
-  top: 2px;
-  left: 5px;
-  width: 4px;
-  height: 8px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
 }
 
 .checkbox-input:checked ~ .checkbox-custom:after {
-  display: block;
+  display: none;
 }
 
 /* ===== SIMPLE CHECKBOXES ===== */
@@ -319,7 +325,7 @@
 .booth-price {
   font-size: 28px;
   font-weight: 700;
-  color: #2c3e50;
+  color: #000000;
   display: block;
   margin-bottom: 15px;
 }
@@ -395,9 +401,11 @@
 /* ===== REGISTRATION FORM ===== */
 .registration-form {
   padding: 30px;
-  background: #f8f9fa;
+  background: transparent;
   border-radius: 12px;
-  border: 1px solid #e1e8ed;
+  border: none;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .registration-header {
@@ -426,10 +434,9 @@
 .registration-title {
   font-size: 24px;
   font-weight: 700;
-  color: #2c3e50;
+  color: #000;
   text-align: center;
   margin-bottom: 10px;
-  font-family: 'Georgia', serif;
 }
 
 .registration-subtitle {
@@ -491,6 +498,48 @@
   background: #b91c1c;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== HEALTH PERMIT SECTION ===== */
+.health-permit-section {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.health-permit-text {
+  font-size: 13px;
+  color: #333333;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.health-permit-options {
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+/* ===== MANDATE SECTIONS ===== */
+.mandate-section {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.mandate-box {
+  background: #ffffff;
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  padding: 14px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.mandate-text {
+  font-size: 15px;
+  color: #333333;
+  line-height: 1.4;
+  margin: 0;
+  font-weight: 400;
 }
 
 /* ===== IMPORTANT NOTICE BOX ===== */

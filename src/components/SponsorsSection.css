@@ -36,8 +36,8 @@
 
 .white-link {
   color: white;
-  text-decoration: underline;
-  font-size: 14px;
+  text-decoration: none;
+  font-size: 16px;
   margin-top: 20px;
   display: inline-block;
 }

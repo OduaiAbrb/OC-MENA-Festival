@@ -83,7 +83,7 @@ const Contact = () => {
 
           <form onSubmit={handleSubmit} className="contact-form">
             <div className="form-group">
-              <label htmlFor="firstName">First name *</label>
+              <label htmlFor="firstName">First name <span className="required">*</span></label>
               <input
                 type="text"
                 id="firstName"
@@ -106,7 +106,7 @@ const Contact = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email *</label>
+              <label htmlFor="email">Email <span className="required">*</span></label>
               <input
                 type="email"
                 id="email"
@@ -129,7 +129,7 @@ const Contact = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="subject">Subject *</label>
+              <label htmlFor="subject">Subject <span className="required">*</span></label>
               <select
                 id="subject"
                 name="subject"

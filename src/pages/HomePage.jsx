@@ -55,7 +55,7 @@ const HomePage = ({ onGetTicketsClick }) => {
           <div className="hero-gradient-overlay"></div>
         </div>
 
-        <div className="hero-content">
+        <div className="hero-content" style={{ paddingTop: '135px' }}>
           <h1 className="hero-title">OC MENA Festival</h1>
           <p className="hero-subtitle">June 19-21, 2026. Orange County, CA</p>
           <p className="hero-description">

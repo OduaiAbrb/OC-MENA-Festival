@@ -92,23 +92,31 @@
 
 .form-group label {
   display: block;
-  font-size: 13px;
+  font-size: 17px !important;
   color: #333333;
   margin-bottom: 6px;
   font-weight: 500;
 }
 
+.form-group label .required {
+  color: #dc2626;
+}
+
 .form-group input,
 .form-group select,
 .form-group textarea {
-  width: 100%;
+  width: 480px !important;
   padding: 6px 10px;
   border: 1px solid #cccccc;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 14px;
   color: #333333;
   background: white;
   transition: border-color 0.3s ease;
+}
+
+.form-group select {
+  font-size: 16px !important;
 }
 
 .form-group input:focus,
@@ -119,7 +127,7 @@
 }
 
 .form-group textarea {
-  min-height: 100px;
+  min-height: 150px;
   resize: vertical;
 }
 
@@ -134,7 +142,7 @@
 
 .submit-btn {
   background: #dc2626 !important;
-  width: 100%;
+  width: 480px !important;
   padding: 8px 16px;
   color: white;
   border: none;

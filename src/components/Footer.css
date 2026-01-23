@@ -1,8 +1,8 @@
 .site-footer {
   color: white;
-  padding: 120px 20px 30px;
+  padding: 60px 20px 30px;
   margin-top: auto;
-  min-height: 600px;
+  min-height: 700px;
   position: relative;
 }
 
@@ -21,10 +21,10 @@
 }
 
 .footer-column h4 {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #ffffff;
+  color: white;
 }
 
 .footer-column ul {
@@ -38,9 +38,9 @@
 }
 
 .footer-column ul li a {
-  color: rgba(255, 255, 255, 0.7);
+  color: white;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 16px;
   transition: color 0.3s ease;
 }
 
@@ -71,15 +71,15 @@
 }
 
 .footer-newsletter-label {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 8px;
   color: white;
 }
 
 .footer-newsletter-text {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  color: white;
   margin-bottom: 10px;
 }
 
@@ -97,23 +97,23 @@
   padding: 10px 12px;
   background: white;
   border: none;
-  color: #666666;
-  font-size: 13px;
+  color: #333333;
+  font-size: 14px;
   outline: none;
   min-width: 0;
 }
 
 .footer-newsletter-form input::placeholder {
-  color: #999999;
+  color: #666666;
 }
 
 .footer-newsletter-form button {
   background: transparent;
   border: none;
-  color: #666666;
+  color: #333333;
   padding: 10px 15px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   transition: color 0.3s ease;
 }
 
@@ -122,15 +122,16 @@
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: none;
   padding-top: 20px;
   text-align: center;
-  color: rgba(255, 255, 255, 0.5);
+  color: white;
   font-size: 13px;
 }
 
 .footer-bottom p {
   margin: 0;
+  font-size:16px;
 }
 
 /* ===== RESPONSIVE ===== */

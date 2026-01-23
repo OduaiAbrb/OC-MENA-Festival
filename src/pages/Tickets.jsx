@@ -135,7 +135,7 @@ const Tickets = () => {
             <p>Choose from single-day or full-weekend passes to experience everything the festival has to offer.</p>
           </div>
 
-          <h2 className="card-title">Tickets</h2>
+          <h2 className="card-title" style={{ textAlign: 'left' }}>Tickets</h2>
           
           <div className="tickets-container">
             {displayTickets.map(ticket => (
@@ -148,40 +148,38 @@ const Tickets = () => {
                   </div>
                 )}
                 <div className="ticket-header">
-                  <h3 className="ticket-name">{ticket.name}</h3>
                   <span className="ticket-savings">{ticket.savings}</span>
                 </div>
                 
                 <p className="ticket-description">{ticket.description}</p>
 
                 <div className="ticket-quantity-section">
-                  <label className="quantity-label">How many tickets?</label>
                   <div className="ticket-quantity">
-                    <button 
-                      type="button"
-                      className="quantity-btn"
-                      onClick={() => decrement(ticket.id)}
-                      disabled={quantities[ticket.id] === 0}
-                    >
-                      −
-                    </button>
-                    <div className="quantity-value">{quantities[ticket.id]}</div>
-                    <button 
-                      type="button"
-                      className="quantity-btn"
-                      onClick={() => increment(ticket.id)}
-                    >
-                      +
-                    </button>
+                    <div className="quantity-label">How many tickets?</div>
+                    <div className="quantity-controls">
+                      <button 
+                        type="button"
+                        className="quantity-btn"
+                        onClick={() => decrement(ticket.id)}
+                        disabled={quantities[ticket.id] === 0}
+                      >
+                        −
+                      </button>
+                      <div className="quantity-value">{quantities[ticket.id]}</div>
+                      <button 
+                        type="button"
+                        className="quantity-btn"
+                        onClick={() => increment(ticket.id)}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </div>
 
                 <div className="ticket-pricing">
+                  <span className="ticket-note-text">*Rides at event range from $2-$10/person</span>
                   <span className="ticket-price">${getTotalTickets() > 0 && quantities[ticket.id] > 0 ? (ticket.price * quantities[ticket.id]) : ticket.price}</span>
-                </div>
-
-                <div className="ticket-note">
-                  <p>*Rides at event range from $2-$10/person</p>
                 </div>
               </div>
             ))}

@@ -22,8 +22,8 @@ const VendorBooths = () => {
   });
   
   const [halal, setHalal] = useState({
-    'food-truck': true,
-    'food-booth': true
+    'food-truck': false,
+    'food-booth': false
   });
 
   const [selectedBooth, setSelectedBooth] = useState(null);
@@ -175,7 +175,7 @@ const VendorBooths = () => {
       id: 'bazaar',
       name: '10x10 Bazaar Booth',
       description: 'Sell goods inside the decorated bazaar',
-      price: 1000,
+      price: 1100,
       days: [
         { id: '3days', label: 'Fri-Sun (3 days)' },
         { id: '2days', label: 'Sat-Sun (2 days)' }
@@ -253,6 +253,7 @@ const VendorBooths = () => {
           
           {!showRegistration ? (
           <>
+            <h2 className="booths-title">Please select a booth option:</h2>
             <div className="booths-container">
               {boothOptions.map(booth => (
                 <div key={booth.id} className={`booth-card ${selectedBooth === booth.id ? 'selected' : ''}`}>
@@ -266,7 +267,7 @@ const VendorBooths = () => {
                   
                   <div className="booth-details">
                     <div className="booth-section">
-                      <div className="vendor-section-title" style={{color: '#000000', background: 'transparent', fontSize: '16px', fontWeight: '600'}}>Days required</div>
+                      <div className="vendor-section-title" style={{color: '#000000', background: 'transparent', fontSize: '12.7px', fontWeight: '600'}}>Days required</div>
                       <div className="radio-group">
                         {booth.days.map(day => (
                           <label key={day.id} className="radio-label">
@@ -286,7 +287,7 @@ const VendorBooths = () => {
                     </div>
 
                     <div className="booth-section">
-                      <div className="vendor-section-title" style={{color: '#000000', background: 'transparent', fontSize: '16px', fontWeight: '600'}}>Includes</div>
+                      <div className="vendor-section-title" style={{color: '#000000', background: 'transparent', fontSize: '12.7px', fontWeight: '600'}}>Includes</div>
                       <ul className="includes-list">
                         {booth.includes.map((item, index) => (
                           <li key={index}>{item}</li>
@@ -296,6 +297,7 @@ const VendorBooths = () => {
 
                     {booth.hasHalal && (
                       <div className="booth-section">
+                        <div className="vendor-section-title" style={{color: '#000000', background: 'transparent', fontSize: '12.7px', fontWeight: '600'}}>Do you serve Halal food?</div>
                         <label className="checkbox-label">
                           <input
                             type="checkbox"
@@ -304,14 +306,14 @@ const VendorBooths = () => {
                             className="checkbox-input"
                           />
                           <span className="checkbox-custom"></span>
-                          <span>Do you serve Halal food? Yes</span>
+                          <span>Yes</span>
                         </label>
                       </div>
                     )}
 
                     {booth.hasUpgrade && (
                       <div className="booth-section">
-                        <div className="vendor-section-title" style={{color: '#000000', background: 'transparent', fontSize: '16px', fontWeight: '600'}}>Do you need more space?</div>
+                        <div className="vendor-section-title" style={{color: '#000000', background: 'transparent', fontSize: '12.7px', fontWeight: '600'}}>Do you need more space?</div>
                         <label className="checkbox-label">
                           <input
                             type="checkbox"
@@ -343,13 +345,13 @@ const VendorBooths = () => {
         ) : (
           <div className="registration-form">
             <div className="registration-header">
-              <button className="back-btn" onClick={handleBackToSelection}>← Back to Selection</button>
               <h2 className="registration-title">Bazaar Vendor Registration</h2>
               <p className="registration-subtitle">Please fill out the form below to reserve your booth</p>
             </div>
             
             <div className="form-group">
               <label className="form-label">Choose what fits your business*</label>
+<<<<<<< Updated upstream
               <select 
                 className="form-select"
                 value={formData.businessType}
@@ -359,6 +361,52 @@ const VendorBooths = () => {
                 <option>Food Vendor</option>
                 <option>Service Provider</option>
               </select>
+=======
+              {selectedBooth === 'bazaar' && (
+                <select name="input_1" id="input_4_1" className="large gfield_select" aria-required="true" aria-invalid="false">
+                  <option value="Arab Boutique">Arab Boutique</option>
+                  <option value="North African Boutique">North African Boutique</option>
+                  <option value="Desi Boutique">Desi Boutique</option>
+                  <option value="American Boutique">American Boutique</option>
+                  <option value="Men's Boutique">Men's Boutique</option>
+                  <option value="Women's Boutique">Women's Boutique</option>
+                  <option value="Hijab, Accessories, and Jewellery">Hijab, Accessories, and Jewellery</option>
+                  <option value="Books">Books</option>
+                  <option value="Business">Business</option>
+                  <option value="Art Items">Art Items</option>
+                  <option value="Kids">Kids</option>
+                  <option value="Perfumes/Oils">Perfumes/Oils</option>
+                  <option value="Other">Other</option>
+                </select>
+              )}
+              {selectedBooth === 'food-truck' && (
+                <select name="input_1" id="input_3_1" className="large gfield_select" aria-required="true" aria-invalid="false">
+                  <option value="Arab Food">Arab Food</option>
+                  <option value="North African Food">North African Food</option>
+                  <option value="American Food">American Food</option>
+                  <option value="General Food">General Food</option>
+                  <option value="Dessert">Dessert</option>
+                  <option value="Beverage">Beverage</option>
+                </select>
+              )}
+              {selectedBooth === 'food-booth' && (
+                <select name="input_1" id="input_4_1" className="large gfield_select" aria-required="true" aria-invalid="false">
+                  <option value="Arab Boutique">Arab Boutique</option>
+                  <option value="North African Boutique">North African Boutique</option>
+                  <option value="Desi Boutique">Desi Boutique</option>
+                  <option value="American Boutique">American Boutique</option>
+                  <option value="Men's Boutique">Men's Boutique</option>
+                  <option value="Women's Boutique">Women's Boutique</option>
+                  <option value="Hijab, Accessories, and Jewellery">Hijab, Accessories, and Jewellery</option>
+                  <option value="Books">Books</option>
+                  <option value="Business">Business</option>
+                  <option value="Art Items">Art Items</option>
+                  <option value="Kids">Kids</option>
+                  <option value="Perfumes/Oils">Perfumes/Oils</option>
+                  <option value="Other">Other</option>
+                </select>
+              )}
+>>>>>>> Stashed changes
             </div>
 
             <div className="form-group">
@@ -394,6 +442,7 @@ const VendorBooths = () => {
               />
             </div>
 
+<<<<<<< Updated upstream
             <div className="simple-checkbox">
               <input 
                 type="checkbox" 
@@ -408,6 +457,13 @@ const VendorBooths = () => {
               />
               <label htmlFor="same-business">Same as legal business name?</label>
             </div>
+=======
+            <label className="checkbox-label">
+              <input type="checkbox" id="same-business" className="checkbox-input" />
+              <span className="checkbox-custom"></span>
+              <span>Same as legal business name?</span>
+            </label>
+>>>>>>> Stashed changes
 
             <div className="form-group">
               <label className="form-label">Phone Number*</label>
@@ -453,12 +509,25 @@ const VendorBooths = () => {
               />
             </div>
 
-            <div className="important-notice">
-              <p className="notice-text">
-                I understand that I can set up my booth starting Friday evening and Saturday morning from 8 AM to 11 AM. After 11 AM, I won't be able to set up my booth and I won't get any refunds. Also, if I am handling any food whether it is packaged or non packaged I would require OC MENA Festival approval*
-              </p>
-            </div>
+            {selectedBooth === 'food-truck' && (
+              <>
+                <div className="health-permit-section">
+                  <p className="health-permit-text">Do you have OC Health Permit? (TFF)*</p>
+                  <div className="health-permit-options">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="health-permit"
+                        value="yes"
+                        className="checkbox-input"
+                      />
+                      <span className="checkbox-custom"></span>
+                      Yes
+                    </label>
+                  </div>
+                </div>
 
+<<<<<<< Updated upstream
             <div className="simple-checkbox">
               <input 
                 type="checkbox" 
@@ -468,6 +537,84 @@ const VendorBooths = () => {
               />
               <label htmlFor="accept-terms">I accept the terms above</label>
             </div>
+=======
+            
+
+                <div className="mandate-section">
+                  <div className="mandate-box">
+                    <p className="mandate-text">
+                      Mandate by the Property Owner: I Understand I can only sell Pepsi Beverages for water and Soda. For water, I can only get AquaFina, and for standard soda, I need to get Pepsi products. I can get ethnic products that are not mainstream like Salaam Cola, Hawa Cola, Palestina or Shaista *
+                    </p>
+                  </div>
+                  <label className="checkbox-label">
+                    <input type="checkbox" id="mandate-pepsi-single" className="checkbox-input" />
+                    <span className="checkbox-custom"></span>
+                    <span>I accept the terms above</span>
+                  </label>
+                </div>
+
+                
+
+                <div className="mandate-section">
+                  <div className="mandate-box">
+                    <p className="mandate-text">
+                      I will bring a handwashing station for my booth which is required by OC Health Department. I can get a 5 Gallon water dispenser with a tap on the bottle and a collection vessel for used water*
+                    </p>
+                  </div>
+                  <label className="checkbox-label">
+                    <input type="checkbox" id="handwashing-single" className="checkbox-input" />
+                    <span className="checkbox-custom"></span>
+                    <span>I accept the terms above</span>
+                  </label>
+                </div>
+
+             
+
+                <div className="mandate-section">
+                  <div className="mandate-box">
+                    <p className="mandate-text">
+                      I will review the presentation to understand the requirements by OC Health Department. The link if provided to me on my confirmation email*
+                    </p>
+                  </div>
+                  <label className="checkbox-label">
+                    <input type="checkbox" id="review-single" className="checkbox-input" />
+                    <span className="checkbox-custom"></span>
+                    <span>I accept the terms above</span>
+                  </label>
+                </div>
+
+               
+
+                <div className="mandate-section">
+                  <div className="mandate-box">
+                    <p className="mandate-text">
+                      I understand that I can set up my booth starting Friday evening and Saturday morning from 8 AM to 11 AM. After 11 AM, I won't be able to set up my booth and I won't get any refunds.Also, if I am handling any food whether it is packaged or non packaged I would require OC MENA Festival*
+                    </p>
+                  </div>
+                  <label className="checkbox-label">
+                    <input type="checkbox" id="setup-single" className="checkbox-input" />
+                    <span className="checkbox-custom"></span>
+                    <span>I accept the terms above</span>
+                  </label>
+                </div>
+              </>
+            )}
+
+            {!selectedBooth || selectedBooth !== 'food-truck' ? (
+              <>
+                <div className="important-notice">
+                  <p className="notice-text">
+                    I understand that I can set up my booth starting Friday evening and Saturday morning from 8 AM to 11 AM. After 11 AM, I won't be able to set up my booth and I won't get any refunds. Also, if I am handling any food whether it is packaged or non packaged I would require OC MENA Festival approval*
+                  </p>
+                </div>
+
+                <div className="simple-checkbox">
+                  <input type="checkbox" id="accept-terms" />
+                  <label htmlFor="accept-terms">I accept the terms above</label>
+                </div>
+              </>
+            ) : null}
+>>>>>>> Stashed changes
 
             <button className="continue-btn" onClick={handleContinueToCheckout}>Continue</button>
           </div>

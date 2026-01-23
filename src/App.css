@@ -15,6 +15,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Inter' !important;
 }
 
 html {
@@ -22,7 +23,7 @@ html {
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter' !important;
   color: var(--text-light);
   line-height: 1.6;
   background-color: #000000;
@@ -115,6 +116,7 @@ body {
 /* ===== GLOBAL CARD STYLES ===== */
 .card-title {
   font-family: sans-serif;
+  color: #333 !important;
 }
 
 .card-description {
@@ -156,19 +158,20 @@ body {
   position: relative;
   background: #ffffff;
   max-width: 1200px; /* Make the entire section much wider - matching HomePage */
-  width: 70%; /* Much larger - increased from 50% to 70% */
+  width: 80%; /* Increased from 70% to 80% to make it wider */
   margin: 0 auto;
   padding: 60px 40px 450px; /* Increased bottom padding to make torn paper taller */
   z-index: 10;
   border: none; /* Ensure no border */
   box-shadow: none; /* Ensure no shadow */
+  min-height:888px;
 }
 
 /* ===== TORN PAPER IMAGES ===== */
 .torn-paper-top,
 .torn-paper-bottom {
   display: block;
-  width: 70% !important; /* Match new larger card width */
+  width: 80% !important; /* Match new larger card width - increased from 70% */
   max-width: 1200px !important; /* Matching HomePage max-width */
   height: auto !important;
   margin: 0 auto !important;
@@ -199,6 +202,7 @@ body {
   flex-direction: column;
   align-items: center;
   overflow: hidden; /* Prevent rendering artifacts */
+  padding-top: 120px; /* Add gap from header - increased from 80px */
 }
 
 /* ===== GLOBAL HERO STYLES ===== */
@@ -306,21 +310,22 @@ body {
   /* Torn paper adjustments for mobile - matching HomePage */
   .torn-paper-top,
   .torn-paper-bottom {
-    width: 100% !important; /* Match HomePage mobile width */
+    width: 90% !important; /* Match the new card width */
     max-width: none !important; /* Match HomePage mobile max-width */
     object-fit: contain;
   }
   
   .torn-paper-card {
-    width: 100%; /* Match HomePage mobile width */
+    width: 90%; /* Changed from 100% to 90% to create space on left and right */
     max-width: none; /* Match HomePage mobile max-width */
-    padding: 40px 0px 450px; /* Increased bottom padding for mobile */
-    margin: 0;
+    padding: 40px 20px 450px; /* Added 20px left/right padding for gap on mobile */
+    margin: 0 auto; /* Added auto margin to center the card */
   }
   
   /* Prevent torn paper expansion on mobile */
   .torn-paper-wrapper {
     overflow-x: hidden;
+    padding-top: 90px; /* Adjusted padding for mobile - increased from 60px */
   }
   
   /* Add padding-top to account for fixed header on mobile */

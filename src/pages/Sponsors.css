@@ -95,7 +95,7 @@
   font-weight: 700;
   color: #1a1a1a;
   margin-bottom: 15px;
-  text-align: left;
+  text-align: left !important;
   background: transparent !important;
 }
 
@@ -110,10 +110,10 @@
 }
 
 .levels-list li {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
   color: #444444;
-  margin-bottom: 8px;
+  margin-bottom: 0px;
   background: transparent !important;
   text-align: left;
   width: 100%;
@@ -137,7 +137,7 @@
 }
 
 .cta-text {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   color: #1a1a1a;
   margin-bottom: 15px;
@@ -151,11 +151,12 @@
   padding: 14px 32px;
   border: none;
   border-radius: 50px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.3s ease;
+  box-shadow: none !important;
 }
 
 .btn-primary:hover {

@@ -45,8 +45,9 @@ const Vendors = () => {
           </p>
 
           <div className="vendor-list-section">
-            <h3 className="section-heading">Vendor List</h3>
+            <h3 className="section-heading" style={{ textAlign: 'center' }}>Vendor List</h3>
             <p className="section-text">We'll release the list of vendors as the event date nears</p>
+            <style>{".section-heading { text-align: center !important; }"}</style>
           </div>
         </TornPaperWrapper>
 

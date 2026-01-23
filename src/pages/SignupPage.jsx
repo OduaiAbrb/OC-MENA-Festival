@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -17,6 +18,7 @@ const SignupPage = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -69,9 +71,10 @@ const SignupPage = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">My Account</h1>
+          <h1 className="card-title" style={{ paddingBottom: '30px' }}>My Account</h1>
+          <style>{".card-title { font-size: 36px !important; }"}</style>
           
-          <div className="auth-options">
+          <div className="auth-options" style={{ paddingBottom: '30px' }}>
             <Link to="/login" className="auth-option">
               Login
             </Link>
@@ -80,6 +83,8 @@ const SignupPage = () => {
               <div className="active-indicator"></div>
             </Link>
           </div>
+
+          <h2 className="register-heading" style={{ textAlign: 'center', fontSize: '32px', fontWeight: '700', color: '#1a1a1a', marginBottom: '30px' }}>Register</h2>
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
@@ -95,17 +100,26 @@ const SignupPage = () => {
               />
             </div>
 
-            <div className="form-group">
+            <div className="form-group password-group">
               <label htmlFor="password">Password *</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                required
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
 
             {error && <div className="error-message" style={{color: '#e74c3c', marginBottom: '1rem', textAlign: 'center'}}>{error}</div>}
@@ -117,7 +131,7 @@ const SignupPage = () => {
             </div>
 
             <button type="submit" className="btn-primary submit-btn" disabled={loading}>
-              {loading ? 'Creating Account...' : 'Create Account'}
+              {loading ? 'Registering...' : 'Register'}
             </button>
           </form>
         </TornPaperWrapper>
