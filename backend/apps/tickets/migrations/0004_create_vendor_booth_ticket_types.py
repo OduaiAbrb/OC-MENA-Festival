@@ -14,7 +14,7 @@ def create_vendor_booth_ticket_types(apps, schema_editor):
             'slug': 'bazaar-3day',
             'description': '10x10 Bazaar booth access for all three days (Friday-Sunday)',
             'price_cents': 100000,  # $1000
-            'quantity_available': 50,
+            'capacity': 50,
             'is_active': True,
         },
         {
@@ -22,7 +22,7 @@ def create_vendor_booth_ticket_types(apps, schema_editor):
             'slug': 'bazaar-2day',
             'description': '10x10 Bazaar booth access for two days (Saturday-Sunday)',
             'price_cents': 70000,  # $700 (30% discount)
-            'quantity_available': 30,
+            'capacity': 30,
             'is_active': True,
         },
         {
@@ -30,7 +30,7 @@ def create_vendor_booth_ticket_types(apps, schema_editor):
             'slug': 'food-truck-3day',
             'description': '10x10 Food truck space for all three days (Friday-Sunday)',
             'price_cents': 300000,  # $3000
-            'quantity_available': 20,
+            'capacity': 20,
             'is_active': True,
         },
         {
@@ -38,7 +38,7 @@ def create_vendor_booth_ticket_types(apps, schema_editor):
             'slug': 'food-truck-2day',
             'description': '10x10 Food truck space for two days (Saturday-Sunday)',
             'price_cents': 210000,  # $2100 (30% discount)
-            'quantity_available': 15,
+            'capacity': 15,
             'is_active': True,
         },
         {
@@ -46,7 +46,7 @@ def create_vendor_booth_ticket_types(apps, schema_editor):
             'slug': 'food-booth-3day',
             'description': '10x10 Food booth access for all three days (Friday-Sunday)',
             'price_cents': 175000,  # $1750
-            'quantity_available': 30,
+            'capacity': 30,
             'is_active': True,
         },
         {
@@ -54,7 +54,7 @@ def create_vendor_booth_ticket_types(apps, schema_editor):
             'slug': 'food-booth-2day',
             'description': '10x10 Food booth access for two days (Saturday-Sunday)',
             'price_cents': 122500,  # $1225 (30% discount)
-            'quantity_available': 20,
+            'capacity': 20,
             'is_active': True,
         },
     ]
