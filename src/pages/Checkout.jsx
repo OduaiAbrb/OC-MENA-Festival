@@ -159,13 +159,32 @@ const Checkout = () => {
     setError('');
 
     try {
-      const items = cartItems.map(item => ({
-        ticket_type_id: item.id,
-        quantity: item.quantity
-      }));
+      // Check if cart has vendor booths (different checkout flow)
+      const hasVendorBooths = cartItems.some(item => item.type === 'vendor-booth');
+      
+      if (hasVendorBooths) {
+        // For vendor booths, show message that they need to contact directly
+        setError('Vendor booth reservations require manual processing. Please contact us at vendors@ocmena.com to complete your booth reservation.');
+        setLoading(false);
+        return;
+      }
+      
+      // Filter only ticket items with valid UUIDs
+      const ticketItems = cartItems
+        .filter(item => item.ticket_type_id && item.ticket_type_id.length > 10) // UUID check
+        .map(item => ({
+          ticket_type_id: item.ticket_type_id || item.id,
+          quantity: item.quantity
+        }));
+
+      if (ticketItems.length === 0) {
+        setError('No valid tickets in cart. Please add tickets before checking out.');
+        setLoading(false);
+        return;
+      }
 
       const idempotencyKey = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const intentResponse = await api.createPaymentIntent(items, idempotencyKey);
+      const intentResponse = await api.createPaymentIntent(ticketItems, idempotencyKey);
 
       if (!intentResponse?.success) {
         throw new Error(intentResponse?.error?.message || 'Failed to create payment intent');
