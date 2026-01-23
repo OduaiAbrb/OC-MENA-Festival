@@ -3,6 +3,7 @@ Data migration to create initial superuser and usher accounts.
 This runs automatically during deployment.
 """
 from django.db import migrations
+from django.contrib.auth.hashers import make_password
 
 
 def create_initial_users(apps, schema_editor):
@@ -11,15 +12,14 @@ def create_initial_users(apps, schema_editor):
     
     # Create superuser
     if not User.objects.filter(email='admin@ocmena.com').exists():
-        admin = User(
+        User.objects.create(
             email='admin@ocmena.com',
+            password=make_password('Admin2026!'),
             full_name='Admin User',
             is_staff=True,
             is_superuser=True,
             is_active=True
         )
-        admin.set_password('Admin2026!')
-        admin.save()
         print('Created superuser: admin@ocmena.com')
     
     # Create ushers
@@ -32,15 +32,14 @@ def create_initial_users(apps, schema_editor):
     
     for email, name in ushers:
         if not User.objects.filter(email=email).exists():
-            usher = User(
+            User.objects.create(
                 email=email,
+                password=make_password('Usher2026!'),
                 full_name=name,
                 is_staff=True,
                 is_superuser=False,
                 is_active=True
             )
-            usher.set_password('Usher2026!')
-            usher.save()
             print(f'Created usher: {email}')
 
 
