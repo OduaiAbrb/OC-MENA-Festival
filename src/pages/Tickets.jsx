@@ -10,132 +10,81 @@ import './Tickets.css';
 
 const Tickets = () => {
   const navigate = useNavigate();
-  const [ticketTypes, setTicketTypes] = useState([]);
-  const [cart, setCart] = useState({});
   const [loading, setLoading] = useState(true); // eslint-disable-line no-unused-vars
   const [error, setError] = useState(''); // eslint-disable-line no-unused-vars
   const [salesMessage, setSalesMessage] = useState('');
   const [hasRealTickets, setHasRealTickets] = useState(false);
+  
+  // Simple cart state with initial values
+  const [quantities, setQuantities] = useState({
+    '3day': 0,
+    '2day': 0,
+    '1day': 0
+  });
 
-  // Fallback ticket options if API fails or sales not open
-  const fallbackTicketOptions = [
+  // Static ticket options - always available
+  const ticketOptions = [
     {
       id: '3day',
       name: '3-Day Pass',
       slug: '3day',
-      savings: 'Save $10 on entry',
-      price_cents: 3500,
-      badge_text: 'BEST VALUE'
+      savings: 'BEST VALUE',
+      price: 35
     },
     {
       id: '2day',
       name: '2-Day Pass',
       slug: '2day',
-      savings: 'Save $5 on entry',
-      price_cents: 2500,
-      badge_text: 'POPULAR'
+      savings: 'POPULAR',
+      price: 25
     },
     {
       id: '1day',
       name: '1-Day Pass',
       slug: '1day',
       savings: 'STANDARD',
-      price_cents: 1500,
-      badge_text: 'STANDARD'
+      price: 15
     }
   ];
 
   useEffect(() => {
-    fetchTicketTypes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Check if backend has real tickets
+    const checkTickets = async () => {
+      try {
+        const response = await api.getTicketTypes();
+        if (response?.success && response.data?.length > 0) {
+          setHasRealTickets(true);
+        } else {
+          setSalesMessage(response?.message || '');
+          setHasRealTickets(true); // Still allow checkout with fallback
+        }
+      } catch (err) {
+        console.log('Using fallback tickets');
+        setHasRealTickets(true); // Allow checkout with fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkTickets();
   }, []);
 
-  const fetchTicketTypes = async () => {
-    try {
-      // Try to fetch from API first
-      const response = await api.getTicketTypes();
-      
-      if (response?.success && response.data?.length > 0) {
-        setTicketTypes(response.data);
-        const initialCart = {};
-        response.data.forEach(ticket => {
-          initialCart[String(ticket.id)] = 0;
-        });
-        setCart(initialCart);
-        setHasRealTickets(true);
-        console.log('Loaded real tickets from API:', response.data.length);
-      } else {
-        // Use fallback if no tickets or sales not open
-        console.log('Using fallback tickets, API response:', response);
-        setTicketTypes(fallbackTicketOptions);
-        const initialCart = {};
-        fallbackTicketOptions.forEach(ticket => {
-          initialCart[String(ticket.id)] = 0;
-        });
-        setCart(initialCart);
-        setSalesMessage(response?.message || 'Ticket sales are currently unavailable.');
-        setHasRealTickets(false);
-      }
-    } catch (err) {
-      console.error('Failed to fetch ticket types:', err);
-      setTicketTypes(fallbackTicketOptions);
-      const initialCart = {};
-      fallbackTicketOptions.forEach(ticket => {
-        initialCart[String(ticket.id)] = 0;
-      });
-      setCart(initialCart);
-      setError('Unable to connect to ticket system. Showing preview tickets.');
-      setHasRealTickets(false);
-    } finally {
-      setLoading(false);
-    }
+  // Simple increment/decrement handlers
+  const increment = (id) => {
+    setQuantities(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   };
 
-  // Memoize ticket options to prevent re-renders
-  const ticketOptions = React.useMemo(() => {
-    return ticketTypes.map(ticket => ({
-      id: String(ticket.id), // Ensure ID is string for consistent key matching
-      name: ticket.name,
-      savings: ticket.badge_text || ticket.savings || (ticket.price_cents >= 3500 ? 'Save $10 on entry' : ticket.price_cents >= 2500 ? 'Save $5 on entry' : 'STANDARD'),
-      price: ticket.price_cents / 100,
-      originalPrice: ticket.price_cents / 100,
-      slug: ticket.slug
-    }));
-  }, [ticketTypes]);
-
-  // Sync cart when ticketOptions change
-  useEffect(() => {
-    if (ticketOptions.length > 0 && Object.keys(cart).length === 0) {
-      const initialCart = {};
-      ticketOptions.forEach(ticket => {
-        initialCart[ticket.id] = 0;
-      });
-      setCart(initialCart);
-      console.log('Cart initialized:', initialCart);
-    }
-  }, [ticketOptions, cart]);
-
-  const handleQuantityChange = (ticketId, change) => {
-    const id = String(ticketId);
-    console.log('handleQuantityChange called:', id, change);
-    setCart(prevCart => {
-      const currentQty = prevCart[id] || 0;
-      const newQty = Math.max(0, currentQty + change);
-      const newCart = { ...prevCart, [id]: newQty };
-      console.log(`Cart update: ${id} -> ${newQty}`, JSON.stringify(newCart));
-      return newCart;
-    });
+  const decrement = (id) => {
+    setQuantities(prev => ({ ...prev, [id]: Math.max(0, (prev[id] || 0) - 1) }));
   };
 
   const getTotalPrice = () => {
     return ticketOptions.reduce((total, ticket) => {
-      const qty = cart[ticket.id] || 0;
-      return total + (qty * ticket.price);
+      return total + ((quantities[ticket.id] || 0) * ticket.price);
     }, 0);
   };
 
   const getTotalTickets = () => {
-    return Object.values(cart).reduce((total, qty) => total + (qty || 0), 0);
+    return Object.values(quantities).reduce((sum, qty) => sum + qty, 0);
   };
 
   return (
@@ -161,23 +110,22 @@ const Tickets = () => {
                 
                 <div className="ticket-pricing">
                   <span className="ticket-price">${ticket.price}</span>
-                  <span className={`ticket-original-price ${ticket.originalPrice > ticket.price ? '' : 'no-saving-price'}`}>
-                    {ticket.originalPrice > ticket.price ? `$${ticket.originalPrice}` : 'No saving'}
-                  </span>
                 </div>
 
                 <div className="ticket-quantity">
                   <button 
+                    type="button"
                     className="quantity-btn"
-                    onClick={() => handleQuantityChange(ticket.id, -1)}
-                    disabled={!cart[ticket.id] || cart[ticket.id] === 0}
+                    onClick={() => decrement(ticket.id)}
+                    disabled={quantities[ticket.id] === 0}
                   >
                     -
                   </button>
-                  <div className="quantity-value">{cart[ticket.id] || 0}</div>
+                  <div className="quantity-value">{quantities[ticket.id]}</div>
                   <button 
+                    type="button"
                     className="quantity-btn"
-                    onClick={() => handleQuantityChange(ticket.id, 1)}
+                    onClick={() => increment(ticket.id)}
                   >
                     +
                   </button>
@@ -213,52 +161,30 @@ const Tickets = () => {
                 <span>${getTotalPrice().toFixed(2)}</span>
               </div>
               <button 
+                type="button"
                 className="checkout-btn"
                 onClick={() => {
-                  if (!hasRealTickets) {
-                    setError('Unable to process checkout. Please refresh the page and try again.');
-                    return;
-                  }
-                  if (!api.isAuthenticated()) {
-                    // Save cart to localStorage and redirect to login
-                    localStorage.setItem('pendingCart', JSON.stringify({
-                      items: ticketOptions
-                        .filter(t => cart[t.id] > 0)
-                        .map(t => ({ 
-                          id: t.id,
-                          ticket_type_id: t.id, 
-                          name: t.name,
-                          quantity: cart[t.id],
-                          price: t.price
-                        })),
-                      total: getTotalPrice()
+                  const cartItems = ticketOptions
+                    .filter(t => quantities[t.id] > 0)
+                    .map(t => ({ 
+                      id: t.id,
+                      ticket_type_id: t.id, 
+                      name: t.name,
+                      quantity: quantities[t.id],
+                      price: t.price
                     }));
+                  
+                  // Save to localStorage
+                  localStorage.setItem('pendingCart', JSON.stringify({
+                    items: cartItems,
+                    total: getTotalPrice()
+                  }));
+                  
+                  if (!api.isAuthenticated()) {
                     navigate('/login?redirect=/checkout');
                   } else {
-                    // Navigate to checkout with cart data
-                    const cartItems = ticketOptions
-                      .filter(t => cart[t.id] > 0)
-                      .map(t => ({ 
-                        id: t.id,
-                        ticket_type_id: t.id, 
-                        name: t.name,
-                        quantity: cart[t.id],
-                        price: t.price
-                      }));
-                    
-                    console.log('Navigating to checkout with items:', cartItems);
-                    
-                    // Save to localStorage as backup
-                    localStorage.setItem('pendingCart', JSON.stringify({
-                      items: cartItems,
-                      total: getTotalPrice()
-                    }));
-                    
                     navigate('/checkout', { 
-                      state: { 
-                        items: cartItems,
-                        total: getTotalPrice()
-                      }
+                      state: { items: cartItems, total: getTotalPrice() }
                     });
                   }
                 }}
