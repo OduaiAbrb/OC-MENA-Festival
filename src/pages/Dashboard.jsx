@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [transferLoading, setTransferLoading] = useState(false);
   const [transferError, setTransferError] = useState('');
   const [transferSuccess, setTransferSuccess] = useState('');
+  const [userProfile, setUserProfile] = useState(null);
 
   const userName = user?.full_name || 'Guest';
 
@@ -30,7 +31,19 @@ const Dashboard = () => {
       return;
     }
     loadDashboardData();
+    loadUserProfile();
   }, [isAuthenticated, navigate]);
+
+  const loadUserProfile = async () => {
+    try {
+      const response = await api.getProfile();
+      if (response?.success) {
+        setUserProfile(response.data);
+      }
+    } catch (err) {
+      console.error('Failed to load user profile:', err);
+    }
+  };
 
   const loadDashboardData = async () => {
     try {
@@ -114,6 +127,16 @@ const Dashboard = () => {
             <div className="dashboard-buttons">
               <button className="action-button" onClick={() => setActiveSection('tickets')}>View tickets ({tickets.length})</button>
               <button className="action-button" onClick={() => setActiveSection('orders')}>View orders ({orders.length})</button>
+              {userProfile?.is_staff && (
+                <>
+                  <button className="action-button" style={{backgroundColor: '#dc2626', borderColor: '#dc2626'}} onClick={() => navigate('/admin-dashboard')}>
+                    🎪 Admin Dashboard
+                  </button>
+                  <button className="action-button" style={{backgroundColor: '#7c3aed', borderColor: '#7c3aed'}} onClick={() => navigate('/scanner')}>
+                    📱 Scanner
+                  </button>
+                </>
+              )}
             </div>
           </div>
         );
