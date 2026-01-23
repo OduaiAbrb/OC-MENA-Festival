@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
+from apps.tickets.models import TicketType
 
 User = get_user_model()
 
@@ -77,5 +78,96 @@ class CreateUshersView(APIView):
                 'Login with usher1@ocmena.com / Usher2026!',
                 'Navigate to /scanner',
                 'Scanner will activate automatically'
+            ]
+        }, status=status.HTTP_200_OK)
+
+
+class CreateTicketTypesView(APIView):
+    """
+    Public endpoint to create default ticket types.
+    Visit: /api/accounts/setup/create-ticket-types/
+    
+    This creates the default 3-Day, 2-Day, and 1-Day passes.
+    """
+    permission_classes = []
+    authentication_classes = []
+    
+    def get(self, request):
+        """Create ticket types when visiting this URL."""
+        ticket_types_data = [
+            {
+                'name': '3-Day Pass',
+                'slug': '3day',
+                'description': 'Full festival access for all three days',
+                'price_cents': 3500,
+                'quantity_available': 1000,
+                'is_active': True,
+                'valid_days': ['2026-05-01', '2026-05-02', '2026-05-03']
+            },
+            {
+                'name': '2-Day Pass',
+                'slug': '2day',
+                'description': 'Festival access for any two days',
+                'price_cents': 2500,
+                'quantity_available': 500,
+                'is_active': True,
+                'valid_days': ['2026-05-01', '2026-05-02', '2026-05-03']
+            },
+            {
+                'name': '1-Day Pass',
+                'slug': '1day',
+                'description': 'Festival access for a single day',
+                'price_cents': 1500,
+                'quantity_available': 500,
+                'is_active': True,
+                'valid_days': ['2026-05-01', '2026-05-02', '2026-05-03']
+            }
+        ]
+        
+        created = []
+        updated = []
+        errors = []
+        
+        for ticket_data in ticket_types_data:
+            try:
+                ticket_type, was_created = TicketType.objects.update_or_create(
+                    slug=ticket_data['slug'],
+                    defaults={
+                        'name': ticket_data['name'],
+                        'description': ticket_data['description'],
+                        'price_cents': ticket_data['price_cents'],
+                        'quantity_available': ticket_data['quantity_available'],
+                        'is_active': ticket_data['is_active'],
+                        'valid_days': ticket_data['valid_days']
+                    }
+                )
+                
+                if was_created:
+                    created.append({
+                        'name': ticket_type.name,
+                        'price': f"${ticket_type.price_cents/100:.2f}",
+                        'id': str(ticket_type.id)
+                    })
+                else:
+                    updated.append({
+                        'name': ticket_type.name,
+                        'price': f"${ticket_type.price_cents/100:.2f}",
+                        'id': str(ticket_type.id)
+                    })
+                    
+            except Exception as e:
+                errors.append(f"Error with {ticket_data['name']}: {str(e)}")
+        
+        return Response({
+            'success': True,
+            'message': 'Ticket types setup complete!',
+            'created': created,
+            'updated': updated,
+            'errors': errors,
+            'next_steps': [
+                'Go to /tickets',
+                'Tickets will now load with proper UUIDs',
+                'Add tickets to cart',
+                'Proceed to checkout - UUID error should be fixed!'
             ]
         }, status=status.HTTP_200_OK)

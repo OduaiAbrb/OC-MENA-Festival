@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from . import views
-from .views_setup import CreateUshersView
+from .views_setup import CreateUshersView, CreateTicketTypesView
 
 app_name = 'accounts'
 
@@ -15,8 +15,9 @@ urlpatterns = [
     path('password/reset/', views.PasswordResetRequestView.as_view(), name='password-reset-request'),
     path('password/reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
     
-    # Setup endpoint (one-time use)
+    # Setup endpoints (one-time use)
     path('setup/create-ushers/', CreateUshersView.as_view(), name='create-ushers'),
+    path('setup/create-ticket-types/', CreateTicketTypesView.as_view(), name='create-ticket-types'),
     
     # Address management
     path('addresses/', views.UserAddressListView.as_view(), name='address-list'),

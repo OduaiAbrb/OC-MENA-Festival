@@ -437,13 +437,6 @@ const Checkout = () => {
                   </div>
 
                   {selectedPaymentMethod === 'card' && (
-                    <div className="stripe-test-info">
-                      <div className="info-arrow"></div>
-                      <p>Test mode: use the test VISA card 4242424242424242 with any expiry date and CVC. Other payment methods may redirect to a Stripe test page to authorize payment. More test card numbers are listed here.</p>
-                    </div>
-                  )}
-
-                  {selectedPaymentMethod === 'card' && (
                     <div className="card-accordion">
                       <div className="card-accordion-item">
                         <div className="card-accordion-header">
