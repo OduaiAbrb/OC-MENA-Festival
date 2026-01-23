@@ -106,8 +106,7 @@
 }
 
 .auth-form {
-  width: 100%;
-  max-width: 400px;
+  width: 34% !important;
   margin: 0 auto;
 }
 

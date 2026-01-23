@@ -62,7 +62,6 @@
 /* ===== CHECKOUT PAGE CONTAINER ===== */
 .checkout-page {
   width: 100%;
-  max-width: 1100px;
 }
 
 /* ===== COUPON SECTION ===== */
@@ -214,19 +213,21 @@
 .checkout-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 60px;
+  gap: 40px;
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .checkout-left {
-  padding-right: 30px;
   width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .checkout-right {
   width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 /* ===== SECTION TITLE ===== */
@@ -301,58 +302,78 @@
 
 /* ===== ORDER TABLE ===== */
 .order-table {
+  width: 100%;
+  border-collapse: collapse;
   border: 1px solid #e0e0e0;
   margin-bottom: 25px;
+  table-layout: fixed;
 }
 
 .order-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 15px;
-  background-color: #f8f9fa;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   border-bottom: 1px solid #e0e0e0;
+}
+
+.order-header span {
+  padding: 12px 15px;
   font-size: 14px;
   font-weight: 600;
   color: #1a1a1a;
+  background-color: #f8f9fa;
+}
+
+.order-header span:first-child {
+  border-right: 1px solid #e0e0e0;
 }
 
 .order-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   border-bottom: 1px solid #e0e0e0;
-  font-size: 14px;
-  color: #1a1a1a;
 }
 
 .order-row:last-child {
   border-bottom: none;
 }
 
-.order-row strong {
-  font-weight: 700;
+.order-row span {
+  padding: 12px 15px;
+  font-size: 14px;
+  color: #1a1a1a;
 }
 
-.order-total {
-  background-color: #f8f9fa;
+.order-row span:first-child {
+  border-right: 1px solid #e0e0e0;
+}
+
+.order-row strong {
+  font-weight: 600;
+}
+
+.order-total span {
   font-weight: 600;
 }
 
 /* ===== PAYMENT METHODS ===== */
 .payment-methods {
   margin-bottom: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
 }
 
 .payment-option {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 0;
+  padding: 8px 0;
 }
 
 .payment-option input[type="radio"] {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
   accent-color: #1a1a2e;
   margin: 0;
@@ -372,14 +393,16 @@
   background-color: #1a1a2e;
   color: #ffffff;
   padding: 15px 20px;
-  margin: 0 0 15px 0;
+  margin: 10px 0 0 0;
   position: relative;
+  border-radius: 4px;
 }
 
-.payment-info-box .info-arrow {
+.payment-info-box::before {
+  content: '';
   position: absolute;
   top: -8px;
-  left: 20px;
+  left: 30px;
   width: 0;
   height: 0;
   border-left: 8px solid transparent;
@@ -397,17 +420,16 @@
   background-color: #1a1a2e;
   color: #ffffff;
   padding: 20px;
-  margin: 0 0 15px 0;
+  margin: 10px 0 0 0;
   position: relative;
   border-radius: 4px;
 }
 
-.card-accordion .info-arrow,
 .card-accordion::before {
   content: '';
   position: absolute;
   top: -8px;
-  left: 20px;
+  left: 55px;
   width: 0;
   height: 0;
   border-left: 8px solid transparent;
@@ -419,26 +441,23 @@
   background: transparent;
 }
 
+.card-accordion-header {
+  display: none;
+}
+
 .card-accordion-content {
   padding: 0;
 }
 
 .card-form-grid {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .card-field {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-width: 80px;
-}
-
-.card-field:first-child {
-  flex: 2;
-  min-width: 150px;
 }
 
 .card-field label {
@@ -449,7 +468,7 @@
 }
 
 .card-input {
-  padding: 10px 12px;
+  padding: 12px;
   border: 1px solid #444;
   border-radius: 4px;
   font-size: 14px;
@@ -471,9 +490,8 @@
 
 /* ===== PRIVACY NOTICE ===== */
 .privacy-notice {
- 
-padding-top:10px;
-  
+  margin-top: 20px;
+  padding-top: 20px;
 }
 
 .privacy-notice p {
@@ -489,6 +507,7 @@ padding-top:10px;
   display: block;
   width: auto;
   margin-left: auto;
+  margin-top: 20px;
   padding: 15px 40px;
   background-color: #dc2626;
   color: white;
@@ -502,6 +521,11 @@ padding-top:10px;
 
 .place-order-btn:hover {
   background-color: #b91c1c;
+}
+
+.place-order-btn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
 }
 
 /* ===== LANTERNS ===== */

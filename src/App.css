@@ -165,9 +165,8 @@ body {
   border: none; /* Ensure no border */
   box-shadow: none; /* Ensure no shadow */
   min-height: 888px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  overflow: hidden; /* Contain all content within the torn paper */
+  box-sizing: border-box;
 }
 
 /* ===== TORN PAPER IMAGES ===== */
