@@ -93,6 +93,36 @@
   font-weight: 600;
 }
 
+.info-value.highlight {
+  color: #dc143c;
+  font-weight: 700;
+}
+
+.info-value.status-valid {
+  color: #00cc44;
+}
+
+.info-value.status-used {
+  color: #ff9800;
+}
+
+.vendor-badge {
+  background: linear-gradient(135deg, #9c27b0, #673ab7);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
 .success-buttons {
   display: flex;
   flex-direction: column;

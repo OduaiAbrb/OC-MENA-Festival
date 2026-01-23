@@ -6,6 +6,14 @@ const TicketSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const ticketData = location.state || {};
+  
+  // Check if this is a vendor booth ticket
+  const passType = ticketData.passType || ticketData.ticketData?.ticket_type || 'N/A';
+  const isVendorBooth = passType.toLowerCase().includes('vendor') || 
+                        passType.toLowerCase().includes('booth') ||
+                        passType.toLowerCase().includes('bazaar') ||
+                        passType.toLowerCase().includes('food truck') ||
+                        passType.toLowerCase().includes('food booth');
 
   const handleClose = () => {
     navigate('/');
@@ -29,7 +37,9 @@ const TicketSuccess = () => {
           </svg>
         </div>
 
-        <h1 className="success-title">Valid ticket</h1>
+        <h1 className="success-title">
+          {isVendorBooth ? '✅ Vendor Booth Valid' : 'Valid ticket'}
+        </h1>
 
         <div className="ticket-info">
           <div className="info-row">
@@ -37,20 +47,72 @@ const TicketSuccess = () => {
             <span className="info-value">{ticketData.checkInTime || new Date().toLocaleString()}</span>
           </div>
           <div className="info-row">
-            <span className="info-label">Pass type:</span>
-            <span className="info-value">{ticketData.passType || 'N/A'}</span>
+            <span className="info-label">{isVendorBooth ? 'Booth Type:' : 'Pass type:'}</span>
+            <span className="info-value highlight">{passType}</span>
           </div>
-          <div className="info-row">
-            <span className="info-label">Days left:</span>
-            <span className="info-value">{ticketData.daysLeft || 'N/A'}</span>
-          </div>
-          {ticketData.ticketData?.holder_name && (
+          
+          {/* Holder/Owner Name */}
+          {(ticketData.holderName || ticketData.ticketData?.owner_name) && (
             <div className="info-row">
-              <span className="info-label">Holder:</span>
-              <span className="info-value">{ticketData.ticketData.holder_name}</span>
+              <span className="info-label">{isVendorBooth ? 'Vendor:' : 'Holder:'}</span>
+              <span className="info-value">{ticketData.holderName || ticketData.ticketData?.owner_name}</span>
+            </div>
+          )}
+          
+          {/* Ticket Status */}
+          {ticketData.status && (
+            <div className="info-row">
+              <span className="info-label">Status:</span>
+              <span className={`info-value status-${ticketData.status.toLowerCase()}`}>
+                {ticketData.status}
+              </span>
+            </div>
+          )}
+          
+          {/* Vendor-specific details */}
+          {isVendorBooth && ticketData.ticketData?.metadata && (
+            <>
+              {ticketData.ticketData.metadata.booth_name && (
+                <div className="info-row">
+                  <span className="info-label">Booth Name:</span>
+                  <span className="info-value">{ticketData.ticketData.metadata.booth_name}</span>
+                </div>
+              )}
+              {ticketData.ticketData.metadata.legal_business_name && (
+                <div className="info-row">
+                  <span className="info-label">Business:</span>
+                  <span className="info-value">{ticketData.ticketData.metadata.legal_business_name}</span>
+                </div>
+              )}
+              {ticketData.ticketData.metadata.contact_email && (
+                <div className="info-row">
+                  <span className="info-label">Contact:</span>
+                  <span className="info-value">{ticketData.ticketData.metadata.contact_email}</span>
+                </div>
+              )}
+              {ticketData.ticketData.metadata.phone_number && (
+                <div className="info-row">
+                  <span className="info-label">Phone:</span>
+                  <span className="info-value">{ticketData.ticketData.metadata.phone_number}</span>
+                </div>
+              )}
+            </>
+          )}
+          
+          {/* Days left for regular tickets */}
+          {!isVendorBooth && ticketData.daysLeft && (
+            <div className="info-row">
+              <span className="info-label">Days left:</span>
+              <span className="info-value">{ticketData.daysLeft}</span>
             </div>
           )}
         </div>
+
+        {isVendorBooth && (
+          <div className="vendor-badge">
+            🏪 VENDOR ACCESS
+          </div>
+        )}
 
         <div className="success-buttons">
           <button className="btn-close" onClick={handleClose}>
