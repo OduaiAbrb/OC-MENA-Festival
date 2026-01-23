@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from . import views
-from .views_setup import CreateUshersView, CreateTicketTypesView
+from .views_setup import CreateUshersView, CreateTicketTypesView, CreateSuperuserView
 
 app_name = 'accounts'
 
@@ -16,6 +16,7 @@ urlpatterns = [
     path('password/reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
     
     # Setup endpoints (one-time use)
+    path('setup/create-superuser/', CreateSuperuserView.as_view(), name='create-superuser'),
     path('setup/create-ushers/', CreateUshersView.as_view(), name='create-ushers'),
     path('setup/create-ticket-types/', CreateTicketTypesView.as_view(), name='create-ticket-types'),
     

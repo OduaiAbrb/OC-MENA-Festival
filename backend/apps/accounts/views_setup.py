@@ -171,3 +171,64 @@ class CreateTicketTypesView(APIView):
                 'Proceed to checkout - UUID error should be fixed!'
             ]
         }, status=status.HTTP_200_OK)
+
+
+class CreateSuperuserView(APIView):
+    """
+    Public endpoint to create a default superuser account.
+    Visit: /api/accounts/setup/create-superuser/
+    
+    WARNING: This creates a default admin account. Change the password immediately after first login!
+    """
+    permission_classes = []
+    authentication_classes = []
+    
+    def get(self, request):
+        """Create default superuser when visiting this URL."""
+        email = 'admin@ocmena.com'
+        password = 'Admin2026!'
+        
+        try:
+            # Check if superuser already exists
+            if User.objects.filter(email=email).exists():
+                user = User.objects.get(email=email)
+                return Response({
+                    'success': True,
+                    'message': 'Superuser already exists!',
+                    'email': email,
+                    'note': 'Use this account to login to Django Admin',
+                    'django_admin_url': '/admin/',
+                    'warning': 'If you forgot the password, you need to reset it via Railway CLI'
+                }, status=status.HTTP_200_OK)
+            
+            # Create superuser
+            user = User.objects.create_superuser(
+                email=email,
+                password=password,
+                full_name='Admin User'
+            )
+            
+            return Response({
+                'success': True,
+                'message': 'Superuser created successfully!',
+                'credentials': {
+                    'email': email,
+                    'password': password,
+                    'warning': '⚠️ CHANGE THIS PASSWORD IMMEDIATELY after first login!'
+                },
+                'next_steps': [
+                    f'Go to /admin/',
+                    f'Login with {email} / {password}',
+                    'Change your password in admin',
+                    'Create usher accounts',
+                    'Create ticket types',
+                    'Make your test user staff if needed'
+                ]
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': str(e),
+                'message': 'Failed to create superuser'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
