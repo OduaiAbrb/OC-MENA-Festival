@@ -397,6 +397,9 @@
   margin: 10px 0 15px 0;
   position: relative;
   font-size: 12px;
+  max-width: 100%;
+  box-sizing: border-box;
+  z-index: 1;
 }
 
 .stripe-test-info .info-arrow {

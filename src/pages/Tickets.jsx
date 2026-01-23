@@ -19,7 +19,9 @@ const Tickets = () => {
     '1day': 0
   });
 
-  // Static ticket options - always available
+  const [realTickets, setRealTickets] = useState([]);
+
+  // Static ticket options - fallback if backend doesn't have tickets
   const ticketOptions = [
     {
       id: '3day',
@@ -47,23 +49,43 @@ const Tickets = () => {
     }
   ];
 
+  // Use real tickets if available, otherwise use fallback
+  const displayTickets = realTickets.length > 0 ? realTickets : ticketOptions;
+
   useEffect(() => {
-    // Check if backend has real tickets
-    const checkTickets = async () => {
+    // Fetch real tickets from backend
+    const fetchTickets = async () => {
       try {
         const response = await api.getTicketTypes();
         if (response?.success && response.data?.length > 0) {
-          // Backend tickets available
+          // Map backend tickets to our format
+          const mappedTickets = response.data.map(ticket => ({
+            id: ticket.id, // This is the UUID
+            name: ticket.name,
+            slug: ticket.slug,
+            description: ticket.description || `${ticket.name} access`,
+            savings: ticket.name.includes('3') ? 'Save $10 on entry' : ticket.name.includes('2') ? 'Save $5 on entry' : 'Save $0 on entry',
+            price: ticket.price_cents / 100 // Convert cents to dollars
+          }));
+          setRealTickets(mappedTickets);
+          
+          // Initialize quantities for real tickets
+          const initialQuantities = {};
+          mappedTickets.forEach((ticket, index) => {
+            initialQuantities[ticket.id] = index === 0 ? 1 : 0;
+          });
+          setQuantities(initialQuantities);
         } else {
           setSalesMessage(response?.message || '');
         }
       } catch (err) {
-        console.log('Using fallback tickets');
+        console.error('Error fetching tickets:', err);
+        // Keep using fallback tickets
       } finally {
         setLoading(false);
       }
     };
-    checkTickets();
+    fetchTickets();
   }, []);
 
   // Simple increment/decrement handlers
@@ -76,7 +98,7 @@ const Tickets = () => {
   };
 
   const getTotalPrice = () => {
-    return ticketOptions.reduce((total, ticket) => {
+    return displayTickets.reduce((total, ticket) => {
       return total + ((quantities[ticket.id] || 0) * ticket.price);
     }, 0);
   };
@@ -106,7 +128,7 @@ const Tickets = () => {
           <h2 className="card-title">Tickets</h2>
           
           <div className="tickets-container">
-            {ticketOptions.map(ticket => (
+            {displayTickets.map(ticket => (
               <div key={ticket.id} className={`ticket-card ${quantities[ticket.id] > 0 ? 'selected' : ''}`}>
                 {quantities[ticket.id] > 0 && (
                   <div className="ticket-checkmark">
@@ -181,11 +203,11 @@ const Tickets = () => {
                 type="button"
                 className="add-to-cart-btn"
                 onClick={() => {
-                  const cartItems = ticketOptions
+                  const cartItems = displayTickets
                     .filter(t => quantities[t.id] > 0)
                     .map(t => ({ 
                       id: t.id,
-                      ticket_type_id: t.id, 
+                      ticket_type_id: t.id, // This is now a UUID from backend
                       name: t.name,
                       quantity: quantities[t.id],
                       price: t.price
