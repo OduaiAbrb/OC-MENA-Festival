@@ -13,7 +13,6 @@ const Dashboard = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [activeSection, setActiveSection] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [tickets, setTickets] = useState([]);
   const [vendorTickets, setVendorTickets] = useState([]);
   const [regularTickets, setRegularTickets] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -55,7 +54,6 @@ const Dashboard = () => {
       ]);
       if (ticketsRes?.success) {
         const allTickets = ticketsRes.data;
-        setTickets(allTickets);
         
         // Separate vendor booth tickets from regular tickets
         const vendor = allTickets.filter(ticket => {
