@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import CartModal from './CartModal';
+import CartSidebar from './CartSidebar';
 import './Header.css';
 
 const Header = ({ onGetTicketsClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems] = useState([]);
+  const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
   const location = useLocation();
   const { isAuthenticated } = useAuth();
 
@@ -32,6 +32,44 @@ const Header = ({ onGetTicketsClick }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Load cart items from localStorage and listen for updates
+  useEffect(() => {
+    const loadCart = () => {
+      const cart = localStorage.getItem('cart');
+      if (cart) {
+        try {
+          const parsedCart = JSON.parse(cart);
+          setCartItems(parsedCart.items || []);
+        } catch (e) {
+          console.error('Error parsing cart:', e);
+          setCartItems([]);
+        }
+      } else {
+        setCartItems([]);
+      }
+    };
+
+    loadCart();
+
+    const handleCartUpdate = (event) => {
+      if (event.detail) {
+        setCartItems(event.detail.items || []);
+      }
+    };
+
+    const handleOpenCart = () => {
+      setIsCartSidebarOpen(true);
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    window.addEventListener('openCart', handleOpenCart);
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+      window.removeEventListener('openCart', handleOpenCart);
+    };
+  }, []);
+
   const handleNavClick = (path, e) => {
     // If we're clicking Home and already on the home page, scroll to top smoothly
     if (path === '/' && location.pathname === '/') {
@@ -42,7 +80,13 @@ const Header = ({ onGetTicketsClick }) => {
   };
 
   const handleCartClick = () => {
-    setIsCartOpen(true);
+    setIsCartSidebarOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleCloseCart = () => {
+    setIsCartSidebarOpen(false);
+    document.body.style.overflow = '';
   };
 
   const getTotalCartItems = () => {
@@ -175,10 +219,9 @@ const Header = ({ onGetTicketsClick }) => {
       </div>
 
       {isMenuOpen && <div className="menu-overlay" onClick={() => setIsMenuOpen(false)}></div>}
-      <CartModal 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-        cartItems={cartItems}
+      <CartSidebar 
+        isOpen={isCartSidebarOpen}
+        onClose={handleCloseCart}
       />
     </header>
   );

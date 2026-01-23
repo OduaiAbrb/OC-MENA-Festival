@@ -10,6 +10,7 @@ import Vendors from './pages/Vendors';
 import Sponsors from './pages/Sponsors';
 import Contact from './pages/Contact';
 import Tickets from './pages/Tickets';
+import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Dashboard from './pages/Dashboard';
 import About from './pages/About';
@@ -94,6 +95,7 @@ const AppWithModal = () => {
             <Route path="/sponsors" element={<Sponsors />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/tickets" element={<Tickets />} />
+            <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/about" element={<About />} />

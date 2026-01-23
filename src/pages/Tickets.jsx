@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
@@ -9,11 +8,9 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './Tickets.css';
 
 const Tickets = () => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true); // eslint-disable-line no-unused-vars
   const [error, setError] = useState(''); // eslint-disable-line no-unused-vars
   const [salesMessage, setSalesMessage] = useState('');
-  const [hasRealTickets, setHasRealTickets] = useState(false);
   
   // Simple cart state with initial values
   const [quantities, setQuantities] = useState({
@@ -28,6 +25,7 @@ const Tickets = () => {
       id: '3day',
       name: '3-Day Pass',
       slug: '3day',
+      description: 'Come enjoy the festival for three days',
       savings: 'BEST VALUE',
       price: 35
     },
@@ -35,6 +33,7 @@ const Tickets = () => {
       id: '2day',
       name: '2-Day Pass',
       slug: '2day',
+      description: 'Come enjoy the festival for two days',
       savings: 'POPULAR',
       price: 25
     },
@@ -42,6 +41,7 @@ const Tickets = () => {
       id: '1day',
       name: '1-Day Pass',
       slug: '1day',
+      description: 'Come enjoy the festival for a single day',
       savings: 'STANDARD',
       price: 15
     }
@@ -53,14 +53,12 @@ const Tickets = () => {
       try {
         const response = await api.getTicketTypes();
         if (response?.success && response.data?.length > 0) {
-          setHasRealTickets(true);
+          // Backend tickets available
         } else {
           setSalesMessage(response?.message || '');
-          setHasRealTickets(true); // Still allow checkout with fallback
         }
       } catch (err) {
         console.log('Using fallback tickets');
-        setHasRealTickets(true); // Allow checkout with fallback
       } finally {
         setLoading(false);
       }
@@ -99,36 +97,41 @@ const Tickets = () => {
 
         <TornPaperWrapper>
           <h1 className="card-title">Tickets</h1>
-          <p className="card-description">Choose your festival experience</p>
           
           <div className="tickets-container">
             {ticketOptions.map(ticket => (
-              <div key={ticket.id} className="ticket-card">
+              <div key={ticket.id} className={`ticket-card ${quantities[ticket.id] > 0 ? 'selected' : ''}`}>
                 <div className="ticket-header">
-                  <span className={`ticket-savings ${ticket.savings === 'No saving' ? 'no-saving' : ''}`}>{ticket.savings}</span>
+                  <h3 className="ticket-name">{ticket.name}</h3>
+                  <span className="ticket-savings">{ticket.savings}</span>
                 </div>
                 
-                <div className="ticket-pricing">
-                  <span className="ticket-price">${ticket.price}</span>
+                <p className="ticket-description">{ticket.description}</p>
+
+                <div className="ticket-quantity-section">
+                  <label className="quantity-label">How many tickets?</label>
+                  <div className="ticket-quantity">
+                    <button 
+                      type="button"
+                      className="quantity-btn"
+                      onClick={() => decrement(ticket.id)}
+                      disabled={quantities[ticket.id] === 0}
+                    >
+                      −
+                    </button>
+                    <div className="quantity-value">{quantities[ticket.id]}</div>
+                    <button 
+                      type="button"
+                      className="quantity-btn"
+                      onClick={() => increment(ticket.id)}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
 
-                <div className="ticket-quantity">
-                  <button 
-                    type="button"
-                    className="quantity-btn"
-                    onClick={() => decrement(ticket.id)}
-                    disabled={quantities[ticket.id] === 0}
-                  >
-                    -
-                  </button>
-                  <div className="quantity-value">{quantities[ticket.id]}</div>
-                  <button 
-                    type="button"
-                    className="quantity-btn"
-                    onClick={() => increment(ticket.id)}
-                  >
-                    +
-                  </button>
+                <div className="ticket-pricing">
+                  <span className="ticket-price">${getTotalTickets() > 0 && quantities[ticket.id] > 0 ? (ticket.price * quantities[ticket.id]) : ticket.price}</span>
                 </div>
 
                 <div className="ticket-note">
@@ -150,19 +153,19 @@ const Tickets = () => {
             </div>
           )}
 
+          <div className="parking-notice">
+            <p>*Parking is $12, paid directly to the OC Fairgrounds on site. Carpooling is encouraged.</p>
+          </div>
+
           {getTotalTickets() > 0 && (
             <div className="ticket-summary">
-              <div className="summary-row">
-                <span>Total Tickets:</span>
-                <span>{getTotalTickets()}</span>
-              </div>
               <div className="summary-row total">
-                <span>Total Price:</span>
-                <span>${getTotalPrice().toFixed(2)}</span>
+                <span>Subtotal:</span>
+                <span>${getTotalPrice()}</span>
               </div>
               <button 
                 type="button"
-                className="checkout-btn"
+                className="add-to-cart-btn"
                 onClick={() => {
                   const cartItems = ticketOptions
                     .filter(t => quantities[t.id] > 0)
@@ -175,21 +178,21 @@ const Tickets = () => {
                     }));
                   
                   // Save to localStorage
-                  localStorage.setItem('pendingCart', JSON.stringify({
+                  localStorage.setItem('cart', JSON.stringify({
                     items: cartItems,
                     total: getTotalPrice()
                   }));
                   
-                  if (!api.isAuthenticated()) {
-                    navigate('/login?redirect=/checkout');
-                  } else {
-                    navigate('/checkout', { 
-                      state: { items: cartItems, total: getTotalPrice() }
-                    });
-                  }
+                  // Dispatch custom event to update cart and open sidebar
+                  window.dispatchEvent(new CustomEvent('cartUpdated', { 
+                    detail: { items: cartItems, total: getTotalPrice() } 
+                  }));
+                  
+                  // Dispatch event to open cart sidebar
+                  window.dispatchEvent(new CustomEvent('openCart'));
                 }}
               >
-                Proceed to Checkout
+                Add to cart
               </button>
             </div>
           )}
