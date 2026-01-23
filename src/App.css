@@ -158,7 +158,7 @@ body {
   max-width: 1200px; /* Make the entire section much wider - matching HomePage */
   width: 70%; /* Much larger - increased from 50% to 70% */
   margin: 0 auto;
-  padding: 60px 40px 321px; /* Matching HomePage padding with massive bottom gap */
+  padding: 60px 40px 450px; /* Increased bottom padding to make torn paper taller */
   z-index: 10;
   border: none; /* Ensure no border */
   box-shadow: none; /* Ensure no shadow */
@@ -285,7 +285,7 @@ body {
   .torn-paper-card {
     width: 92%; /* Match HomePage medium screen width */
     max-width: 700px; /* Match HomePage medium screen max-width */
-    padding: 40px 40px 321px; /* Match HomePage medium screen padding with massive bottom gap */
+    padding: 40px 40px 450px; /* Increased bottom padding for medium screens */
     margin: 0 auto;
   }
 }
@@ -314,7 +314,7 @@ body {
   .torn-paper-card {
     width: 100%; /* Match HomePage mobile width */
     max-width: none; /* Match HomePage mobile max-width */
-    padding: 40px 0px 321px; /* Match HomePage mobile padding with massive bottom gap - remove side padding */
+    padding: 40px 0px 450px; /* Increased bottom padding for mobile */
     margin: 0;
   }
   
