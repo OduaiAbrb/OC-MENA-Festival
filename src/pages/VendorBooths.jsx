@@ -165,10 +165,6 @@ const VendorBooths = () => {
     });
   };
 
-  const handleBackToSelection = () => {
-    setShowRegistration(false);
-    setSelectedBooth(null);
-  };
 
   const boothOptions = [
     {
