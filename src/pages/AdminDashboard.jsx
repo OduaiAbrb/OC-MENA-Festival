@@ -32,7 +32,7 @@ const AdminDashboard = () => {
 
     try {
       const profileResponse = await api.getProfile();
-      if (!profileResponse.success || !profileResponse.data.is_staff) {
+      if (!profileResponse.success || !profileResponse.data.is_superuser) {
         setError('Access denied. Admin permissions required.');
         setTimeout(() => navigate('/'), 3000);
         return;

@@ -147,15 +147,15 @@ const Dashboard = () => {
             <div className="dashboard-buttons">
               <button className="action-button" onClick={() => setActiveSection('tickets')}>View tickets ({regularTickets.length})</button>
               <button className="action-button" onClick={() => setActiveSection('orders')}>View orders ({orders.length})</button>
+              {userProfile?.is_superuser && (
+                <button className="action-button" style={{backgroundColor: '#dc2626', borderColor: '#dc2626'}} onClick={() => navigate('/admin-dashboard')}>
+                  🎪 Admin Dashboard
+                </button>
+              )}
               {userProfile?.is_staff && (
-                <>
-                  <button className="action-button" style={{backgroundColor: '#dc2626', borderColor: '#dc2626'}} onClick={() => navigate('/admin-dashboard')}>
-                    🎪 Admin Dashboard
-                  </button>
-                  <button className="action-button" style={{backgroundColor: '#7c3aed', borderColor: '#7c3aed'}} onClick={() => navigate('/scanner')}>
-                    📱 Scanner
-                  </button>
-                </>
+                <button className="action-button" style={{backgroundColor: '#7c3aed', borderColor: '#7c3aed'}} onClick={() => navigate('/scanner')}>
+                  📱 Scanner
+                </button>
               )}
             </div>
           </div>
