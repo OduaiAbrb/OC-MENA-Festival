@@ -85,6 +85,10 @@ const LoginPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your username or email"
+                autoComplete="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
                 required
               />
             </div>
@@ -98,6 +102,7 @@ const LoginPage = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter your password"
+                autoComplete="current-password"
                 required
               />
             </div>
