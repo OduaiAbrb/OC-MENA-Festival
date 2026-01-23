@@ -130,20 +130,29 @@ const Scanner = () => {
       // Use authenticated validate endpoint instead of quick-scan
       const result = await api.validateScan(qrData);
       
-      if (result?.success && result?.data?.can_enter) {
-        // Valid ticket - navigate to success page
-        navigate('/success', { 
-          state: { 
-            ticketData: result.data,
-            checkInTime: new Date().toLocaleString(),
-            passType: result.data?.ticket_type || 'N/A',
-            holderName: result.data?.owner_name || 'N/A',
-            status: result.data?.status || 'VALID'
-          } 
-        });
+      console.log('Scan result:', result);
+      
+      if (result?.success) {
+        if (result.data?.can_enter) {
+          // Valid ticket - navigate to success page
+          navigate('/success', { 
+            state: { 
+              ticketData: result.data,
+              checkInTime: new Date().toLocaleString(),
+              passType: result.data?.ticket_type || 'N/A',
+              holderName: result.data?.owner_name || 'N/A',
+              status: result.data?.status || 'VALID'
+            } 
+          });
+        } else {
+          // Ticket found but can't enter (already used, wrong day, etc.)
+          const errorMsg = result.data?.message || 'Ticket cannot be used for entry';
+          setError(errorMsg);
+          setTimeout(() => setError(''), 4000);
+        }
       } else {
-        // Show specific error message from backend
-        const errorMsg = result?.data?.message || result?.error?.message || 'Invalid ticket';
+        // API returned success: false
+        const errorMsg = result?.error?.message || result?.message || 'Invalid ticket';
         setError(errorMsg);
         setTimeout(() => setError(''), 4000);
       }
@@ -153,8 +162,10 @@ const Scanner = () => {
         setError('Authentication required. Please log in as staff.');
       } else if (err.response?.status === 403) {
         setError('Access denied. Staff permission required.');
+      } else if (err.response?.status === 0) {
+        setError('Network error. Check your connection.');
       } else {
-        setError('Failed to validate ticket. Check connection.');
+        setError(err.message || 'Failed to validate ticket.');
       }
       setTimeout(() => setError(''), 4000);
     } finally {
