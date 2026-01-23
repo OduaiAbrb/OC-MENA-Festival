@@ -17,7 +17,6 @@ const AdminDashboard = () => {
   });
   const [tickets, setTickets] = useState([]);
   const [allTickets, setAllTickets] = useState([]);
-  const [vendorRegistrations, setVendorRegistrations] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -80,7 +79,6 @@ const AdminDashboard = () => {
       try {
         const vendorResponse = await api.getVendorDashboard();
         if (vendorResponse.success) {
-          setVendorRegistrations(vendorResponse.data.registrations || []);
           setStats(prev => ({
             ...prev,
             totalVendors: vendorResponse.data.registrations?.length || 0
