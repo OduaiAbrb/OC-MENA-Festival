@@ -160,11 +160,60 @@ const Checkout = () => {
 
     try {
       // Check if cart has vendor booths (different checkout flow)
-      const hasVendorBooths = cartItems.some(item => item.type === 'vendor-booth');
+      const vendorBoothItems = cartItems.filter(item => item.type === 'vendor-booth');
       
-      if (hasVendorBooths) {
-        // For vendor booths, show message that they need to contact directly
-        setError('Vendor booth reservations require manual processing. Please contact us at vendors@ocmena.com to complete your booth reservation.');
+      if (vendorBoothItems.length > 0) {
+        // Process vendor booth registration
+        for (const boothItem of vendorBoothItems) {
+          const boothDetails = boothItem.boothDetails || {};
+          const formDetails = boothDetails.formData || {};
+          
+          // Prepare registration data
+          const registrationData = {
+            booth_name: formDetails.boothName || '',
+            legal_business_name: formDetails.legalName || '',
+            contact_email: formDetails.email || formData.email,
+            phone_number: formDetails.phone || formData.phone,
+            business_type: boothItem.id?.includes('food') ? 'food' : 'bazaar',
+            booth_type: boothItem.id?.includes('food') ? 'food-booth' : 'bazaar',
+            days_selected: boothDetails.days || '3days',
+            upgrade_selected: boothDetails.upgrade || false,
+            halal_certified: boothDetails.halal || false,
+            total_price: boothItem.price || 0,
+            terms_accepted: formDetails.acceptTerms || true,
+            billing_address: {
+              street: formData.streetAddress,
+              city: formData.city,
+              state: formData.state,
+              zip: formData.zipCode,
+              country: formData.country
+            }
+          };
+          
+          // Submit based on booth type
+          let result;
+          if (boothItem.id?.includes('food')) {
+            result = await api.submitFoodVendor(registrationData);
+          } else {
+            result = await api.submitBazaarVendor(registrationData);
+          }
+          
+          if (!result?.success) {
+            throw new Error(result?.error?.message || 'Failed to register vendor booth');
+          }
+        }
+        
+        // Clear cart and show success
+        localStorage.removeItem('cart');
+        localStorage.removeItem('pendingCart');
+        setSuccessMessage('Vendor booth registration successful! Check your email for confirmation and QR code.');
+        setCartItems([]);
+        
+        // Redirect to dashboard after 3 seconds
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 3000);
+        
         setLoading(false);
         return;
       }
