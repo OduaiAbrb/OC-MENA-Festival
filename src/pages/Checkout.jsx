@@ -159,72 +159,57 @@ const Checkout = () => {
     setError('');
 
     try {
-      // Check if cart has vendor booths (different checkout flow)
-      const vendorBoothItems = cartItems.filter(item => item.type === 'vendor-booth');
+      // Process all items (tickets and vendor booths) through the same flow
+      // Map cart items to ticket purchase format
+      const ticketItems = [];
       
-      if (vendorBoothItems.length > 0) {
-        // Process vendor booth registration
-        for (const boothItem of vendorBoothItems) {
-          const boothDetails = boothItem.boothDetails || {};
-          const formDetails = boothDetails.formData || {};
+      for (const item of cartItems) {
+        if (item.type === 'vendor-booth') {
+          // Convert vendor booth to ticket type ID based on booth type and days
+          const boothDetails = item.boothDetails || {};
+          const days = boothDetails.days || '3days';
+          const isFood = item.ticket_type_id?.includes('food');
           
-          // Prepare registration data
-          const registrationData = {
-            booth_name: formDetails.boothName || '',
-            legal_business_name: formDetails.legalName || '',
-            contact_email: formDetails.email || formData.email,
-            phone_number: formDetails.phone || formData.phone,
-            business_type: boothItem.id?.includes('food') ? 'food' : 'bazaar',
-            booth_type: boothItem.id?.includes('food') ? 'food-booth' : 'bazaar',
-            days_selected: boothDetails.days || '3days',
-            upgrade_selected: boothDetails.upgrade || false,
-            halal_certified: boothDetails.halal || false,
-            total_price: boothItem.price || 0,
-            terms_accepted: formDetails.acceptTerms || true,
-            billing_address: {
-              street: formData.streetAddress,
-              city: formData.city,
-              state: formData.state,
-              zip: formData.zipCode,
-              country: formData.country
-            }
-          };
-          
-          // Submit based on booth type
-          let result;
-          if (boothItem.id?.includes('food')) {
-            result = await api.submitFoodVendor(registrationData);
+          // Map to vendor booth ticket type slug
+          let slug;
+          if (isFood) {
+            slug = days === '3days' ? 'food-3day' : 'food-2day';
           } else {
-            result = await api.submitBazaarVendor(registrationData);
+            slug = days === '3days' ? 'bazaar-3day' : 'bazaar-2day';
           }
           
-          if (!result?.success) {
-            throw new Error(result?.error?.message || 'Failed to register vendor booth');
+          // Fetch the actual ticket type UUID from backend
+          try {
+            const ticketTypesResponse = await api.getTicketTypes();
+            if (ticketTypesResponse.success) {
+              const vendorTicketType = ticketTypesResponse.data.find(t => t.slug === slug);
+              if (vendorTicketType) {
+                ticketItems.push({
+                  ticket_type_id: vendorTicketType.id,
+                  quantity: item.quantity || 1,
+                  metadata: {
+                    booth_name: boothDetails.formData?.boothName || '',
+                    legal_business_name: boothDetails.formData?.legalName || '',
+                    contact_email: boothDetails.formData?.email || formData.email,
+                    phone_number: boothDetails.formData?.phone || formData.phone,
+                    business_type: isFood ? 'food' : 'bazaar',
+                    upgrade_selected: boothDetails.upgrade || false,
+                    halal_certified: boothDetails.halal || false
+                  }
+                });
+              }
+            }
+          } catch (err) {
+            console.error('Error fetching vendor ticket types:', err);
           }
+        } else if (item.ticket_type_id && item.ticket_type_id.length > 10) {
+          // Regular ticket with valid UUID
+          ticketItems.push({
+            ticket_type_id: item.ticket_type_id || item.id,
+            quantity: item.quantity
+          });
         }
-        
-        // Clear cart and show success
-        localStorage.removeItem('cart');
-        localStorage.removeItem('pendingCart');
-        setSuccessMessage('Vendor booth registration successful! Check your email for confirmation and QR code.');
-        setCartItems([]);
-        
-        // Redirect to dashboard after 3 seconds
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 3000);
-        
-        setLoading(false);
-        return;
       }
-      
-      // Filter only ticket items with valid UUIDs
-      const ticketItems = cartItems
-        .filter(item => item.ticket_type_id && item.ticket_type_id.length > 10) // UUID check
-        .map(item => ({
-          ticket_type_id: item.ticket_type_id || item.id,
-          quantity: item.quantity
-        }));
 
       if (ticketItems.length === 0) {
         setError('No valid tickets in cart. Please add tickets before checking out.');
