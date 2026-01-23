@@ -2,7 +2,7 @@
 Vendor serializers.
 """
 from rest_framework import serializers
-from .models import VendorProfile, Booth, BoothAssignment
+from .models import VendorProfile, Booth, BoothAssignment, BazaarVendorRegistration, FoodVendorRegistration
 
 
 class VendorPublicSerializer(serializers.ModelSerializer):
@@ -102,3 +102,33 @@ class AdminVendorSerializer(serializers.ModelSerializer):
             'internal_notes', 'is_active', 'is_public', 'created_at',
             'updated_at', 'booth_assignments'
         ]
+
+
+class BazaarVendorRegistrationSerializer(serializers.ModelSerializer):
+    """Serializer for bazaar vendor registration."""
+    
+    class Meta:
+        model = BazaarVendorRegistration
+        fields = [
+            'id', 'business_type', 'contact_email', 'legal_business_name',
+            'booth_name', 'same_as_legal_name', 'phone_number',
+            'instagram_handle', 'facebook_handle', 'tiktok_handle',
+            'accept_terms', 'created_at'
+        ]
+        read_only_fields = ['id', 'created_at']
+
+
+class FoodVendorRegistrationSerializer(serializers.ModelSerializer):
+    """Serializer for food vendor registration."""
+    
+    class Meta:
+        model = FoodVendorRegistration
+        fields = [
+            'id', 'business_type', 'contact_email', 'legal_business_name',
+            'booth_name', 'same_as_legal_name', 'phone_number',
+            'instagram_handle', 'facebook_handle', 'tiktok_handle',
+            'has_health_permit', 'pepsi_beverage_terms',
+            'handwashing_station_terms', 'health_department_terms',
+            'setup_terms', 'accept_terms', 'created_at'
+        ]
+        read_only_fields = ['id', 'created_at']

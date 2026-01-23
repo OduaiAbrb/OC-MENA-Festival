@@ -1,9 +1,11 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './TicketSuccess.css';
 
 const TicketSuccess = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const ticketData = location.state || {};
 
   const handleClose = () => {
     navigate('/');
@@ -32,16 +34,22 @@ const TicketSuccess = () => {
         <div className="ticket-info">
           <div className="info-row">
             <span className="info-label">Check-in:</span>
-            <span className="info-value">1/21/2026, 11:45:30 AM</span>
+            <span className="info-value">{ticketData.checkInTime || new Date().toLocaleString()}</span>
           </div>
           <div className="info-row">
             <span className="info-label">Pass type:</span>
-            <span className="info-value">2-day</span>
+            <span className="info-value">{ticketData.passType || 'N/A'}</span>
           </div>
           <div className="info-row">
             <span className="info-label">Days left:</span>
-            <span className="info-value">1</span>
+            <span className="info-value">{ticketData.daysLeft || 'N/A'}</span>
           </div>
+          {ticketData.ticketData?.holder_name && (
+            <div className="info-row">
+              <span className="info-label">Holder:</span>
+              <span className="info-value">{ticketData.ticketData.holder_name}</span>
+            </div>
+          )}
         </div>
 
         <div className="success-buttons">

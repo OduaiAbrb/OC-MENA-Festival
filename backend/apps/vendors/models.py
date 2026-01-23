@@ -201,24 +201,77 @@ class VendorSetupLog(models.Model):
         on_delete=models.CASCADE,
         related_name='setup_logs'
     )
-    scanned_by = models.ForeignKey(
+    checked_in_at = models.DateTimeField(default=timezone.now)
+    checked_in_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='vendor_setups_scanned'
+        related_name='vendor_checkins'
     )
-    
-    action = models.CharField(max_length=50)
     notes = models.TextField(blank=True)
-    
-    scanned_at = models.DateTimeField(default=timezone.now)
     
     class Meta:
         db_table = 'vendor_setup_logs'
-        ordering = ['-scanned_at']
-        indexes = [
-            models.Index(fields=['vendor', 'scanned_at']),
-        ]
+        ordering = ['-checked_in_at']
     
     def __str__(self):
-        return f"{self.vendor.business_name} - {self.action}"
+        return f"{self.vendor.business_name} - {self.checked_in_at}"
+
+
+class BazaarVendorRegistration(models.Model):
+    """
+    Bazaar vendor registration submissions.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    business_type = models.CharField(max_length=100)
+    contact_email = models.EmailField()
+    legal_business_name = models.CharField(max_length=255)
+    booth_name = models.CharField(max_length=255)
+    same_as_legal_name = models.BooleanField(default=False)
+    phone_number = models.CharField(max_length=20)
+    instagram_handle = models.CharField(max_length=100, blank=True)
+    facebook_handle = models.CharField(max_length=255, blank=True)
+    tiktok_handle = models.CharField(max_length=100, blank=True)
+    accept_terms = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(default=timezone.now)
+    processed = models.BooleanField(default=False)
+    
+    class Meta:
+        db_table = 'bazaar_vendor_registrations'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.booth_name} - {self.contact_email}"
+
+
+class FoodVendorRegistration(models.Model):
+    """
+    Food vendor registration submissions.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    business_type = models.CharField(max_length=100)
+    contact_email = models.EmailField()
+    legal_business_name = models.CharField(max_length=255)
+    booth_name = models.CharField(max_length=255)
+    same_as_legal_name = models.BooleanField(default=False)
+    phone_number = models.CharField(max_length=20)
+    instagram_handle = models.CharField(max_length=100, blank=True)
+    facebook_handle = models.CharField(max_length=255, blank=True)
+    tiktok_handle = models.CharField(max_length=100, blank=True)
+    has_health_permit = models.BooleanField(default=False)
+    pepsi_beverage_terms = models.BooleanField(default=False)
+    handwashing_station_terms = models.BooleanField(default=False)
+    health_department_terms = models.BooleanField(default=False)
+    setup_terms = models.BooleanField(default=False)
+    accept_terms = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(default=timezone.now)
+    processed = models.BooleanField(default=False)
+    
+    class Meta:
+        db_table = 'food_vendor_registrations'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.booth_name} - {self.contact_email}"

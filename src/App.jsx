@@ -29,7 +29,6 @@ import TicketTerms from './pages/TicketTerms';
 import VendorBooths from './pages/VendorBooths';
 import BazaarVendor from './pages/BazaarVendor';
 import FoodVendor from './pages/FoodVendor';
-import QRScanner from './pages/QRScanner';
 import Scanner from './pages/Scanner';
 import TicketSuccess from './pages/TicketSuccess';
 import GlobalTicketModal from './components/GlobalTicketModal';
@@ -40,7 +39,7 @@ const RouteChangeHandler = ({ setIsScanPage }) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setIsScanPage(location.pathname === '/scan' || location.pathname === '/scanner' || location.pathname === '/success');
+    setIsScanPage(location.pathname === '/scanner' || location.pathname === '/success');
   }, [location.pathname, setIsScanPage]);
 
   return null;
@@ -118,7 +117,6 @@ const AppWithModal = () => {
             <Route path="/vendor-booths" element={<VendorBooths />} />
             <Route path="/bazaar-vendor" element={<BazaarVendor />} />
             <Route path="/food-vendor" element={<FoodVendor />} />
-            <Route path="/scan" element={<QRScanner />} />
             <Route path="/scanner" element={<Scanner />} />
             <Route path="/success" element={<TicketSuccess />} />
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,14 +1,19 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import jsQR from 'jsqr';
+import api from '../services/api';
 import './Scanner.css';
 
 const Scanner = () => {
   const [flashlightOn, setFlashlightOn] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [error, setError] = useState('');
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const scanningIntervalRef = useRef(null);
+  const lastScanRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,8 +74,47 @@ const Scanner = () => {
     setVideoReady(true);
   };
 
+  const handleScanQR = useCallback(async (qrData) => {
+    if (scanning || !qrData) return;
+    
+    // Prevent duplicate scans within 3 seconds
+    const now = Date.now();
+    if (lastScanRef.current && (now - lastScanRef.current) < 3000) {
+      return;
+    }
+    
+    setScanning(true);
+    setError('');
+    lastScanRef.current = now;
+    
+    try {
+      const result = await api.quickScan(qrData);
+      
+      if (result?.success) {
+        // Navigate to success page with ticket data
+        navigate('/success', { 
+          state: { 
+            ticketData: result.data,
+            checkInTime: new Date().toLocaleString(),
+            passType: result.data?.ticket_type || 'N/A',
+            daysLeft: result.data?.days_remaining || 'N/A'
+          } 
+        });
+      } else {
+        setError(result?.error?.message || 'Invalid ticket');
+        setTimeout(() => setError(''), 3000);
+      }
+    } catch (err) {
+      console.error('Scan error:', err);
+      setError('Failed to validate ticket');
+      setTimeout(() => setError(''), 3000);
+    } finally {
+      setScanning(false);
+    }
+  }, [scanning, navigate]);
+
   const captureFrame = useCallback(() => {
-    if (videoRef.current && canvasRef.current && videoReady && 
+    if (videoRef.current && canvasRef.current && videoReady && !scanning &&
         videoRef.current.videoWidth > 0 && videoRef.current.videoHeight > 0) {
       try {
         const context = canvasRef.current.getContext('2d');
@@ -78,19 +122,26 @@ const Scanner = () => {
         canvasRef.current.height = videoRef.current.videoHeight;
         context.drawImage(videoRef.current, 0, 0);
         
-        const randomDetection = Math.random();
-        if (randomDetection > 0.98) {
-          navigate('/success');
+        // Detect QR code using jsQR
+        const imageData = context.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height);
+        const qrCode = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: 'dontInvert'
+        });
+        
+        if (qrCode && qrCode.data) {
+          // Valid QR code detected
+          handleScanQR(qrCode.data);
         }
       } catch (error) {
         console.error('Error capturing frame:', error);
       }
     }
-  }, [videoReady, navigate]);
+  }, [videoReady, scanning, handleScanQR]);
 
   useEffect(() => {
     if (videoReady) {
-      scanningIntervalRef.current = setInterval(captureFrame, 1000);
+      // Scan more frequently for better QR detection (every 300ms)
+      scanningIntervalRef.current = setInterval(captureFrame, 300);
     }
     return () => {
       if (scanningIntervalRef.current) {
@@ -99,8 +150,10 @@ const Scanner = () => {
     };
   }, [videoReady, captureFrame]);
 
-  const handleCheckTicket = () => {
-    navigate('/success');
+  const handleCheckTicket = async () => {
+    // For testing: simulate a valid ticket scan
+    const testQRData = 'TEST_TICKET_' + Date.now();
+    await handleScanQR(testQRData);
   };
 
   return (
@@ -131,21 +184,39 @@ const Scanner = () => {
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
 
+        {error && (
+          <div className="scanner-error">
+            <div className="error-icon">⚠️</div>
+            <div className="error-text">{error}</div>
+          </div>
+        )}
+
+        {scanning && (
+          <div className="scanner-status">
+            <div className="status-text">Validating ticket...</div>
+          </div>
+        )}
+
         <div className="scanner-controls">
           <button
             className="btn-flashlight"
             onClick={toggleFlashlight}
             title="Toggle Flashlight"
           >
-            {flashlightOn ? 'Flashlight On' : 'Toggle Flashlight'}
+            {flashlightOn ? '🔦 Flashlight On' : '🔦 Toggle Flashlight'}
           </button>
 
           <button
             className="btn-check-ticket"
             onClick={handleCheckTicket}
+            disabled={scanning}
           >
-            Check Ticket
+            {scanning ? 'Checking...' : 'Test Scan'}
           </button>
+        </div>
+
+        <div className="scanner-instructions">
+          <p>Point camera at QR code to scan automatically</p>
         </div>
       </div>
     </div>

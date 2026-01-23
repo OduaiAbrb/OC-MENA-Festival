@@ -13,11 +13,12 @@ from apps.accounts.permissions import IsVendor, IsVendorOrAdmin, IsStaffOrAdmin,
 from apps.accounts.services import AuditService
 from apps.config.models import EventConfig
 
+from rest_framework.throttling import AnonRateThrottle
 from .models import VendorProfile, Booth, BoothAssignment
 from .serializers import (
     VendorPublicSerializer, VendorProfileSerializer, VendorProfileUpdateSerializer,
     BoothSerializer, BoothAssignmentSerializer, BoothAssignSerializer,
-    AdminVendorSerializer
+    AdminVendorSerializer, BazaarVendorRegistrationSerializer, FoodVendorRegistrationSerializer
 )
 from .services import VendorService
 
@@ -253,3 +254,63 @@ class AdminVendorListView(APIView):
             'success': True,
             'data': AdminVendorSerializer(vendors, many=True).data
         })
+
+
+class BazaarVendorRegistrationView(APIView):
+    """Public: Submit bazaar vendor registration."""
+    permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle]
+    
+    @extend_schema(
+        summary="Submit bazaar vendor registration",
+        request=BazaarVendorRegistrationSerializer,
+        responses={201: BazaarVendorRegistrationSerializer}
+    )
+    def post(self, request):
+        serializer = BazaarVendorRegistrationSerializer(data=request.data)
+        
+        if not serializer.is_valid():
+            return Response({
+                'success': False,
+                'error': {'message': 'Invalid data', 'details': serializer.errors}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        registration = serializer.save()
+        
+        logger.info(f"Bazaar vendor registration submitted: {registration.booth_name} ({registration.contact_email})")
+        
+        return Response({
+            'success': True,
+            'message': 'Registration submitted successfully',
+            'data': BazaarVendorRegistrationSerializer(registration).data
+        }, status=status.HTTP_201_CREATED)
+
+
+class FoodVendorRegistrationView(APIView):
+    """Public: Submit food vendor registration."""
+    permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle]
+    
+    @extend_schema(
+        summary="Submit food vendor registration",
+        request=FoodVendorRegistrationSerializer,
+        responses={201: FoodVendorRegistrationSerializer}
+    )
+    def post(self, request):
+        serializer = FoodVendorRegistrationSerializer(data=request.data)
+        
+        if not serializer.is_valid():
+            return Response({
+                'success': False,
+                'error': {'message': 'Invalid data', 'details': serializer.errors}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        registration = serializer.save()
+        
+        logger.info(f"Food vendor registration submitted: {registration.booth_name} ({registration.contact_email})")
+        
+        return Response({
+            'success': True,
+            'message': 'Registration submitted successfully',
+            'data': FoodVendorRegistrationSerializer(registration).data
+        }, status=status.HTTP_201_CREATED)

@@ -6,6 +6,8 @@ app_name = 'vendors'
 urlpatterns = [
     # Public
     path('list/', views.VendorPublicListView.as_view(), name='vendor-list'),
+    path('bazaar-registration/', views.BazaarVendorRegistrationView.as_view(), name='bazaar-registration'),
+    path('food-registration/', views.FoodVendorRegistrationView.as_view(), name='food-registration'),
     
     # Vendor dashboard
     path('profile/', views.VendorProfileView.as_view(), name='vendor-profile'),

@@ -274,6 +274,55 @@ class ApiService {
   async getVendorDashboard() {
     return this.request('/vendors/dashboard/');
   }
+
+  async submitBazaarVendor(data) {
+    return this.request('/vendors/bazaar-registration/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      skipAuth: true
+    });
+  }
+
+  async submitFoodVendor(data) {
+    return this.request('/vendors/food-registration/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      skipAuth: true
+    });
+  }
+
+  // ==================== SCANNING ====================
+
+  async quickScan(qrData) {
+    return this.request('/scanning/quick-scan/', {
+      method: 'POST',
+      body: JSON.stringify({ qr_data: qrData }),
+      skipAuth: true
+    });
+  }
+
+  async validateScan(qrData) {
+    return this.request('/scanning/validate/', {
+      method: 'POST',
+      body: JSON.stringify({ qr_data: qrData })
+    });
+  }
+
+  async commitScan(ticketId) {
+    return this.request('/scanning/commit/', {
+      method: 'POST',
+      body: JSON.stringify({ ticket_id: ticketId })
+    });
+  }
+
+  async getScanLogs(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    return this.request(`/scanning/logs/${queryString ? '?' + queryString : ''}`);
+  }
+
+  async getScanStats() {
+    return this.request('/scanning/stats/');
+  }
 }
 
 // Export singleton instance

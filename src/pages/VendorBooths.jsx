@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -7,6 +8,7 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './VendorBooths.css';
 
 const VendorBooths = () => {
+  const navigate = useNavigate();
   const [selectedDays, setSelectedDays] = useState({
     bazaar: '3days',
     'food-truck': '3days',
@@ -26,6 +28,18 @@ const VendorBooths = () => {
 
   const [selectedBooth, setSelectedBooth] = useState(null);
   const [showRegistration, setShowRegistration] = useState(false);
+  const [formData, setFormData] = useState({
+    businessType: 'Arab Boutique',
+    email: '',
+    legalName: '',
+    boothName: '',
+    sameAsLegal: false,
+    phone: '',
+    instagram: '',
+    facebook: '',
+    tiktok: '',
+    acceptTerms: false
+  });
 
   const handleDayChange = (boothId, days) => {
     setSelectedDays(prev => ({
@@ -56,6 +70,99 @@ const VendorBooths = () => {
       // Select the booth
       setSelectedBooth(boothId);
     }
+  };
+
+  const handleFormChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const calculateBoothPrice = (boothId) => {
+    const booth = boothOptions.find(b => b.id === boothId);
+    if (!booth) return 0;
+    
+    let price = booth.price;
+    
+    // Add upgrade cost if selected
+    if (upgrades[boothId]) {
+      if (boothId === 'bazaar') price += 100;
+      if (boothId === 'food-booth') price += 200;
+    }
+    
+    // Adjust for 2-day selection (reduce by 30%)
+    if (selectedDays[boothId] === '2days') {
+      price = Math.round(price * 0.7);
+    }
+    
+    return price;
+  };
+
+  const handleContinueToCheckout = () => {
+    // Validate form
+    if (!formData.email || !formData.legalName || !formData.boothName || !formData.phone) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    
+    if (!formData.acceptTerms) {
+      alert('Please accept the terms to continue');
+      return;
+    }
+    
+    const booth = boothOptions.find(b => b.id === selectedBooth);
+    const price = calculateBoothPrice(selectedBooth);
+    const daysLabel = selectedDays[selectedBooth] === '3days' ? 'Fri-Sun (3 days)' : 'Sat-Sun (2 days)';
+    
+    // Create cart item for the booth
+    const boothCartItem = {
+      id: `booth-${selectedBooth}-${Date.now()}`,
+      ticket_type_id: selectedBooth,
+      name: `${booth.name} - ${daysLabel}`,
+      quantity: 1,
+      price: price,
+      type: 'vendor-booth',
+      boothDetails: {
+        days: selectedDays[selectedBooth],
+        upgrade: upgrades[selectedBooth],
+        halal: halal[selectedBooth],
+        formData: formData
+      }
+    };
+    
+    // Add to cart
+    const existingCart = localStorage.getItem('cart');
+    let cartItems = [];
+    
+    if (existingCart) {
+      try {
+        const parsed = JSON.parse(existingCart);
+        cartItems = parsed.items || [];
+      } catch (e) {
+        console.error('Error parsing cart:', e);
+      }
+    }
+    
+    // Add booth to cart
+    cartItems.push(boothCartItem);
+    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Save to localStorage
+    localStorage.setItem('cart', JSON.stringify({
+      items: cartItems,
+      total: total
+    }));
+    
+    // Dispatch cart update event
+    window.dispatchEvent(new CustomEvent('cartUpdated', { 
+      detail: { items: cartItems, total: total } 
+    }));
+    
+    // Navigate to checkout
+    navigate('/checkout', { 
+      state: { items: cartItems, total: total } 
+    });
   };
 
   const handleBackToSelection = () => {
@@ -243,7 +350,11 @@ const VendorBooths = () => {
             
             <div className="form-group">
               <label className="form-label">Choose what fits your business*</label>
-              <select className="form-select">
+              <select 
+                className="form-select"
+                value={formData.businessType}
+                onChange={(e) => handleFormChange('businessType', e.target.value)}
+              >
                 <option>Arab Boutique</option>
                 <option>Food Vendor</option>
                 <option>Service Provider</option>
@@ -252,42 +363,94 @@ const VendorBooths = () => {
 
             <div className="form-group">
               <label className="form-label">Contact Email*</label>
-              <input type="email" className="form-input" placeholder="your@email.com" />
+              <input 
+                type="email" 
+                className="form-input" 
+                placeholder="your@email.com"
+                value={formData.email}
+                onChange={(e) => handleFormChange('email', e.target.value)}
+              />
             </div>
 
             <div className="form-group">
               <label className="form-label">Legal Business Name*</label>
-              <input type="text" className="form-input" placeholder="Your legal business name" />
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="Your legal business name"
+                value={formData.legalName}
+                onChange={(e) => handleFormChange('legalName', e.target.value)}
+              />
             </div>
 
             <div className="form-group">
               <label className="form-label">Booth Name*</label>
-              <input type="text" className="form-input" placeholder="Your booth display name" />
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="Your booth display name"
+                value={formData.boothName}
+                onChange={(e) => handleFormChange('boothName', e.target.value)}
+              />
             </div>
 
             <div className="simple-checkbox">
-              <input type="checkbox" id="same-business" />
+              <input 
+                type="checkbox" 
+                id="same-business"
+                checked={formData.sameAsLegal}
+                onChange={(e) => {
+                  handleFormChange('sameAsLegal', e.target.checked);
+                  if (e.target.checked) {
+                    handleFormChange('boothName', formData.legalName);
+                  }
+                }}
+              />
               <label htmlFor="same-business">Same as legal business name?</label>
             </div>
 
             <div className="form-group">
               <label className="form-label">Phone Number*</label>
-              <input type="tel" className="form-input" placeholder="(555) 123-4567" />
+              <input 
+                type="tel" 
+                className="form-input" 
+                placeholder="(555) 123-4567"
+                value={formData.phone}
+                onChange={(e) => handleFormChange('phone', e.target.value)}
+              />
             </div>
 
             <div className="form-group">
               <label className="form-label">Instagram Handle</label>
-              <input type="text" className="form-input" placeholder="@yourbusiness" />
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="@yourbusiness"
+                value={formData.instagram}
+                onChange={(e) => handleFormChange('instagram', e.target.value)}
+              />
             </div>
 
             <div className="form-group">
               <label className="form-label">Facebook Handle</label>
-              <input type="text" className="form-input" placeholder="facebook.com/yourbusiness" />
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="facebook.com/yourbusiness"
+                value={formData.facebook}
+                onChange={(e) => handleFormChange('facebook', e.target.value)}
+              />
             </div>
 
             <div className="form-group">
               <label className="form-label">TikTok Handle</label>
-              <input type="text" className="form-input" placeholder="@yourbusiness" />
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="@yourbusiness"
+                value={formData.tiktok}
+                onChange={(e) => handleFormChange('tiktok', e.target.value)}
+              />
             </div>
 
             <div className="important-notice">
@@ -297,11 +460,16 @@ const VendorBooths = () => {
             </div>
 
             <div className="simple-checkbox">
-              <input type="checkbox" id="accept-terms" />
+              <input 
+                type="checkbox" 
+                id="accept-terms"
+                checked={formData.acceptTerms}
+                onChange={(e) => handleFormChange('acceptTerms', e.target.checked)}
+              />
               <label htmlFor="accept-terms">I accept the terms above</label>
             </div>
 
-            <button className="continue-btn">Continue</button>
+            <button className="continue-btn" onClick={handleContinueToCheckout}>Continue</button>
           </div>
         )}
         </TornPaperWrapper>
