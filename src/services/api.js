@@ -294,7 +294,7 @@ class ApiService {
   // ==================== SCANNING ====================
 
   async quickScan(qrData) {
-    return this.request('/scanning/quick-scan/', {
+    return this.request('/scan/quick/', {
       method: 'POST',
       body: JSON.stringify({ qr_data: qrData }),
       skipAuth: true
@@ -302,14 +302,14 @@ class ApiService {
   }
 
   async validateScan(qrData) {
-    return this.request('/scanning/validate/', {
+    return this.request('/scan/validate/', {
       method: 'POST',
       body: JSON.stringify({ qr_data: qrData })
     });
   }
 
   async commitScan(ticketId) {
-    return this.request('/scanning/commit/', {
+    return this.request('/scan/commit/', {
       method: 'POST',
       body: JSON.stringify({ ticket_id: ticketId })
     });
