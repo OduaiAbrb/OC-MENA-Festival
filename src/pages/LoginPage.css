@@ -121,9 +121,11 @@
   color: #59565c;
   margin-bottom: 6px;
   font-weight: 500;
+  text-align: left;
 }
 
 .form-group input {
+  width: 100%;
   padding: 6px 10px;
   border: 1px solid #cccccc;
   border-radius: 4px;
@@ -131,6 +133,7 @@
   color: #333333;
   background: white;
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {

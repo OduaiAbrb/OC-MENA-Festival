@@ -275,9 +275,12 @@
 
 /* ===== SIMPLE CHECKBOXES ===== */
 .simple-checkbox {
-  margin: 15px 0;
+  margin: 15px auto;
   font-size: 13px;
   color: #5a6c7d;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
 }
 
 .simple-checkbox input[type="checkbox"] {
