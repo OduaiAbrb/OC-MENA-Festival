@@ -28,7 +28,7 @@ const Scanner = () => {
       
       // Verify user has staff permissions by checking their profile
       try {
-        const response = await api.getUserProfile();
+        const response = await api.getProfile();
         if (!response.success) {
           setAuthError('Failed to verify permissions');
           setTimeout(() => navigate('/login?redirect=/scanner', { replace: true }), 2000);
@@ -44,6 +44,7 @@ const Scanner = () => {
         
         setAuthChecking(false);
       } catch (err) {
+        console.error('Auth check error:', err);
         setAuthError('Authentication error');
         setTimeout(() => navigate('/login?redirect=/scanner', { replace: true }), 2000);
       }
