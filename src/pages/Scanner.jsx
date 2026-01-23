@@ -9,6 +9,7 @@ const Scanner = () => {
   const [videoReady, setVideoReady] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState('');
+  const [authChecking, setAuthChecking] = useState(true);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -18,10 +19,20 @@ const Scanner = () => {
 
   useEffect(() => {
     // Check if user is authenticated and has staff permissions
-    if (!api.isAuthenticated()) {
-      navigate('/login?redirect=/scanner');
-      return;
-    }
+    const checkAuth = async () => {
+      if (!api.isAuthenticated()) {
+        navigate('/login?redirect=/scanner');
+        return;
+      }
+      
+      setAuthChecking(false);
+    };
+    
+    checkAuth();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (authChecking) return;
 
     startCamera();
     return () => {
@@ -30,7 +41,7 @@ const Scanner = () => {
         clearInterval(scanningIntervalRef.current);
       }
     };
-  }, [navigate]);
+  }, [authChecking]);
 
   const startCamera = async () => {
     try {
@@ -165,6 +176,24 @@ const Scanner = () => {
       }
     };
   }, [videoReady, captureFrame]);
+
+  if (authChecking) {
+    return (
+      <div className="scanner-page">
+        <div className="scanner-header">
+          <div className="scanner-logo">
+            <img src="/logo.png" alt="Festival Logo" className="logo-img" />
+          </div>
+          <h1 className="scanner-title">Festival Entry Scanner</h1>
+        </div>
+        <div className="scanner-content">
+          <div className="scanner-status">
+            <div className="status-text">Checking authentication...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="scanner-page">
