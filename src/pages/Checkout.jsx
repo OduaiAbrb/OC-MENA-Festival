@@ -170,6 +170,9 @@ const Checkout = () => {
           const days = boothDetails.days || '3days';
           const boothType = item.ticket_type_id || '';
           
+          // Determine if this is a food vendor
+          const isFood = boothType.includes('food-truck') || boothType.includes('food-booth') || boothType.includes('food');
+          
           // Map to vendor booth ticket type slug
           let slug;
           if (boothType.includes('food-truck')) {
