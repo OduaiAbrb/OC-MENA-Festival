@@ -10,6 +10,7 @@ const Scanner = () => {
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState('');
   const [authChecking, setAuthChecking] = useState(true);
+  const [authError, setAuthError] = useState('');
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -21,11 +22,31 @@ const Scanner = () => {
     // Check if user is authenticated and has staff permissions
     const checkAuth = async () => {
       if (!api.isAuthenticated()) {
-        navigate('/login?redirect=/scanner');
+        navigate('/login?redirect=/scanner', { replace: true });
         return;
       }
       
-      setAuthChecking(false);
+      // Verify user has staff permissions by checking their profile
+      try {
+        const response = await api.getUserProfile();
+        if (!response.success) {
+          setAuthError('Failed to verify permissions');
+          setTimeout(() => navigate('/login?redirect=/scanner', { replace: true }), 2000);
+          return;
+        }
+        
+        const user = response.data;
+        if (!user.is_staff) {
+          setAuthError('Access denied. Scanner requires staff permissions.');
+          setTimeout(() => navigate('/', { replace: true }), 3000);
+          return;
+        }
+        
+        setAuthChecking(false);
+      } catch (err) {
+        setAuthError('Authentication error');
+        setTimeout(() => navigate('/login?redirect=/scanner', { replace: true }), 2000);
+      }
     };
     
     checkAuth();
@@ -177,7 +198,7 @@ const Scanner = () => {
     };
   }, [videoReady, captureFrame]);
 
-  if (authChecking) {
+  if (authChecking || authError) {
     return (
       <div className="scanner-page">
         <div className="scanner-header">
@@ -188,7 +209,15 @@ const Scanner = () => {
         </div>
         <div className="scanner-content">
           <div className="scanner-status">
-            <div className="status-text">Checking authentication...</div>
+            {authError ? (
+              <div className="scanner-error">
+                <div className="error-icon">⚠️</div>
+                <div className="error-text">{authError}</div>
+                <div className="status-text">Redirecting...</div>
+              </div>
+            ) : (
+              <div className="status-text">Checking authentication...</div>
+            )}
           </div>
         </div>
       </div>
