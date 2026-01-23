@@ -40,7 +40,7 @@ const RouteChangeHandler = ({ setIsScanPage }) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setIsScanPage(location.pathname === '/scanner' || location.pathname === '/success');
+    setIsScanPage(location.pathname === '/scanner' || location.pathname === '/success' || location.pathname === '/admin-dashboard');
   }, [location.pathname, setIsScanPage]);
 
   return null;
