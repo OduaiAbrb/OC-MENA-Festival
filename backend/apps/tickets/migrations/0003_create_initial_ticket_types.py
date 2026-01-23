@@ -52,7 +52,7 @@ def reverse_migration(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tickets', '0001_initial'),
+        ('tickets', '0002_rename_ticket_type_is_acti_a1b2c3_idx_ticket_type_is_acti_ba16c9_idx_and_more'),
     ]
 
     operations = [
