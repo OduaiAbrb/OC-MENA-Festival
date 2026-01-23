@@ -18,4 +18,6 @@ urlpatterns = [
     path('admin/booths/', views.BoothListView.as_view(), name='booth-list'),
     path('admin/booths/assign/', views.BoothAssignView.as_view(), name='booth-assign'),
     path('admin/vendors/', views.AdminVendorListView.as_view(), name='admin-vendor-list'),
+    path('admin/bazaar-registrations/', views.AdminBazaarRegistrationsView.as_view(), name='admin-bazaar-registrations'),
+    path('admin/food-registrations/', views.AdminFoodRegistrationsView.as_view(), name='admin-food-registrations'),
 ]

@@ -238,7 +238,9 @@ const Checkout = () => {
         throw new Error(confirmResponse?.error?.message || 'Payment failed');
       }
 
+      // Clear all cart data from localStorage
       localStorage.removeItem('pendingCart');
+      localStorage.removeItem('cart');
       
       // Show success message
       setSuccessMessage(`Payment successful! Order #${confirmResponse.data.order_number || orderId} confirmed.`);

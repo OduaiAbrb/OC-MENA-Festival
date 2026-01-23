@@ -314,3 +314,39 @@ class FoodVendorRegistrationView(APIView):
             'message': 'Registration submitted successfully',
             'data': FoodVendorRegistrationSerializer(registration).data
         }, status=status.HTTP_201_CREATED)
+
+
+class AdminBazaarRegistrationsView(APIView):
+    """Admin: List all bazaar vendor registrations."""
+    permission_classes = [IsStaffOrAdmin]
+    
+    @extend_schema(
+        summary="List bazaar vendor registrations",
+        responses={200: BazaarVendorRegistrationSerializer(many=True)}
+    )
+    def get(self, request):
+        from .models import BazaarVendorRegistration
+        registrations = BazaarVendorRegistration.objects.all().order_by('-created_at')
+        
+        return Response({
+            'success': True,
+            'data': BazaarVendorRegistrationSerializer(registrations, many=True).data
+        })
+
+
+class AdminFoodRegistrationsView(APIView):
+    """Admin: List all food vendor registrations."""
+    permission_classes = [IsStaffOrAdmin]
+    
+    @extend_schema(
+        summary="List food vendor registrations",
+        responses={200: FoodVendorRegistrationSerializer(many=True)}
+    )
+    def get(self, request):
+        from .models import FoodVendorRegistration
+        registrations = FoodVendorRegistration.objects.all().order_by('-created_at')
+        
+        return Response({
+            'success': True,
+            'data': FoodVendorRegistrationSerializer(registrations, many=True).data
+        })

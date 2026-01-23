@@ -17,6 +17,8 @@ const AdminDashboard = () => {
   });
   const [tickets, setTickets] = useState([]);
   const [allTickets, setAllTickets] = useState([]);
+  const [bazaarRegistrations, setBazaarRegistrations] = useState([]);
+  const [foodRegistrations, setFoodRegistrations] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -75,7 +77,26 @@ const AdminDashboard = () => {
         console.log('All tickets data not available');
       }
 
-      // Fetch vendor dashboard data
+      // Fetch vendor registration data
+      try {
+        const bazaarResponse = await api.getBazaarRegistrations();
+        if (bazaarResponse.success) {
+          setBazaarRegistrations(bazaarResponse.data);
+        }
+      } catch (err) {
+        console.log('Bazaar registrations not available');
+      }
+
+      try {
+        const foodResponse = await api.getFoodRegistrations();
+        if (foodResponse.success) {
+          setFoodRegistrations(foodResponse.data);
+        }
+      } catch (err) {
+        console.log('Food registrations not available');
+      }
+
+      // Update vendor stats
       try {
         const vendorResponse = await api.getVendorDashboard();
         if (vendorResponse.success) {
@@ -202,30 +223,23 @@ const AdminDashboard = () => {
             <div className="quick-links">
               <h2>Quick Actions</h2>
               <div className="quick-links-grid">
-                <a href="https://api-production-34dd.up.railway.app/admin/tickets/ticket/" target="_blank" rel="noopener noreferrer" className="quick-link">
-                  <span className="link-icon">🎫</span>
-                  <span>View All Tickets</span>
-                </a>
-                <a href="https://api-production-34dd.up.railway.app/admin/tickets/order/" target="_blank" rel="noopener noreferrer" className="quick-link">
-                  <span className="link-icon">🛒</span>
-                  <span>View All Orders</span>
-                </a>
-                <a href="https://api-production-34dd.up.railway.app/admin/vendors/bazaarvendorregistration/" target="_blank" rel="noopener noreferrer" className="quick-link">
-                  <span className="link-icon">🏪</span>
-                  <span>Bazaar Vendors</span>
-                </a>
-                <a href="https://api-production-34dd.up.railway.app/admin/vendors/foodvendorregistration/" target="_blank" rel="noopener noreferrer" className="quick-link">
-                  <span className="link-icon">🍔</span>
-                  <span>Food Vendors</span>
-                </a>
-                <a href="https://api-production-34dd.up.railway.app/admin/accounts/user/" target="_blank" rel="noopener noreferrer" className="quick-link">
-                  <span className="link-icon">👥</span>
-                  <span>All Users</span>
-                </a>
                 <button onClick={() => setActiveTab('tickets')} className="quick-link">
                   <span className="link-icon">🎫</span>
-                  <span>Manage Tickets</span>
+                  <span>View Tickets</span>
                 </button>
+                <button onClick={() => setActiveTab('vendors')} className="quick-link">
+                  <span className="link-icon">🏪</span>
+                  <span>View Vendors</span>
+                </button>
+                <a 
+                  href="https://api-production-34dd.up.railway.app/admin/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="quick-link"
+                >
+                  <span className="link-icon">⚙️</span>
+                  <span>Django Admin (Advanced)</span>
+                </a>
               </div>
             </div>
           </div>
@@ -267,36 +281,112 @@ const AdminDashboard = () => {
                 </tbody>
               </table>
             </div>
-            <div className="table-actions">
-              <a 
-                href="https://api-production-34dd.up.railway.app/admin/tickets/tickettype/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="admin-btn primary"
-              >
-                Manage Ticket Types in Admin →
-              </a>
-            </div>
           </div>
         )}
 
         {activeTab === 'vendors' && (
           <div className="vendors-tab">
-            <h2>🏪 Vendor Booth Tickets</h2>
-            <p className="tab-description">
-              All vendor booth tickets with business details and contact information.
-            </p>
+            <h2>🏪 Vendor Management</h2>
             
             <div className="vendor-summary">
               <div className="vendor-stat">
-                <h4>Bazaar Vendors</h4>
-                <p className="vendor-count">{tickets.filter(t => t.name.toLowerCase().includes('bazaar')).reduce((sum, t) => sum + (t.sold_count || 0), 0)}</p>
+                <h4>Bazaar Registrations</h4>
+                <p className="vendor-count">{bazaarRegistrations.length}</p>
               </div>
               <div className="vendor-stat">
-                <h4>Food Vendors</h4>
-                <p className="vendor-count">{tickets.filter(t => t.name.toLowerCase().includes('food')).reduce((sum, t) => sum + (t.sold_count || 0), 0)}</p>
+                <h4>Food Registrations</h4>
+                <p className="vendor-count">{foodRegistrations.length}</p>
+              </div>
+              <div className="vendor-stat">
+                <h4>Total Vendors</h4>
+                <p className="vendor-count">{bazaarRegistrations.length + foodRegistrations.length}</p>
               </div>
             </div>
+
+            <h3 style={{marginTop: '2rem', marginBottom: '1rem'}}>🎪 Bazaar Vendor Registrations</h3>
+            <div className="data-table-container">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Business Type</th>
+                    <th>Business Name</th>
+                    <th>Booth Name</th>
+                    <th>Contact</th>
+                    <th>Phone</th>
+                    <th>Social Media</th>
+                    <th>Registered</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bazaarRegistrations.map(reg => (
+                    <tr key={reg.id}>
+                      <td><strong>{reg.business_type}</strong></td>
+                      <td>{reg.legal_business_name}</td>
+                      <td>{reg.booth_name}</td>
+                      <td>{reg.contact_email}</td>
+                      <td>{reg.phone_number}</td>
+                      <td style={{fontSize: '0.85em'}}>
+                        {reg.instagram_handle && <div>IG: @{reg.instagram_handle}</div>}
+                        {reg.facebook_handle && <div>FB: {reg.facebook_handle}</div>}
+                        {reg.tiktok_handle && <div>TT: @{reg.tiktok_handle}</div>}
+                        {!reg.instagram_handle && !reg.facebook_handle && !reg.tiktok_handle && 'N/A'}
+                      </td>
+                      <td>{new Date(reg.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                  {bazaarRegistrations.length === 0 && (
+                    <tr>
+                      <td colSpan="7" style={{textAlign: 'center', padding: '2rem', color: '#666'}}>
+                        No bazaar vendor registrations yet
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <h3 style={{marginTop: '2rem', marginBottom: '1rem'}}>🍔 Food Vendor Registrations</h3>
+            <div className="data-table-container">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Business Type</th>
+                    <th>Business Name</th>
+                    <th>Booth Name</th>
+                    <th>Contact</th>
+                    <th>Phone</th>
+                    <th>Health Permit</th>
+                    <th>Registered</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {foodRegistrations.map(reg => (
+                    <tr key={reg.id}>
+                      <td><strong>{reg.business_type}</strong></td>
+                      <td>{reg.legal_business_name}</td>
+                      <td>{reg.booth_name}</td>
+                      <td>{reg.contact_email}</td>
+                      <td>{reg.phone_number}</td>
+                      <td>
+                        <span className={`status-badge ${reg.has_health_permit ? 'active' : 'inactive'}`}>
+                          {reg.has_health_permit ? 'Yes' : 'No'}
+                        </span>
+                      </td>
+                      <td>{new Date(reg.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                  {foodRegistrations.length === 0 && (
+                    <tr>
+                      <td colSpan="7" style={{textAlign: 'center', padding: '2rem', color: '#666'}}>
+                        No food vendor registrations yet
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <h3 style={{marginTop: '2rem', marginBottom: '1rem'}}>🎫 Vendor Booth Tickets (Paid)</h3>
 
             <div className="data-table-container">
               <table className="data-table">
@@ -351,24 +441,6 @@ const AdminDashboard = () => {
               </table>
             </div>
 
-            <div className="vendor-actions" style={{marginTop: '2rem'}}>
-              <a 
-                href="https://api-production-34dd.up.railway.app/admin/vendors/bazaarvendorregistration/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="admin-btn secondary"
-              >
-                Django Admin: Bazaar Registrations →
-              </a>
-              <a 
-                href="https://api-production-34dd.up.railway.app/admin/vendors/foodvendorregistration/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="admin-btn secondary"
-              >
-                Django Admin: Food Registrations →
-              </a>
-            </div>
           </div>
         )}
 

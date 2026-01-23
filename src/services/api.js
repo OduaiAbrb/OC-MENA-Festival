@@ -300,6 +300,14 @@ class ApiService {
     });
   }
 
+  async getBazaarRegistrations() {
+    return this.request('/vendors/admin/bazaar-registrations/');
+  }
+
+  async getFoodRegistrations() {
+    return this.request('/vendors/admin/food-registrations/');
+  }
+
   // ==================== SCANNING ====================
 
   async quickScan(qrData) {
