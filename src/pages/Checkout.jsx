@@ -499,10 +499,6 @@ const Checkout = () => {
                   {selectedPaymentMethod === 'card' && (
                     <div className="card-accordion">
                       <div className="card-accordion-item">
-                        <div className="card-accordion-header">
-                          <div className="card-icon">💳</div>
-                          <span>Card</span>
-                        </div>
                         <div className="card-accordion-content">
                           <div className="card-form-grid">
                             <div className="card-field">

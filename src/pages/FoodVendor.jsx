@@ -184,16 +184,18 @@ const FoodVendor = () => {
               />
             </div>
 
-            <div className="form-group checkbox-group">
-              <label htmlFor="sameAsLegalName">
-                <input
-                  type="checkbox"
-                  id="sameAsLegalName"
-                  name="sameAsLegalName"
-                  checked={formData.sameAsLegalName}
-                  onChange={handleChange}
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  id="sameAsLegalName" 
+                  name="sameAsLegalName" 
+                  checked={formData.sameAsLegalName} 
+                  onChange={handleChange} 
+                  className="checkbox-input"
                 />
-                Same as legal business name?
+                <span className="checkbox-custom"></span>
+                <span>Same as legal business name?</span>
               </label>
             </div>
 
@@ -242,17 +244,19 @@ const FoodVendor = () => {
               />
             </div>
 
-            <div className="form-group checkbox-group">
-              <label htmlFor="hasHealthPermit">
-                <input
-                  type="checkbox"
-                  id="hasHealthPermit"
-                  name="hasHealthPermit"
-                  checked={formData.hasHealthPermit}
-                  onChange={handleChange}
-                  required
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  id="hasHealthPermit" 
+                  name="hasHealthPermit" 
+                  checked={formData.hasHealthPermit} 
+                  onChange={handleChange} 
+                  required 
+                  className="checkbox-input"
                 />
-                Do you have OC Health Permit? (TFF) *
+                <span className="checkbox-custom"></span>
+                <span>Do you have OC Health Permit? (TFF) *</span>
               </label>
             </div>
 
@@ -262,17 +266,19 @@ const FoodVendor = () => {
               </p>
             </div>
 
-            <div className="form-group checkbox-group">
-              <label htmlFor="pepsiBeverageTerms">
-                <input
-                  type="checkbox"
-                  id="pepsiBeverageTerms"
-                  name="pepsiBeverageTerms"
-                  checked={formData.pepsiBeverageTerms}
-                  onChange={handleChange}
-                  required
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  id="pepsiBeverageTerms" 
+                  name="pepsiBeverageTerms" 
+                  checked={formData.pepsiBeverageTerms} 
+                  onChange={handleChange} 
+                  required 
+                  className="checkbox-input"
                 />
-                I accept the terms above
+                <span className="checkbox-custom"></span>
+                <span>I accept the terms above</span>
               </label>
             </div>
 
@@ -282,17 +288,19 @@ const FoodVendor = () => {
               </p>
             </div>
 
-            <div className="form-group checkbox-group">
-              <label htmlFor="handwashingStationTerms">
-                <input
-                  type="checkbox"
-                  id="handwashingStationTerms"
-                  name="handwashingStationTerms"
-                  checked={formData.handwashingStationTerms}
-                  onChange={handleChange}
-                  required
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  id="handwashingStationTerms" 
+                  name="handwashingStationTerms" 
+                  checked={formData.handwashingStationTerms} 
+                  onChange={handleChange} 
+                  required 
+                  className="checkbox-input"
                 />
-                I accept the terms above
+                <span className="checkbox-custom"></span>
+                <span>I accept the terms above</span>
               </label>
             </div>
 
@@ -302,17 +310,19 @@ const FoodVendor = () => {
               </p>
             </div>
 
-            <div className="form-group checkbox-group">
-              <label htmlFor="healthDepartmentTerms">
-                <input
-                  type="checkbox"
-                  id="healthDepartmentTerms"
-                  name="healthDepartmentTerms"
-                  checked={formData.healthDepartmentTerms}
-                  onChange={handleChange}
-                  required
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  id="healthDepartmentTerms" 
+                  name="healthDepartmentTerms" 
+                  checked={formData.healthDepartmentTerms} 
+                  onChange={handleChange} 
+                  required 
+                  className="checkbox-input"
                 />
-                I accept the terms above
+                <span className="checkbox-custom"></span>
+                <span>I accept the terms above</span>
               </label>
             </div>
 
@@ -322,17 +332,35 @@ const FoodVendor = () => {
               </p>
             </div>
 
-            <div className="form-group checkbox-group">
-              <label htmlFor="setupTerms">
-                <input
-                  type="checkbox"
-                  id="setupTerms"
-                  name="setupTerms"
-                  checked={formData.setupTerms}
-                  onChange={handleChange}
-                  required
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  id="setupTerms" 
+                  name="setupTerms" 
+                  checked={formData.setupTerms} 
+                  onChange={handleChange} 
+                  required 
+                  className="checkbox-input"
                 />
-                I accept the terms above
+                <span className="checkbox-custom"></span>
+                <span>I accept the terms above</span>
+              </label>
+            </div>
+
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  id="acceptTerms" 
+                  name="acceptTerms" 
+                  checked={formData.acceptTerms} 
+                  onChange={handleChange} 
+                  required 
+                  className="checkbox-input"
+                />
+                <span className="checkbox-custom"></span>
+                <span>I accept the terms above</span>
               </label>
             </div>
 

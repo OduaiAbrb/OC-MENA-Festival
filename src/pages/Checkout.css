@@ -341,13 +341,23 @@
 /* ===== PAYMENT METHODS ===== */
 .payment-methods {
   margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .payment-option {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 0;
+  gap: 12px;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  margin: 0;
+}
+
+.payment-option:last-child {
+  border-bottom: none;
 }
 
 .payment-option input[type="radio"] {
@@ -355,13 +365,16 @@
   height: 18px;
   cursor: pointer;
   accent-color: #1a1a2e;
+  margin: 0;
 }
 
 .payment-option label {
-  font-size: 14px;
+  font-size: 15px;
   color: #1a1a1a;
   cursor: pointer;
   margin: 0;
+  font-weight: 500;
+  flex-grow: 1;
 }
 
 /* ===== PAYMENT INFO BOX (Dark Blue) ===== */
@@ -421,40 +434,26 @@
 
 /* ===== CARD ACCORDION ===== */
 .card-accordion {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  margin: 15px 0;
-  overflow: hidden;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 0;
+  border-radius: 0;
+  background: #ffffff;
 }
 
 .card-accordion-item {
   background: #ffffff;
 }
 
-.card-accordion-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px 20px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e0e0e0;
-  cursor: pointer;
-  font-weight: 500;
-  color: #1a1a1a;
-}
-
-.card-icon {
-  font-size: 20px;
-}
-
 .card-accordion-content {
   padding: 20px;
+  border-top: 1px solid #f0f0f0;
 }
 
 .card-form-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
 .card-field {
@@ -466,27 +465,41 @@
   font-size: 14px;
   font-weight: 500;
   color: #1a1a1a;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .card-input {
-  padding: 12px 15px;
+  padding: 10px 12px;
   border: 1px solid #d0d0d0;
   border-radius: 4px;
   font-size: 14px;
   color: #1a1a1a;
   background-color: #ffffff;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .card-input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+  border-color: #1a1a2e;
+  box-shadow: 0 0 0 2px rgba(26, 26, 46, 0.1);
 }
 
 .card-input::placeholder {
   color: #999999;
+  opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (min-width: 576px) {
+  .card-form-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+  
+  .card-field:last-child {
+    grid-column: span 1;
+  }
 }
 
 /* ===== PRIVACY NOTICE ===== */

@@ -431,19 +431,23 @@ const VendorBooths = () => {
               />
             </div>
 
-            <div className="simple-checkbox">
-              <input 
-                type="checkbox" 
-                id="same-business"
-                checked={formData.sameAsLegal}
-                onChange={(e) => {
-                  handleFormChange('sameAsLegal', e.target.checked);
-                  if (e.target.checked) {
-                    handleFormChange('boothName', formData.legalName);
-                  }
-                }}
-              />
-              <label htmlFor="same-business">Same as legal business name?</label>
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  id="same-business" 
+                  checked={formData.sameAsLegal}
+                  onChange={(e) => {
+                    handleFormChange('sameAsLegal', e.target.checked);
+                    if (e.target.checked) {
+                      handleFormChange('boothName', formData.legalName);
+                    }
+                  }}
+                  className="checkbox-input"
+                />
+                <span className="checkbox-custom"></span>
+                <span>Same as legal business name?</span>
+              </label>
             </div>
 
             <div className="form-group">

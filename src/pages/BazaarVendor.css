@@ -132,22 +132,65 @@
 }
 
 /* ===== CHECKBOX GROUP ===== */
+.checkbox-group {
+  margin: 15px 0;
+}
+
 .checkbox-group label {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   font-size: 13px;
   font-weight: 400;
   color: #333333;
   margin-bottom: 0;
   cursor: pointer;
+  line-height: 1.4;
+  position: relative;
+  padding-left: 30px;
+  min-height: 20px;
 }
 
 .checkbox-group input[type="checkbox"] {
-  width: auto;
-  margin-right: 10px;
-  margin-top: 2px;
+  position: absolute;
+  opacity: 0;
   cursor: pointer;
-  flex-shrink: 0;
+  height: 0;
+  width: 0;
+  margin: 0;
+}
+
+.checkbox-group label:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #A91D3A;
+  border-radius: 3px;
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+.checkbox-group input[type="checkbox"]:checked + label:before {
+  background-color: #A91D3A;
+  border-color: #A91D3A;
+}
+
+.checkbox-group input[type="checkbox"]:checked + label:after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-group input[type="checkbox"]:focus + label:before {
+  box-shadow: 0 0 0 3px rgba(169, 29, 58, 0.2);
 }
 
 /* ===== FORM TEXT ===== */

@@ -171,16 +171,18 @@ const BazaarVendor = () => {
               />
             </div>
 
-            <div className="form-group checkbox-group">
-              <label htmlFor="sameAsLegalName">
-                <input
-                  type="checkbox"
-                  id="sameAsLegalName"
-                  name="sameAsLegalName"
-                  checked={formData.sameAsLegalName}
-                  onChange={handleChange}
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  id="sameAsLegalName" 
+                  name="sameAsLegalName" 
+                  checked={formData.sameAsLegalName} 
+                  onChange={handleChange} 
+                  className="checkbox-input"
                 />
-                Same as legal business name?
+                <span className="checkbox-custom"></span>
+                <span>Same as legal business name?</span>
               </label>
             </div>
 
@@ -235,17 +237,19 @@ const BazaarVendor = () => {
               </p>
             </div>
 
-            <div className="form-group checkbox-group">
-              <label htmlFor="acceptTerms">
-                <input
-                  type="checkbox"
-                  id="acceptTerms"
-                  name="acceptTerms"
-                  checked={formData.acceptTerms}
-                  onChange={handleChange}
-                  required
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  id="acceptTerms" 
+                  name="acceptTerms" 
+                  checked={formData.acceptTerms} 
+                  onChange={handleChange} 
+                  required 
+                  className="checkbox-input"
                 />
-                I accept the terms above
+                <span className="checkbox-custom"></span>
+                <span>I accept the terms above</span>
               </label>
             </div>
 
