@@ -21,6 +21,7 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').sp
 ENVIRONMENT = os.environ.get('DJANGO_ENVIRONMENT', 'development')
 
 INSTALLED_APPS = [
+    'jazzmin',  # Must be before django.contrib.admin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -353,3 +354,142 @@ if ENVIRONMENT == 'production':
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+# Jazzmin Admin UI Configuration
+JAZZMIN_SETTINGS = {
+    # Title on the login screen and header
+    "site_title": "OC MENA Festival Admin",
+    "site_header": "OC MENA Festival",
+    "site_brand": "Festival Dashboard",
+    "site_logo": None,
+    "login_logo": None,
+    "site_logo_classes": "img-circle",
+    "site_icon": None,
+    
+    # Welcome text on the login screen
+    "welcome_sign": "Welcome to OC MENA Festival Admin Dashboard",
+    
+    # Copyright on the footer
+    "copyright": "OC MENA Festival 2026",
+    
+    # Search model in the admin
+    "search_model": ["auth.User", "accounts.User", "tickets.Ticket", "tickets.Order"],
+    
+    # Field name on user model that contains avatar
+    "user_avatar": None,
+    
+    # Top Menu
+    "topmenu_links": [
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Festival Website", "url": "/", "new_window": True},
+        {"model": "tickets.Order"},
+        {"model": "tickets.Ticket"},
+        {"app": "vendors"},
+    ],
+    
+    # User Menu
+    "usermenu_links": [
+        {"model": "auth.user"}
+    ],
+    
+    # Side Menu
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    
+    # Custom Links
+    "custom_links": {
+        "tickets": [{
+            "name": "Generate Report", 
+            "url": "admin:tickets_order_changelist",
+            "icon": "fas fa-file-pdf",
+            "permissions": ["tickets.view_order"]
+        }]
+    },
+    
+    # Icons for models
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "accounts.User": "fas fa-user-circle",
+        "accounts.AuditLog": "fas fa-history",
+        "config.EventConfig": "fas fa-cog",
+        "config.Sponsor": "fas fa-handshake",
+        "tickets.TicketType": "fas fa-ticket-alt",
+        "tickets.Ticket": "fas fa-qrcode",
+        "tickets.Order": "fas fa-shopping-cart",
+        "tickets.OrderItem": "fas fa-list",
+        "tickets.Transfer": "fas fa-exchange-alt",
+        "vendors.VendorProfile": "fas fa-store",
+        "vendors.Booth": "fas fa-warehouse",
+        "vendors.BoothAssignment": "fas fa-map-marked-alt",
+        "vendors.VendorSetupLog": "fas fa-clipboard-check",
+        "vendors.BazaarVendorRegistration": "fas fa-file-signature",
+        "vendors.FoodVendorRegistration": "fas fa-utensils",
+        "scanning.ScanLog": "fas fa-barcode",
+        "payments.PaymentIntent": "fas fa-credit-card",
+        "payments.Refund": "fas fa-undo",
+        "wallet.Wallet": "fas fa-wallet",
+        "wallet.Transaction": "fas fa-exchange-alt",
+    },
+    
+    # Icons for default admin
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    
+    # Related modal
+    "related_modal_active": False,
+    
+    # UI Tweaks
+    "custom_css": None,
+    "custom_js": None,
+    "use_google_fonts_cdn": True,
+    "show_ui_builder": False,
+    
+    # Change view
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "auth.user": "collapsible",
+        "auth.group": "vertical_tabs"
+    },
+    
+    # Theme
+    "theme": "flatly",  # Options: default, darkly, flatly, journal, litera, lux, materia, minty, pulse, sandstone, simplex, slate, solar, spacelab, superhero, united, yeti
+    
+    # Language chooser
+    "language_chooser": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-white navbar-light",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "flatly",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}

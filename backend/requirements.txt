@@ -60,3 +60,6 @@ faker==22.0.0
 
 # Load testing
 locust==2.20.1
+
+# Admin UI
+django-jazzmin==2.6.0
