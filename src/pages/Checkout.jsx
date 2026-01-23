@@ -48,12 +48,12 @@ const Checkout = () => {
       console.log('Setting cart from location state:', location.state.items);
       setCartItems(location.state.items);
     } else {
-      // Try localStorage
-      const pendingCart = localStorage.getItem('pendingCart');
-      console.log('Pending cart from localStorage:', pendingCart);
-      if (pendingCart) {
+      // Try localStorage - check both 'cart' and 'pendingCart' keys
+      const cartData = localStorage.getItem('cart') || localStorage.getItem('pendingCart');
+      console.log('Cart from localStorage:', cartData);
+      if (cartData) {
         try {
-          const cart = JSON.parse(pendingCart);
+          const cart = JSON.parse(cartData);
           if (cart.items && cart.items.length > 0) {
             console.log('Setting cart from localStorage:', cart.items);
             setCartItems(cart.items);
