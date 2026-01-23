@@ -27,6 +27,8 @@ import Accessibility from './pages/Accessibility';
 import TermsOfUse from './pages/TermsOfUse';
 import TicketTerms from './pages/TicketTerms';
 import VendorBooths from './pages/VendorBooths';
+import BazaarVendor from './pages/BazaarVendor';
+import FoodVendor from './pages/FoodVendor';
 import QRScanner from './pages/QRScanner';
 import GlobalTicketModal from './components/GlobalTicketModal';
 import './App.css';
@@ -112,6 +114,8 @@ const AppWithModal = () => {
             <Route path="/terms-of-use" element={<TermsOfUse />} />
             <Route path="/ticket-terms" element={<TicketTerms />} />
             <Route path="/vendor-booths" element={<VendorBooths />} />
+            <Route path="/bazaar-vendor" element={<BazaarVendor />} />
+            <Route path="/food-vendor" element={<FoodVendor />} />
             <Route path="/scan" element={<QRScanner />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

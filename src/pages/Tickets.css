@@ -60,14 +60,41 @@
 }
 
 
+/* ===== PAGE HEADING ===== */
+.page-heading {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.page-intro {
+  text-align: left;
+  margin-bottom: 40px;
+  max-width: 100%;
+}
+
+.page-intro p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.7;
+  margin: 0 0 12px 0;
+}
+
+.page-intro p:last-child {
+  margin-bottom: 0;
+}
+
 /* ===== CARD CONTENT ===== */
 .card-title {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   color: #1a1a1a;
-  text-align: center;
-  margin-bottom: 15px;
-  font-family: 'Georgia', serif;
+  text-align: left;
+  margin-bottom: 30px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 .card-description {
@@ -91,14 +118,14 @@
 .ticket-card {
   background: white;
   border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 16px;
+  padding: 24px;
   text-align: center;
   transition: all 0.3s ease;
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 320px;
+  min-height: 340px;
 }
 
 .ticket-card:hover {
@@ -109,7 +136,22 @@
 
 .ticket-card.selected {
   border-color: #10b981;
+  border-width: 3px;
   box-shadow: 0 0 0 1px #10b981;
+}
+
+.ticket-checkmark {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
 .ticket-header {
@@ -130,15 +172,15 @@
 
 .ticket-savings {
   display: inline-block;
-  background: #dc2626;
-  color: white;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 12px;
+  background: transparent;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0;
+  border-radius: 0;
   margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .ticket-description {
@@ -161,8 +203,10 @@
 }
 
 .ticket-pricing {
-  margin: 20px 0;
-  text-align: left;
+  margin-top: auto;
+  padding-top: 20px;
+  text-align: right;
+  border-top: none;
 }
 
 .ticket-price {
@@ -247,36 +291,37 @@
 /* ===== PARKING NOTICE ===== */
 .parking-notice {
   text-align: center;
-  margin: 30px 0;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
+  margin: 40px 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
 }
 
 .parking-notice p {
   font-size: 14px;
   color: #333;
   margin: 0;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* ===== TICKET SUMMARY ===== */
 .ticket-summary {
-  background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 24px;
-  margin-top: 30px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 24px 0;
+  margin-top: 40px;
   text-align: center;
 }
 
 .summary-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 10px;
   font-size: 16px;
   color: #495057;
+  gap: 20px;
 }
 
 .summary-row.total {
@@ -285,18 +330,19 @@
   color: #000000;
   padding-bottom: 20px;
   margin-bottom: 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: none;
 }
 
 .add-to-cart-btn {
-  width: 100%;
+  width: auto;
+  min-width: 200px;
   background: #dc2626;
   color: white;
   border: none;
-  padding: 14px 24px;
+  padding: 14px 40px;
   font-size: 16px;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 20px;

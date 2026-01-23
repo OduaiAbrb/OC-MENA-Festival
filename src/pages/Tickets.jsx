@@ -14,7 +14,7 @@ const Tickets = () => {
   
   // Simple cart state with initial values
   const [quantities, setQuantities] = useState({
-    '3day': 0,
+    '3day': 1,
     '2day': 0,
     '1day': 0
   });
@@ -26,7 +26,7 @@ const Tickets = () => {
       name: '3-Day Pass',
       slug: '3day',
       description: 'Come enjoy the festival for three days',
-      savings: 'BEST VALUE',
+      savings: 'Save $10 on entry',
       price: 35
     },
     {
@@ -34,7 +34,7 @@ const Tickets = () => {
       name: '2-Day Pass',
       slug: '2day',
       description: 'Come enjoy the festival for two days',
-      savings: 'POPULAR',
+      savings: 'Save $5 on entry',
       price: 25
     },
     {
@@ -42,7 +42,7 @@ const Tickets = () => {
       name: '1-Day Pass',
       slug: '1day',
       description: 'Come enjoy the festival for a single day',
-      savings: 'STANDARD',
+      savings: 'Save $0 on entry',
       price: 15
     }
   ];
@@ -96,11 +96,25 @@ const Tickets = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">Tickets</h1>
+          <h1 className="page-heading">OC MENA Festival Tickets</h1>
+          
+          <div className="page-intro">
+            <p>Discover the excitement of the OC MENA Festival, a vibrant summer celebration in Orange County inspired by the rich cultures of the Middle East and North Africa. Enjoy three unforgettable days of music, food, carnival rides, cultural showcases, shopping, and family-friendly entertainment.</p>
+            <p>Choose from single-day or full-weekend passes to experience everything the festival has to offer.</p>
+          </div>
+
+          <h2 className="card-title">Tickets</h2>
           
           <div className="tickets-container">
             {ticketOptions.map(ticket => (
               <div key={ticket.id} className={`ticket-card ${quantities[ticket.id] > 0 ? 'selected' : ''}`}>
+                {quantities[ticket.id] > 0 && (
+                  <div className="ticket-checkmark">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                )}
                 <div className="ticket-header">
                   <h3 className="ticket-name">{ticket.name}</h3>
                   <span className="ticket-savings">{ticket.savings}</span>

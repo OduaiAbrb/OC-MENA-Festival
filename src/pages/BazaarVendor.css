@@ -1,0 +1,280 @@
+/* ===== BAZAAR VENDOR PAGE ===== */
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #000000;
+}
+
+/* ===== HERO SECTION ===== */
+.hero-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 200px;
+  padding-bottom: 60px;
+}
+
+.hero-background-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-background-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.hero-gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 30%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.6) 65%,
+    rgba(0, 0, 0, 0.85) 80%,
+    rgba(0, 0, 0, 1) 100%
+  );
+}
+
+.card-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-align: center;
+  margin-bottom: 10px;
+  font-family: 'Georgia', serif;
+}
+
+.card-subtitle {
+  font-size: 17px;
+  color: #666666;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.card-subtitle a {
+  color: #666666;
+  text-decoration: underline;
+}
+
+.card-subtitle a:hover {
+  color: #333333;
+}
+
+/* ===== VENDOR FORM ===== */
+.vendor-form {
+  width: 50% !important;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333333;
+  background: white;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #A91D3A;
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+}
+
+/* ===== CHECKBOX GROUP ===== */
+.checkbox-group label {
+  display: flex;
+  align-items: flex-start;
+  font-size: 13px;
+  font-weight: 400;
+  color: #333333;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+  margin-top: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ===== FORM TEXT ===== */
+.form-text {
+  font-size: 13px;
+  font-weight: 400;
+  color: #333333;
+  margin: 0;
+  padding: 15px;
+  line-height: 1.5;
+  background-color: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+}
+
+/* ===== MESSAGES ===== */
+.error-message {
+  color: #e74c3c;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 14px;
+}
+
+.success-message {
+  color: #27ae60;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* ===== SUBMIT BUTTON ===== */
+.submit-btn {
+  background: #dc2626 !important;
+  width: 100%;
+  padding: 12px 16px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  display: block;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #b91c1c !important;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== LANTERNS ===== */
+.lanterns-container {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 5;
+}
+
+.lanterns-image {
+  height: 231px;
+  width: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .hero-section {
+    padding-top: 180px;
+    padding-bottom: 40px;
+  }
+  
+  .card-title {
+    font-size: 26px;
+  }
+  
+  .vendor-form {
+    width: 70% !important;
+  }
+  
+  .form-group input,
+  .form-group select {
+    width: 100% !important;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+  }
+  
+  .submit-btn {
+    width: 100%;
+  }
+  
+  .lanterns-image {
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding-top: 180px;
+    padding-bottom: 30px;
+  }
+  
+  .card-title {
+    font-size: 22px;
+  }
+  
+  .vendor-form {
+    width: 90% !important;
+  }
+  
+  .form-group input,
+  .form-group select {
+    width: 100% !important;
+    padding: 12px 14px !important;
+    font-size: 14px !important;
+  }
+  
+  .submit-btn {
+    width: 100%;
+  }
+  
+  .lanterns-image {
+    height: 60px;
+  }
+}
