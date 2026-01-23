@@ -14,6 +14,8 @@ const Dashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [tickets, setTickets] = useState([]);
+  const [vendorTickets, setVendorTickets] = useState([]);
+  const [regularTickets, setRegularTickets] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [transferModal, setTransferModal] = useState({ open: false, ticket: null });
@@ -51,7 +53,27 @@ const Dashboard = () => {
         api.getMyTickets(),
         api.getMyOrders()
       ]);
-      if (ticketsRes?.success) setTickets(ticketsRes.data);
+      if (ticketsRes?.success) {
+        const allTickets = ticketsRes.data;
+        setTickets(allTickets);
+        
+        // Separate vendor booth tickets from regular tickets
+        const vendor = allTickets.filter(ticket => {
+          const name = ticket.ticket_type_name?.toLowerCase() || '';
+          return name.includes('vendor') || name.includes('booth') || 
+                 name.includes('bazaar') || name.includes('food truck') || 
+                 name.includes('food booth');
+        });
+        const regular = allTickets.filter(ticket => {
+          const name = ticket.ticket_type_name?.toLowerCase() || '';
+          return !name.includes('vendor') && !name.includes('booth') && 
+                 !name.includes('bazaar') && !name.includes('food truck') && 
+                 !name.includes('food booth');
+        });
+        
+        setVendorTickets(vendor);
+        setRegularTickets(regular);
+      }
       if (ordersRes?.success) setOrders(ordersRes.data);
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
@@ -125,7 +147,12 @@ const Dashboard = () => {
             <h2 className="section-title">Hello {userName}</h2>
             <p className="section-subtitle">(<span onClick={handleLogout} style={{cursor: 'pointer', textDecoration: 'underline'}}>not {userName}? Log out</span>)</p>
             <div className="dashboard-buttons">
-              <button className="action-button" onClick={() => setActiveSection('tickets')}>View tickets ({tickets.length})</button>
+              <button className="action-button" onClick={() => setActiveSection('tickets')}>View tickets ({regularTickets.length})</button>
+              {vendorTickets.length > 0 && (
+                <button className="action-button" style={{backgroundColor: '#9333ea', borderColor: '#9333ea'}} onClick={() => setActiveSection('vendor-booths')}>
+                  🏪 Vendor Booths ({vendorTickets.length})
+                </button>
+              )}
               <button className="action-button" onClick={() => setActiveSection('orders')}>View orders ({orders.length})</button>
               {userProfile?.is_staff && (
                 <>
@@ -145,10 +172,10 @@ const Dashboard = () => {
           <div className="content-section">
             <h2 className="section-title">My Tickets</h2>
             <div className="static-content">
-              {tickets.length === 0 ? (
+              {regularTickets.length === 0 ? (
                 <p>No tickets yet. <a href="/tickets" style={{color: '#0284c7'}}>Purchase tickets</a> to get started!</p>
               ) : (
-                tickets.map(ticket => (
+                regularTickets.map(ticket => (
                   <div key={ticket.id} style={{border: '1px solid #e5e7eb', borderRadius: '12px', padding: '1.5rem', marginBottom: '1rem', backgroundColor: '#fff'}}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem'}}>
                       <div style={{flex: 1, minWidth: '200px'}}>
@@ -214,6 +241,79 @@ const Dashboard = () => {
                 <p>View your vendor dashboard for booth details.</p>
               ) : (
                 <p>This section is for vendors only.</p>
+              )}
+            </div>
+          </div>
+        );
+      case 'vendor-booths':
+        return (
+          <div className="content-section">
+            <h2 className="section-title">🏪 My Vendor Booths</h2>
+            <div className="static-content">
+              {vendorTickets.length === 0 ? (
+                <p>No vendor booths yet. <a href="/vendor-booths" style={{color: '#9333ea'}}>Reserve a booth</a> to get started!</p>
+              ) : (
+                vendorTickets.map(ticket => (
+                  <div key={ticket.id} style={{border: '2px solid #9333ea', borderRadius: '12px', padding: '1.5rem', marginBottom: '1rem', backgroundColor: '#faf5ff'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem'}}>
+                      <div style={{flex: 1, minWidth: '200px'}}>
+                        <h3 style={{margin: '0 0 0.5rem 0', color: '#6b21a8', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                          🏪 {ticket.ticket_type_name}
+                        </h3>
+                        <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Booth Code:</strong> {ticket.ticket_code}</p>
+                        {ticket.metadata?.booth_name && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Booth Name:</strong> {ticket.metadata.booth_name}</p>
+                        )}
+                        {ticket.metadata?.legal_business_name && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Business:</strong> {ticket.metadata.legal_business_name}</p>
+                        )}
+                        {ticket.metadata?.contact_email && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Contact:</strong> {ticket.metadata.contact_email}</p>
+                        )}
+                        {ticket.metadata?.phone_number && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Phone:</strong> {ticket.metadata.phone_number}</p>
+                        )}
+                        <p style={{margin: '0.25rem 0'}}>
+                          <strong>Status:</strong>{' '}
+                          <span style={{
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.85rem',
+                            fontWeight: 'bold',
+                            backgroundColor: ticket.status === 'ISSUED' ? '#dcfce7' : ticket.status === 'USED' ? '#fee2e2' : '#fef3c7',
+                            color: ticket.status === 'ISSUED' ? '#166534' : ticket.status === 'USED' ? '#991b1b' : '#92400e'
+                          }}>
+                            {ticket.status}
+                          </span>
+                        </p>
+                      </div>
+                      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem'}}>
+                        {ticket.qr_code && (
+                          <img 
+                            src={ticket.qr_code} 
+                            alt="Vendor Booth QR Code" 
+                            style={{width: '150px', height: '150px', border: '2px solid #9333ea', borderRadius: '8px'}}
+                          />
+                        )}
+                        <a 
+                          href={ticket.qr_code} 
+                          download={`vendor-booth-${ticket.ticket_code}.png`}
+                          style={{
+                            padding: '0.5rem 1rem',
+                            backgroundColor: '#9333ea',
+                            color: 'white',
+                            textDecoration: 'none',
+                            borderRadius: '6px',
+                            fontSize: '0.9rem',
+                            fontWeight: '600'
+                          }}
+                        >
+                          Download QR
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))
               )}
             </div>
           </div>
