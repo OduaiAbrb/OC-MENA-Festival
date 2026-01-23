@@ -100,18 +100,6 @@ const LoginPage = () => {
 
             <div className="form-group password-group">
               <label htmlFor="password">Password *</label>
-<<<<<<< Updated upstream
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                required
-              />
-=======
               <div className="password-input-wrapper">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -120,6 +108,7 @@ const LoginPage = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter your password"
+                  autoComplete="current-password"
                   required
                 />
                 <button
@@ -130,7 +119,6 @@ const LoginPage = () => {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
->>>>>>> Stashed changes
             </div>
 
             <div className="form-options">

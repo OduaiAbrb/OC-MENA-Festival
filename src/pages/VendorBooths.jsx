@@ -351,19 +351,12 @@ const VendorBooths = () => {
             
             <div className="form-group">
               <label className="form-label">Choose what fits your business*</label>
-<<<<<<< Updated upstream
-              <select 
-                className="form-select"
-                value={formData.businessType}
-                onChange={(e) => handleFormChange('businessType', e.target.value)}
-              >
-                <option>Arab Boutique</option>
-                <option>Food Vendor</option>
-                <option>Service Provider</option>
-              </select>
-=======
               {selectedBooth === 'bazaar' && (
-                <select name="input_1" id="input_4_1" className="large gfield_select" aria-required="true" aria-invalid="false">
+                <select 
+                  className="form-select"
+                  value={formData.businessType}
+                  onChange={(e) => handleFormChange('businessType', e.target.value)}
+                >
                   <option value="Arab Boutique">Arab Boutique</option>
                   <option value="North African Boutique">North African Boutique</option>
                   <option value="Desi Boutique">Desi Boutique</option>
@@ -380,7 +373,11 @@ const VendorBooths = () => {
                 </select>
               )}
               {selectedBooth === 'food-truck' && (
-                <select name="input_1" id="input_3_1" className="large gfield_select" aria-required="true" aria-invalid="false">
+                <select 
+                  className="form-select"
+                  value={formData.businessType}
+                  onChange={(e) => handleFormChange('businessType', e.target.value)}
+                >
                   <option value="Arab Food">Arab Food</option>
                   <option value="North African Food">North African Food</option>
                   <option value="American Food">American Food</option>
@@ -390,23 +387,19 @@ const VendorBooths = () => {
                 </select>
               )}
               {selectedBooth === 'food-booth' && (
-                <select name="input_1" id="input_4_1" className="large gfield_select" aria-required="true" aria-invalid="false">
-                  <option value="Arab Boutique">Arab Boutique</option>
-                  <option value="North African Boutique">North African Boutique</option>
-                  <option value="Desi Boutique">Desi Boutique</option>
-                  <option value="American Boutique">American Boutique</option>
-                  <option value="Men's Boutique">Men's Boutique</option>
-                  <option value="Women's Boutique">Women's Boutique</option>
-                  <option value="Hijab, Accessories, and Jewellery">Hijab, Accessories, and Jewellery</option>
-                  <option value="Books">Books</option>
-                  <option value="Business">Business</option>
-                  <option value="Art Items">Art Items</option>
-                  <option value="Kids">Kids</option>
-                  <option value="Perfumes/Oils">Perfumes/Oils</option>
-                  <option value="Other">Other</option>
+                <select 
+                  className="form-select"
+                  value={formData.businessType}
+                  onChange={(e) => handleFormChange('businessType', e.target.value)}
+                >
+                  <option value="Arab Food">Arab Food</option>
+                  <option value="North African Food">North African Food</option>
+                  <option value="American Food">American Food</option>
+                  <option value="General Food">General Food</option>
+                  <option value="Dessert">Dessert</option>
+                  <option value="Beverage">Beverage</option>
                 </select>
               )}
->>>>>>> Stashed changes
             </div>
 
             <div className="form-group">
@@ -442,7 +435,6 @@ const VendorBooths = () => {
               />
             </div>
 
-<<<<<<< Updated upstream
             <div className="simple-checkbox">
               <input 
                 type="checkbox" 
@@ -457,13 +449,6 @@ const VendorBooths = () => {
               />
               <label htmlFor="same-business">Same as legal business name?</label>
             </div>
-=======
-            <label className="checkbox-label">
-              <input type="checkbox" id="same-business" className="checkbox-input" />
-              <span className="checkbox-custom"></span>
-              <span>Same as legal business name?</span>
-            </label>
->>>>>>> Stashed changes
 
             <div className="form-group">
               <label className="form-label">Phone Number*</label>
@@ -527,19 +512,6 @@ const VendorBooths = () => {
                   </div>
                 </div>
 
-<<<<<<< Updated upstream
-            <div className="simple-checkbox">
-              <input 
-                type="checkbox" 
-                id="accept-terms"
-                checked={formData.acceptTerms}
-                onChange={(e) => handleFormChange('acceptTerms', e.target.checked)}
-              />
-              <label htmlFor="accept-terms">I accept the terms above</label>
-            </div>
-=======
-            
-
                 <div className="mandate-section">
                   <div className="mandate-box">
                     <p className="mandate-text">
@@ -552,8 +524,6 @@ const VendorBooths = () => {
                     <span>I accept the terms above</span>
                   </label>
                 </div>
-
-                
 
                 <div className="mandate-section">
                   <div className="mandate-box">
@@ -568,8 +538,6 @@ const VendorBooths = () => {
                   </label>
                 </div>
 
-             
-
                 <div className="mandate-section">
                   <div className="mandate-box">
                     <p className="mandate-text">
@@ -582,8 +550,6 @@ const VendorBooths = () => {
                     <span>I accept the terms above</span>
                   </label>
                 </div>
-
-               
 
                 <div className="mandate-section">
                   <div className="mandate-box">
@@ -609,12 +575,16 @@ const VendorBooths = () => {
                 </div>
 
                 <div className="simple-checkbox">
-                  <input type="checkbox" id="accept-terms" />
+                  <input 
+                    type="checkbox" 
+                    id="accept-terms"
+                    checked={formData.acceptTerms}
+                    onChange={(e) => handleFormChange('acceptTerms', e.target.checked)}
+                  />
                   <label htmlFor="accept-terms">I accept the terms above</label>
                 </div>
               </>
             ) : null}
->>>>>>> Stashed changes
 
             <button className="continue-btn" onClick={handleContinueToCheckout}>Continue</button>
           </div>
