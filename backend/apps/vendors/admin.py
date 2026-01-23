@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import VendorProfile, Booth, BoothAssignment, VendorSetupLog
+from .models import VendorProfile, Booth, BoothAssignment, VendorSetupLog, BazaarVendorRegistration, FoodVendorRegistration
 
 
 @admin.register(VendorProfile)
@@ -29,7 +29,26 @@ class BoothAssignmentAdmin(admin.ModelAdmin):
 
 @admin.register(VendorSetupLog)
 class VendorSetupLogAdmin(admin.ModelAdmin):
-    list_display = ('vendor', 'action', 'scanned_by', 'scanned_at')
-    list_filter = ('action', 'scanned_at')
+    list_display = ('vendor', 'checked_in_by', 'checked_in_at')
+    list_filter = ('checked_in_at',)
     search_fields = ('vendor__business_name',)
-    readonly_fields = ('id', 'scanned_at')
+    readonly_fields = ('id', 'checked_in_at')
+    raw_id_fields = ('vendor', 'checked_in_by')
+
+
+@admin.register(BazaarVendorRegistration)
+class BazaarVendorRegistrationAdmin(admin.ModelAdmin):
+    list_display = ('booth_name', 'legal_business_name', 'contact_email', 'phone_number', 'business_type', 'created_at', 'processed')
+    list_filter = ('business_type', 'processed', 'created_at')
+    search_fields = ('booth_name', 'legal_business_name', 'contact_email', 'phone_number')
+    readonly_fields = ('id', 'created_at')
+    list_editable = ('processed',)
+
+
+@admin.register(FoodVendorRegistration)
+class FoodVendorRegistrationAdmin(admin.ModelAdmin):
+    list_display = ('booth_name', 'legal_business_name', 'contact_email', 'phone_number', 'business_type', 'has_health_permit', 'created_at', 'processed')
+    list_filter = ('business_type', 'has_health_permit', 'processed', 'created_at')
+    search_fields = ('booth_name', 'legal_business_name', 'contact_email', 'phone_number')
+    readonly_fields = ('id', 'created_at')
+    list_editable = ('processed',)
