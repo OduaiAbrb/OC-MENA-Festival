@@ -201,6 +201,10 @@ class ApiService {
     return this.request('/tickets/my/');
   }
 
+  async getAllTickets() {
+    return this.request('/tickets/all/');
+  }
+
   async getTicketDetail(ticketId) {
     return this.request(`/tickets/${ticketId}/`);
   }

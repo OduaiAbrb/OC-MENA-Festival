@@ -23,7 +23,7 @@ class IsStaffOrAdmin(permissions.BasePermission):
         return (
             request.user and 
             request.user.is_authenticated and 
-            request.user.role in [UserRole.STAFF_SCANNER, UserRole.ADMIN]
+            (request.user.is_staff or request.user.role in [UserRole.STAFF_SCANNER, UserRole.ADMIN])
         )
 
 
@@ -53,7 +53,7 @@ class IsOwnerOrStaff(permissions.BasePermission):
     """Allow access to resource owner or staff/admin."""
     
     def has_object_permission(self, request, view, obj):
-        if request.user.role in [UserRole.STAFF_SCANNER, UserRole.ADMIN]:
+        if request.user.is_staff or request.user.role in [UserRole.STAFF_SCANNER, UserRole.ADMIN]:
             return True
         
         # Check for owner field

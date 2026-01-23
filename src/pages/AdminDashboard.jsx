@@ -16,6 +16,7 @@ const AdminDashboard = () => {
     vendorRegistrationsToday: 0
   });
   const [tickets, setTickets] = useState([]);
+  const [allTickets, setAllTickets] = useState([]);
   const [vendorRegistrations, setVendorRegistrations] = useState([]);
   const [error, setError] = useState('');
 
@@ -49,7 +50,7 @@ const AdminDashboard = () => {
 
   const fetchAllData = async () => {
     try {
-      // Fetch tickets data
+      // Fetch ticket types
       const ticketsResponse = await api.getTicketTypes();
       if (ticketsResponse.success) {
         setTickets(ticketsResponse.data);
@@ -63,6 +64,16 @@ const AdminDashboard = () => {
           totalTicketsSold: totalSold,
           totalRevenue: totalRevenue
         }));
+      }
+
+      // Fetch all individual tickets for vendor booth display
+      try {
+        const allTicketsResponse = await api.getAllTickets();
+        if (allTicketsResponse.success) {
+          setAllTickets(allTicketsResponse.data);
+        }
+      } catch (err) {
+        console.log('All tickets data not available');
       }
 
       // Fetch vendor dashboard data
@@ -154,12 +165,6 @@ const AdminDashboard = () => {
         >
           🏪 Vendors
         </button>
-        <button 
-          className={`tab-btn ${activeTab === 'scanner' ? 'active' : ''}`}
-          onClick={() => setActiveTab('scanner')}
-        >
-          📱 Scanner
-        </button>
       </nav>
 
       <main className="admin-content">
@@ -219,10 +224,10 @@ const AdminDashboard = () => {
                   <span className="link-icon">👥</span>
                   <span>All Users</span>
                 </a>
-                <a href="https://api-production-34dd.up.railway.app/admin/scanning/scanlog/" target="_blank" rel="noopener noreferrer" className="quick-link">
-                  <span className="link-icon">📱</span>
-                  <span>Scan Logs</span>
-                </a>
+                <button onClick={() => setActiveTab('tickets')} className="quick-link">
+                  <span className="link-icon">🎫</span>
+                  <span>Manage Tickets</span>
+                </button>
               </div>
             </div>
           </div>
@@ -279,78 +284,96 @@ const AdminDashboard = () => {
 
         {activeTab === 'vendors' && (
           <div className="vendors-tab">
-            <h2>🏪 Vendor Registrations</h2>
+            <h2>🏪 Vendor Booth Tickets</h2>
             <p className="tab-description">
-              View all vendor booth registrations. Click to open full details in Django Admin.
+              All vendor booth tickets with business details and contact information.
             </p>
             
             <div className="vendor-summary">
               <div className="vendor-stat">
                 <h4>Bazaar Vendors</h4>
-                <p className="vendor-count">{vendorRegistrations.filter(v => v.business_type === 'bazaar').length || 0}</p>
+                <p className="vendor-count">{tickets.filter(t => t.name.toLowerCase().includes('bazaar')).reduce((sum, t) => sum + (t.sold_count || 0), 0)}</p>
               </div>
               <div className="vendor-stat">
                 <h4>Food Vendors</h4>
-                <p className="vendor-count">{vendorRegistrations.filter(v => v.business_type === 'food').length || 0}</p>
+                <p className="vendor-count">{tickets.filter(t => t.name.toLowerCase().includes('food')).reduce((sum, t) => sum + (t.sold_count || 0), 0)}</p>
               </div>
             </div>
 
-            <div className="vendor-actions">
+            <div className="data-table-container">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Booth Type</th>
+                    <th>Business Name</th>
+                    <th>Contact</th>
+                    <th>Booth Name</th>
+                    <th>Ticket Code</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allTickets
+                    .filter(t => {
+                      const name = t.ticket_type_name?.toLowerCase() || '';
+                      return name.includes('vendor') || name.includes('booth') || name.includes('bazaar') || name.includes('food');
+                    })
+                    .map(ticket => (
+                      <tr key={ticket.id}>
+                        <td><strong>{ticket.ticket_type_name}</strong></td>
+                        <td>{ticket.metadata?.legal_business_name || 'N/A'}</td>
+                        <td>
+                          {ticket.metadata?.contact_email ? (
+                            <div>
+                              <div>{ticket.metadata.contact_email}</div>
+                              <div style={{fontSize: '0.85em', color: '#666'}}>{ticket.metadata.phone_number || ''}</div>
+                            </div>
+                          ) : 'N/A'}
+                        </td>
+                        <td>{ticket.metadata?.booth_name || 'N/A'}</td>
+                        <td><code>{ticket.ticket_code || 'N/A'}</code></td>
+                        <td>
+                          <span className={`status-badge ${ticket.status?.toLowerCase()}`}>
+                            {ticket.status || 'N/A'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  {allTickets.filter(t => {
+                    const name = t.ticket_type_name?.toLowerCase() || '';
+                    return name.includes('vendor') || name.includes('booth') || name.includes('bazaar') || name.includes('food');
+                  }).length === 0 && (
+                    <tr>
+                      <td colSpan="6" style={{textAlign: 'center', padding: '2rem', color: '#666'}}>
+                        No vendor booth tickets yet
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="vendor-actions" style={{marginTop: '2rem'}}>
               <a 
                 href="https://api-production-34dd.up.railway.app/admin/vendors/bazaarvendorregistration/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="admin-btn primary"
+                className="admin-btn secondary"
               >
-                View Bazaar Registrations →
+                Django Admin: Bazaar Registrations →
               </a>
               <a 
                 href="https://api-production-34dd.up.railway.app/admin/vendors/foodvendorregistration/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="admin-btn primary"
+                className="admin-btn secondary"
               >
-                View Food Registrations →
+                Django Admin: Food Registrations →
               </a>
             </div>
           </div>
         )}
 
-        {activeTab === 'scanner' && (
-          <div className="scanner-tab">
-            <h2>📱 Scanner & Entry Management</h2>
-            <p className="tab-description">
-              Monitor ticket scans and festival entry in real-time.
-            </p>
-            
-            <div className="scanner-actions">
-              <button 
-                onClick={() => navigate('/scanner')}
-                className="admin-btn large primary"
-              >
-                🔍 Open Scanner
-              </button>
-              <a 
-                href="https://api-production-34dd.up.railway.app/admin/scanning/scanlog/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="admin-btn large secondary"
-              >
-                📊 View All Scan Logs
-              </a>
-            </div>
-
-            <div className="scanner-info">
-              <h3>Scanner Access</h3>
-              <p>Staff members can access the scanner at <code>/scanner</code></p>
-              <p>Usher credentials:</p>
-              <ul>
-                <li><strong>Email:</strong> usher1@ocmena.com</li>
-                <li><strong>Password:</strong> Usher2026!</li>
-              </ul>
-            </div>
-          </div>
-        )}
       </main>
 
       <footer className="admin-footer">
