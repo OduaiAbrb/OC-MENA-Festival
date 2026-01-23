@@ -16,14 +16,12 @@ const AdminDashboard = () => {
     vendorRegistrationsToday: 0
   });
   const [tickets, setTickets] = useState([]);
-  const [orders, setOrders] = useState([]);
   const [vendorRegistrations, setVendorRegistrations] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [scanLogs, setScanLogs] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
     checkAuthAndFetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkAuthAndFetchData = async () => {
@@ -91,16 +89,6 @@ const AdminDashboard = () => {
       style: 'currency',
       currency: 'USD'
     }).format(cents / 100);
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
   };
 
   if (loading) {
@@ -263,7 +251,7 @@ const AdminDashboard = () => {
                         <span className="ticket-slug">{ticket.slug}</span>
                       </td>
                       <td>{formatCurrency(ticket.price_cents)}</td>
-                      <td>{ticket.quantity_available || 'Unlimited'}</td>
+                      <td>{ticket.capacity || 'Unlimited'}</td>
                       <td>{ticket.sold_count || 0}</td>
                       <td>{formatCurrency((ticket.sold_count || 0) * (ticket.price_cents || 0))}</td>
                       <td>
