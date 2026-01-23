@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Scanner.css';
 
 const Scanner = () => {
   const [flashlightOn, setFlashlightOn] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
-  const [cameraError, setCameraError] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -38,7 +37,6 @@ const Scanner = () => {
       }
     } catch (error) {
       console.error('Error accessing camera:', error);
-      setCameraError(true);
     }
   };
 
@@ -71,7 +69,7 @@ const Scanner = () => {
     setVideoReady(true);
   };
 
-  const captureFrame = () => {
+  const captureFrame = useCallback(() => {
     if (videoRef.current && canvasRef.current && videoReady && 
         videoRef.current.videoWidth > 0 && videoRef.current.videoHeight > 0) {
       try {
@@ -80,70 +78,30 @@ const Scanner = () => {
         canvasRef.current.height = videoRef.current.videoHeight;
         context.drawImage(videoRef.current, 0, 0);
         
-        // Simulate QR code detection - in a real app you'd use a QR scanning library
-        // For demo purposes, we'll randomly detect a QR code after some time
         const randomDetection = Math.random();
-        if (randomDetection > 0.98) { // 2% chance per frame to simulate QR detection
+        if (randomDetection > 0.98) {
           navigate('/success');
         }
       } catch (error) {
         console.error('Error capturing frame:', error);
       }
     }
-  };
+  }, [videoReady, navigate]);
 
   useEffect(() => {
     if (videoReady) {
-      scanningIntervalRef.current = setInterval(captureFrame, 1000); // Check every second
+      scanningIntervalRef.current = setInterval(captureFrame, 1000);
     }
     return () => {
       if (scanningIntervalRef.current) {
         clearInterval(scanningIntervalRef.current);
       }
     };
-  }, [videoReady]);
+  }, [videoReady, captureFrame]);
 
   const handleCheckTicket = () => {
     navigate('/success');
   };
-
-  if (cameraError) {
-    return (
-      <div className="scanner-page">
-        <div className="scanner-header">
-          <div className="scanner-logo">
-            <img src="/logo.png" alt="Festival Logo" className="logo-img" />
-          </div>
-          <h1 className="scanner-title">Festival Entry Scanner</h1>
-        </div>
-
-        <div className="scanner-content">
-          <div className="camera-error">
-            <div className="error-icon">📱</div>
-            <h2>Camera Not Available</h2>
-            <p>This scanner is designed for mobile devices with cameras.</p>
-            <p>Please open this page on your phone to scan QR codes.</p>
-            
-            <div className="qr-frame demo-frame">
-              <div className="qr-corner qr-corner-tl"></div>
-              <div className="qr-corner qr-corner-tr"></div>
-              <div className="qr-corner qr-corner-bl"></div>
-              <div className="qr-corner qr-corner-br"></div>
-            </div>
-          </div>
-
-          <div className="scanner-controls">
-            <button
-              className="btn-check-ticket"
-              onClick={handleCheckTicket}
-            >
-              Check Ticket (Demo)
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="scanner-page">
@@ -179,7 +137,7 @@ const Scanner = () => {
             onClick={toggleFlashlight}
             title="Toggle Flashlight"
           >
-            {flashlightOn ? '💡 Flashlight On' : '🔦 Toggle Flashlight'}
+            {flashlightOn ? 'Flashlight On' : 'Toggle Flashlight'}
           </button>
 
           <button

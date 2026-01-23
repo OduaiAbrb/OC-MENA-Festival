@@ -127,13 +127,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .btn-flashlight:active {
   transform: scale(0.98);
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 .btn-check-ticket {
@@ -141,54 +140,18 @@
   padding: 14px 16px;
   border: none;
   border-radius: 25px;
-  background-color: #dc143c;
+  background-color: #c41e3a;
   color: #fff;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .btn-check-ticket:active {
   transform: scale(0.98);
-  opacity: 0.9;
-}
-
-.camera-error {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  padding: 40px 20px;
-  text-align: center;
-  color: #fff;
-}
-
-.error-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.camera-error h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0 0 12px;
-  color: #ff6b6b;
-}
-
-.camera-error p {
-  font-size: 14px;
-  margin: 4px 0;
-  color: #ccc;
-  line-height: 1.4;
-}
-
-.demo-frame {
-  margin: 24px 0;
-  background-color: rgba(255, 255, 255, 0.05);
+  opacity: 0.85;
 }
 
 @media (max-width: 480px) {
@@ -223,28 +186,5 @@
   .btn-check-ticket {
     padding: 12px 14px;
     font-size: 13px;
-  }
-
-  .camera-error {
-    padding: 32px 16px;
-  }
-
-  .error-icon {
-    font-size: 40px;
-    margin-bottom: 12px;
-  }
-
-  .camera-error h2 {
-    font-size: 18px;
-  }
-
-  .camera-error p {
-    font-size: 13px;
-  }
-
-  .demo-frame {
-    width: 180px;
-    height: 180px;
-    margin: 20px 0;
   }
 }
