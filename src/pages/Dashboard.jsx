@@ -148,11 +148,6 @@ const Dashboard = () => {
             <p className="section-subtitle">(<span onClick={handleLogout} style={{cursor: 'pointer', textDecoration: 'underline'}}>not {userName}? Log out</span>)</p>
             <div className="dashboard-buttons">
               <button className="action-button" onClick={() => setActiveSection('tickets')}>View tickets ({regularTickets.length})</button>
-              {vendorTickets.length > 0 && (
-                <button className="action-button" style={{backgroundColor: '#9333ea', borderColor: '#9333ea'}} onClick={() => setActiveSection('vendor-booths')}>
-                  🏪 Vendor Booths ({vendorTickets.length})
-                </button>
-              )}
               <button className="action-button" onClick={() => setActiveSection('orders')}>View orders ({orders.length})</button>
               {userProfile?.is_staff && (
                 <>
@@ -236,19 +231,6 @@ const Dashboard = () => {
         return (
           <div className="content-section">
             <h2 className="section-title">Vendor Booth</h2>
-            <div className="static-content">
-              {user?.role === 'VENDOR' ? (
-                <p>View your vendor dashboard for booth details.</p>
-              ) : (
-                <p>This section is for vendors only.</p>
-              )}
-            </div>
-          </div>
-        );
-      case 'vendor-booths':
-        return (
-          <div className="content-section">
-            <h2 className="section-title">🏪 My Vendor Booths</h2>
             <div className="static-content">
               {vendorTickets.length === 0 ? (
                 <p>No vendor booths yet. <a href="/vendor-booths" style={{color: '#9333ea'}}>Reserve a booth</a> to get started!</p>
