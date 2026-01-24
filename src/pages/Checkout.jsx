@@ -333,25 +333,24 @@ const Checkout = () => {
                     />
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>First name <span className="required">*</span></label>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Last name <span className="required">*</span></label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                  <div className="form-group">
+                    <label>First name <span className="required">*</span></label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Last name <span className="required">*</span></label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                    />
                   </div>
 
                   <div className="form-group">
