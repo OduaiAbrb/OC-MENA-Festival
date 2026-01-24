@@ -7,7 +7,9 @@ from django.conf import settings
 from django.core.mail import send_mail
 
 from apps.accounts.models import User
-from apps.tickets.services import QRCodeService
+from apps.tickets.services import QRCodeService, CompService
+from apps.tickets.models import TicketType, Comp
+from apps.tickets.email_service import TicketEmailService
 from .models import VendorProfile, Booth, BoothAssignment
 
 logger = logging.getLogger(__name__)
@@ -103,3 +105,69 @@ OC MENA Festival Team
             'payload': payload,
             'signature': signature
         })
+    
+    @classmethod
+    @transaction.atomic
+    def issue_vendor_comp_tickets(
+        cls,
+        vendor: VendorProfile,
+        issued_by: User,
+        ticket_type: TicketType = None
+    ) -> list:
+        """
+        Issue complimentary attendee tickets to vendor.
+        Default is 2 tickets as per vendor.included_tickets_count.
+        """
+        if not ticket_type:
+            # Get general admission ticket type
+            ticket_type = TicketType.objects.filter(
+                slug='general-admission',
+                is_active=True
+            ).first()
+            
+            if not ticket_type:
+                # Fallback to any active ticket
+                ticket_type = TicketType.objects.filter(is_active=True).first()
+            
+            if not ticket_type:
+                raise ValueError("No active ticket types available")
+        
+        quantity = vendor.included_tickets_count
+        
+        if quantity == 0:
+            logger.info(f"No comp tickets configured for vendor {vendor.business_name}")
+            return []
+        
+        # Issue comp tickets
+        comp, tickets = CompService.issue_comp(
+            issued_by=issued_by,
+            to_user=vendor.user,
+            ticket_type=ticket_type,
+            quantity=quantity,
+            reason=Comp.Reason.VENDOR,
+            notes=f"Vendor booth purchase - {vendor.business_name}"
+        )
+        
+        logger.info(f"Issued {quantity} comp tickets to vendor {vendor.business_name}")
+        return tickets
+    
+    @classmethod
+    def send_vendor_confirmation_package(cls, vendor: VendorProfile, issued_by: User) -> None:
+        """
+        Send complete vendor confirmation package including:
+        - Setup QR ticket for day-before check-in
+        - Complimentary attendee tickets (if configured)
+        """
+        try:
+            # Send vendor setup ticket email
+            TicketEmailService.send_vendor_setup_ticket(vendor)
+            
+            # Issue comp attendee tickets if configured
+            if vendor.included_tickets_count > 0:
+                cls.issue_vendor_comp_tickets(vendor, issued_by)
+            
+            logger.info(f"Vendor confirmation package sent to {vendor.business_name}")
+            
+        except Exception as e:
+            logger.error(f"Failed to send vendor confirmation package: {e}")
+            raise

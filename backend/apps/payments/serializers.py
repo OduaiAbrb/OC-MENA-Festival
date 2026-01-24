@@ -20,3 +20,12 @@ class ConfirmPaymentSerializer(serializers.Serializer):
     """Serializer for confirming payment."""
     payment_intent_id = serializers.CharField()
     order_id = serializers.UUIDField()
+
+
+class GuestCheckoutSerializer(serializers.Serializer):
+    """Serializer for guest checkout (no forced registration)."""
+    email = serializers.EmailField()
+    full_name = serializers.CharField(max_length=255)
+    phone = serializers.CharField(max_length=20, required=False, allow_blank=True)
+    items = CheckoutItemSerializer(many=True, min_length=1)
+    idempotency_key = serializers.CharField(max_length=100)

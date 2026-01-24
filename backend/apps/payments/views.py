@@ -16,14 +16,91 @@ from apps.tickets.models import Order, TicketType
 from apps.tickets.serializers import OrderSerializer
 from apps.tickets.services import OrderService
 
-from .serializers import CreatePaymentIntentSerializer, ConfirmPaymentSerializer
+from .serializers import CreatePaymentIntentSerializer, ConfirmPaymentSerializer, GuestCheckoutSerializer
 from .services import StripeService
+from .guest_checkout import GuestCheckoutService
 
 logger = logging.getLogger(__name__)
 
 
+class GuestCheckoutView(APIView):
+    """Create payment intent for guest checkout (no forced registration)."""
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    
+    @extend_schema(
+        summary="Guest checkout - create payment intent",
+        request=GuestCheckoutSerializer
+    )
+    def post(self, request):
+        config = EventConfig.get_active()
+        if not config.ticket_sales_enabled:
+            return Response({
+                'success': False,
+                'error': {'message': 'Ticket sales are not currently open'}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = GuestCheckoutSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        data = serializer.validated_data
+        
+        try:
+            # Get or create user account for guest
+            user, created = GuestCheckoutService.get_or_create_user(
+                email=data['email'],
+                full_name=data['full_name'],
+                phone=data.get('phone', '')
+            )
+            
+            # Create order
+            order = OrderService.create_order(
+                buyer=user,
+                items=data['items'],
+                idempotency_key=data['idempotency_key']
+            )
+            
+            # Create payment intent
+            result = StripeService.create_payment_intent(
+                order=order,
+                idempotency_key=data['idempotency_key']
+            )
+            
+            # Send account creation email if new user
+            if created:
+                try:
+                    GuestCheckoutService.send_account_created_email(user, order.order_number)
+                except Exception as e:
+                    logger.error(f"Failed to send account creation email: {e}")
+            
+            return Response({
+                'success': True,
+                'data': {
+                    'order_id': str(order.id),
+                    'order_number': order.order_number,
+                    'total_cents': order.total_cents,
+                    'client_secret': result['client_secret'],
+                    'payment_intent_id': result['payment_intent_id'],
+                    'account_created': created
+                }
+            })
+            
+        except ValueError as e:
+            return Response({
+                'success': False,
+                'error': {'message': str(e)}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response({
+                'success': False,
+                'error': {'message': f'Server error: {str(e)}'}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class CreatePaymentIntentView(APIView):
-    """Create a payment intent for checkout."""
+    """Create a payment intent for checkout (authenticated users)."""
     permission_classes = [IsAuthenticated]
     
     @extend_schema(

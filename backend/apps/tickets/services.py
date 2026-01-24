@@ -20,6 +20,7 @@ from .models import (
 )
 from apps.accounts.models import User, AuditLog
 from apps.accounts.services import AuditService
+from .email_service import TicketEmailService
 
 logger = logging.getLogger(__name__)
 
@@ -190,6 +191,12 @@ class OrderService:
             order=order,
             invoice_number=Invoice.generate_invoice_number(order)
         )
+        
+        # Send order confirmation email
+        try:
+            TicketEmailService.send_order_confirmation(order)
+        except Exception as e:
+            logger.error(f"Failed to send confirmation email for order {order.order_number}: {e}")
         
         logger.info(f"Order {order.order_number} finalized successfully")
         
