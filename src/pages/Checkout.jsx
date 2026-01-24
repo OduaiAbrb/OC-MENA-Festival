@@ -11,7 +11,7 @@ const Checkout = () => {
   const location = useLocation();
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [couponCode, setCouponCode] = useState('');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('cash');
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

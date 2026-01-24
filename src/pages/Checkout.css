@@ -248,12 +248,17 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
 .form-group label {
@@ -294,10 +299,21 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-row .form-group {
   margin: 0;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.form-row .form-group input,
+.form-row .form-group select {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ===== ORDER TABLE ===== */
@@ -362,13 +378,17 @@
   background: #f8f9fa;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .payment-option {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 0;
+  padding: 12px 0;
+  margin-bottom: 0;
 }
 
 .payment-option input[type="radio"] {
