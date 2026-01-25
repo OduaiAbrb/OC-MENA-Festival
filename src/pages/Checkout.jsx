@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import TornPaperWrapper from '../components/TornPaperWrapper';
 import api from '../services/api';
 import './Checkout.css';
 
-const Checkout = () => {
+const stripePromise = loadStripe('pk_test_51StHLMFbFWcxHNhaMkmL0iboXG9x1VxpgQOFQkDyjUdiIo0nEuxYHqOwLx907GnuOgBXQLxDIljrlZQI5wXQx3PJ00Pc5pI3Tn');
+
+const CheckoutForm = () => {
+  const stripe = useStripe();
+  const elements = useElements();
   const navigate = useNavigate();
   const location = useLocation();
   const [showCouponInput, setShowCouponInput] = useState(false);
@@ -16,11 +22,6 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [cardData, setCardData] = useState({
-    cardNumber: '',
-    expiry: '',
-    cvc: ''
-  });
   const [formData, setFormData] = useState({
     email: '',
     firstName: '',
@@ -98,22 +99,6 @@ const Checkout = () => {
     }));
   };
 
-  const handleCardInputChange = (e) => {
-    const { name, value } = e.target;
-    let formattedValue = value;
-
-    if (name === 'cardNumber') {
-      formattedValue = value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim().slice(0, 19);
-    }
-    if (name === 'expiry') {
-      formattedValue = value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').slice(0, 5);
-    }
-    if (name === 'cvc') {
-      formattedValue = value.replace(/\D/g, '').slice(0, 4);
-    }
-
-    setCardData(prev => ({ ...prev, [name]: formattedValue }));
-  };
 
   const handlePlaceOrder = async () => {
     if (loading) return;
@@ -132,18 +117,16 @@ const Checkout = () => {
       return;
     }
 
-    // Validate card details if paying by card
+    // Validate Stripe card element if paying by card
     if (selectedPaymentMethod === 'card') {
-      if (!cardData.cardNumber || !cardData.expiry || !cardData.cvc) {
-        setError('Please enter complete card details');
+      if (!stripe || !elements) {
+        setError('Stripe is not loaded yet. Please wait.');
         return;
       }
-      if (cardData.cardNumber.replace(/\s/g, '').length < 13) {
-        setError('Please enter a valid card number');
-        return;
-      }
-      if (cardData.cvc.length < 3) {
-        setError('Please enter a valid CVC');
+      
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) {
+        setError('Card information is required');
         return;
       }
     }
@@ -231,6 +214,39 @@ const Checkout = () => {
 
       const orderId = intentResponse.data.order_id;
       const paymentIntentId = intentResponse.data.payment_intent_id;
+      const clientSecret = intentResponse.data.client_secret;
+
+      // If paying by card, confirm with Stripe
+      if (selectedPaymentMethod === 'card' && stripe && elements) {
+        const cardElement = elements.getElement(CardElement);
+        
+        const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: `${formData.firstName} ${formData.lastName}`,
+              email: formData.email,
+              phone: formData.phone,
+              address: {
+                line1: formData.streetAddress,
+                line2: formData.apartment,
+                city: formData.city,
+                state: formData.state,
+                postal_code: formData.zipCode,
+                country: 'US'
+              }
+            }
+          }
+        });
+
+        if (stripeError) {
+          throw new Error(stripeError.message || 'Payment failed');
+        }
+
+        if (paymentIntent.status !== 'succeeded') {
+          throw new Error('Payment was not successful');
+        }
+      }
 
       const confirmResponse = await api.confirmPayment(orderId, paymentIntentId);
 
@@ -499,40 +515,21 @@ const Checkout = () => {
                     <div className="card-accordion">
                       <div className="card-accordion-item">
                         <div className="card-accordion-content">
-                          <div className="card-form-grid">
-                            <div className="card-field">
-                              <label>Card number</label>
-                              <input
-                                type="text"
-                                name="cardNumber"
-                                value={cardData.cardNumber}
-                                onChange={handleCardInputChange}
-                                placeholder="4242 4242 4242 4242"
-                                className="card-input"
-                              />
-                            </div>
-                            <div className="card-field">
-                              <label>Expiration date</label>
-                              <input
-                                type="text"
-                                name="expiry"
-                                value={cardData.expiry}
-                                onChange={handleCardInputChange}
-                                placeholder="MM / YY"
-                                className="card-input"
-                              />
-                            </div>
-                            <div className="card-field">
-                              <label>Security code</label>
-                              <input
-                                type="text"
-                                name="cvc"
-                                value={cardData.cvc}
-                                onChange={handleCardInputChange}
-                                placeholder="123"
-                                className="card-input"
-                              />
-                            </div>
+                          <div style={{ padding: '10px', background: '#fff', borderRadius: '4px' }}>
+                            <CardElement options={{
+                              style: {
+                                base: {
+                                  fontSize: '16px',
+                                  color: '#424770',
+                                  '::placeholder': {
+                                    color: '#aab7c4',
+                                  },
+                                },
+                                invalid: {
+                                  color: '#9e2146',
+                                },
+                              },
+                            }} />
                           </div>
                         </div>
                       </div>
@@ -584,6 +581,14 @@ const Checkout = () => {
 
       <Footer />
     </div>
+  );
+};
+
+const Checkout = () => {
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
   );
 };
 
