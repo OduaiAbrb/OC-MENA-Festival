@@ -90,8 +90,8 @@ OC MENA Festival Team
             
             # Get first ticket for main QR code
             main_ticket = tickets[0] if tickets else None
-            # Skip QR generation for now to avoid timeouts - will be available in dashboard
-            qr_code_base64 = ""
+            # Generate QR code for the first ticket
+            qr_code_base64 = TicketEmailService._generate_qr_code_base64(main_ticket) if main_ticket else ""
             
             # HTML version matching the provided design
             html_content = f"""
