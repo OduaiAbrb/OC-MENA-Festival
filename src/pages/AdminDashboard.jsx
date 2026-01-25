@@ -154,14 +154,6 @@ const AdminDashboard = () => {
           <button onClick={() => navigate('/')} className="admin-btn secondary">
             ← Back to Site
           </button>
-          <a 
-            href="https://api-production-34dd.up.railway.app/admin/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="admin-btn primary"
-          >
-            Django Admin →
-          </a>
         </div>
       </header>
 
@@ -231,15 +223,6 @@ const AdminDashboard = () => {
                   <span className="link-icon">🏪</span>
                   <span>View Vendors</span>
                 </button>
-                <a 
-                  href="https://api-production-34dd.up.railway.app/admin/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="quick-link"
-                >
-                  <span className="link-icon">⚙️</span>
-                  <span>Django Admin (Advanced)</span>
-                </a>
               </div>
             </div>
           </div>
