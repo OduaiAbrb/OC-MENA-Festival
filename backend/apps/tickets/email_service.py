@@ -19,11 +19,10 @@ class TicketEmailService:
     """Service for sending ticket-related emails."""
     
     @staticmethod
-    def _generate_qr_code_base64(ticket: Ticket) -> str:
-        """Generate QR code as base64 string for email embedding."""
+    def _generate_qr_code_bytes(ticket: Ticket) -> tuple:
+        """Generate QR code as bytes for email attachment. Returns (bytes, content_id)."""
         try:
             logger.info(f"Generating QR code for ticket {ticket.ticket_code}")
-            # Import here to avoid circular import
             from .services import QRCodeService
             
             qr_data = QRCodeService.generate_qr_data(ticket)
@@ -37,14 +36,15 @@ class TicketEmailService:
             buffer = io.BytesIO()
             img.save(buffer, format='PNG')
             buffer.seek(0)
-            img_base64 = base64.b64encode(buffer.getvalue()).decode()
-            logger.info(f"QR code generated successfully, base64 length: {len(img_base64)}")
-            return f"data:image/png;base64,{img_base64}"
+            img_bytes = buffer.getvalue()
+            content_id = f"qr_{ticket.ticket_code}"
+            logger.info(f"QR code generated successfully, size: {len(img_bytes)} bytes")
+            return (img_bytes, content_id)
         except Exception as e:
             logger.error(f"Failed to generate QR code: {e}")
             import traceback
             logger.error(traceback.format_exc())
-            return ""
+            return (None, None)
     
     @staticmethod
     def send_order_confirmation(order: Order) -> bool:
@@ -54,7 +54,7 @@ class TicketEmailService:
         """
         try:
             from sendgrid import SendGridAPIClient
-            from sendgrid.helpers.mail import Mail
+            from sendgrid.helpers.mail import Mail, Attachment, ContentId, Disposition, FileContent, FileName, FileType
             
             tickets = order.tickets.select_related('ticket_type').all()
             
@@ -96,11 +96,23 @@ OC MENA Festival Team
             
             # Generate QR codes for ALL tickets
             ticket_qr_codes = []
+            attachments = []
             for ticket in tickets:
-                qr_code = TicketEmailService._generate_qr_code_base64(ticket)
+                img_bytes, content_id = TicketEmailService._generate_qr_code_bytes(ticket)
+                if img_bytes:
+                    # Create attachment for SendGrid
+                    encoded = base64.b64encode(img_bytes).decode()
+                    attachment = Attachment()
+                    attachment.file_content = FileContent(encoded)
+                    attachment.file_type = FileType('image/png')
+                    attachment.file_name = FileName(f'{content_id}.png')
+                    attachment.disposition = Disposition('inline')
+                    attachment.content_id = ContentId(content_id)
+                    attachments.append(attachment)
+                    
                 ticket_qr_codes.append({
                     'ticket': ticket,
-                    'qr_code': qr_code
+                    'content_id': content_id if img_bytes else None
                 })
             
             # HTML version matching the provided design
@@ -269,15 +281,15 @@ OC MENA Festival Team
             </div>
         </div>"""
             
-            # Add each ticket with its QR code
+            # Add each ticket with its QR code using CID references
             for idx, item in enumerate(ticket_qr_codes):
                 ticket = item['ticket']
-                qr_code = item['qr_code']
+                content_id = item['content_id']
                 html_content += f"""
         <div style="text-align: center; padding: 30px 20px; background: #fafafa; border-top: 1px solid #eee;">
             <h3 style="margin: 0 0 10px; color: #333;">Ticket {idx + 1}: {ticket.ticket_type.name}</h3>
             <p style="margin: 0 0 15px; color: #666; font-size: 12px;">Code: {ticket.ticket_code}</p>
-            {f'<img src="{qr_code}" alt="QR Code for {ticket.ticket_code}" style="width: 200px; height: 200px; margin: 10px auto; display: block;">' if qr_code else '<p style="color: #999;">QR Code unavailable</p>'}
+            {f'<img src="cid:{content_id}" alt="QR Code for {ticket.ticket_code}" style="width: 200px; height: 200px; margin: 10px auto; display: block;">' if content_id else '<p style="color: #999;">QR Code unavailable</p>'}
             <div style="margin-top: 15px;">
                 <a href="#" style="display: inline-block; background: #000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-size: 12px; margin: 5px;">Add to Apple Wallet</a>
                 <a href="#" style="display: inline-block; background: white; color: #000; border: 1px solid #ddd; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-size: 12px; margin: 5px;">Download PDF</a>
@@ -361,6 +373,10 @@ OC MENA Festival Team
                 plain_text_content=text_content,
                 html_content=html_content
             )
+            
+            # Add QR code attachments as inline images
+            for attachment in attachments:
+                message.add_attachment(attachment)
             
             sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
             response = sg.send(message)
