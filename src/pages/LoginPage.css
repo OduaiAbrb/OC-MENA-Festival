@@ -130,8 +130,11 @@
   border: 1px solid #cccccc;
   border-radius: 4px;
   font-size: 12px;
-  color: #333333;
-  background: white;
+  color: #333333 !important;
+  background: white !important;
+  background-color: white !important;
+  -webkit-text-fill-color: #333333 !important;
+  opacity: 1 !important;
   transition: border-color 0.3s ease;
   box-sizing: border-box;
 }
