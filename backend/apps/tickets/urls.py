@@ -1,9 +1,13 @@
 from django.urls import path
 from . import views
+from .test_views import TestEmailView
 
 app_name = 'tickets'
 
 urlpatterns = [
+    # Test endpoint (development only)
+    path('test/send-email/', TestEmailView.as_view(), name='test-email'),
+    
     # Public
     path('types/', views.TicketTypeListView.as_view(), name='ticket-types'),
     
