@@ -32,6 +32,7 @@ import FoodVendor from './pages/FoodVendor';
 import Scanner from './pages/Scanner';
 import TicketSuccess from './pages/TicketSuccess';
 import AdminDashboard from './pages/AdminDashboard';
+import VendorDashboard from './pages/VendorDashboard';
 import GlobalTicketModal from './components/GlobalTicketModal';
 import './App.css';
 
@@ -121,6 +122,7 @@ const AppWithModal = () => {
             <Route path="/scanner" element={<Scanner />} />
             <Route path="/success" element={<TicketSuccess />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/vendor-dashboard" element={<VendorDashboard />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

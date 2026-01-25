@@ -270,6 +270,38 @@ class ApiService {
     return this.request(`/payments/orders/${orderId}/`);
   }
 
+  // ==================== PDF DOWNLOADS ====================
+
+  getTicketPDFUrl(ticketId) {
+    return `${this.baseUrl}/tickets/${ticketId}/pdf/`;
+  }
+
+  getOrderTicketsPDFUrl(orderId) {
+    return `${this.baseUrl}/tickets/order/${orderId}/pdf/`;
+  }
+
+  async downloadTicketPDF(ticketId) {
+    const token = this.getToken();
+    const response = await fetch(`${this.baseUrl}/tickets/${ticketId}/pdf/`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to download PDF');
+    return response.blob();
+  }
+
+  async downloadOrderTicketsPDF(orderId) {
+    const token = this.getToken();
+    const response = await fetch(`${this.baseUrl}/tickets/order/${orderId}/pdf/`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to download PDF');
+    return response.blob();
+  }
+
   // ==================== VENDORS ====================
 
   async getPublicVendors() {

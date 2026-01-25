@@ -15,6 +15,8 @@ urlpatterns = [
     path('my/', views.MyTicketsView.as_view(), name='my-tickets'),
     path('<uuid:ticket_id>/', views.TicketDetailView.as_view(), name='ticket-detail'),
     path('<uuid:ticket_id>/qr/', views.TicketQRView.as_view(), name='ticket-qr'),
+    path('<uuid:ticket_id>/pdf/', views.TicketPDFView.as_view(), name='ticket-pdf'),
+    path('order/<uuid:order_id>/pdf/', views.OrderTicketsPDFView.as_view(), name='order-tickets-pdf'),
     
     # Transfers
     path('transfers/', views.TransferListView.as_view(), name='transfer-list'),

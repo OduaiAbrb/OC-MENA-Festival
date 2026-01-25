@@ -538,3 +538,203 @@ class StaffOrderDetailView(APIView):
                 'tickets': TicketSerializer(order.tickets.all(), many=True).data
             }
         })
+
+
+class TicketPDFView(APIView):
+    """Download ticket as PDF with QR code."""
+    permission_classes = [IsAuthenticated]
+    
+    @extend_schema(summary="Download ticket PDF")
+    def get(self, request, ticket_id):
+        from django.http import HttpResponse
+        from io import BytesIO
+        import qrcode
+        from reportlab.lib import colors
+        from reportlab.lib.pagesizes import letter
+        from reportlab.lib.units import inch
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.enums import TA_CENTER
+        
+        ticket = get_object_or_404(
+            Ticket.objects.select_related('ticket_type', 'order__buyer'),
+            id=ticket_id,
+            holder=request.user
+        )
+        
+        # Generate QR code
+        qr_data = QRCodeService.generate_qr_data(ticket)
+        qr = qrcode.QRCode(version=1, box_size=10, border=4)
+        qr.add_data(qr_data)
+        qr.make(fit=True)
+        qr_img = qr.make_image(fill_color="black", back_color="white")
+        
+        qr_buffer = BytesIO()
+        qr_img.save(qr_buffer, format='PNG')
+        qr_buffer.seek(0)
+        
+        # Create PDF
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        # Custom styles
+        title_style = ParagraphStyle('Title', parent=styles['Heading1'], alignment=TA_CENTER, fontSize=24, spaceAfter=20)
+        subtitle_style = ParagraphStyle('Subtitle', parent=styles['Normal'], alignment=TA_CENTER, fontSize=14, textColor=colors.grey)
+        
+        # Header
+        elements.append(Paragraph("🎪 OC MENA Festival", title_style))
+        elements.append(Paragraph("Your Ticket", subtitle_style))
+        elements.append(Spacer(1, 30))
+        
+        # QR Code
+        qr_image = Image(qr_buffer, width=2.5*inch, height=2.5*inch)
+        qr_image.hAlign = 'CENTER'
+        elements.append(qr_image)
+        elements.append(Spacer(1, 20))
+        
+        # Ticket details
+        details_data = [
+            ['Ticket Type:', ticket.ticket_type.name],
+            ['Ticket Code:', ticket.ticket_code],
+            ['Valid Days:', ', '.join(ticket.ticket_type.valid_days) if ticket.ticket_type.valid_days else 'All Days'],
+            ['Holder:', ticket.holder.full_name],
+            ['Order #:', ticket.order.order_number if ticket.order else 'N/A'],
+        ]
+        
+        details_table = Table(details_data, colWidths=[2*inch, 4*inch])
+        details_table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+            ('TOPPADDING', (0, 0), (-1, -1), 10),
+            ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+            ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+        ]))
+        elements.append(details_table)
+        elements.append(Spacer(1, 30))
+        
+        # Location
+        elements.append(Paragraph("<b>Location:</b> OC Fair & Event Center", styles['Normal']))
+        elements.append(Paragraph("88 Fair Drive, Costa Mesa, CA 92626", styles['Normal']))
+        elements.append(Spacer(1, 20))
+        
+        # Footer
+        footer_style = ParagraphStyle('Footer', parent=styles['Normal'], alignment=TA_CENTER, fontSize=10, textColor=colors.grey)
+        elements.append(Paragraph("Present this QR code at the entrance for scanning", footer_style))
+        elements.append(Paragraph("This ticket is non-transferable", footer_style))
+        
+        doc.build(elements)
+        
+        # Return PDF response
+        pdf = buffer.getvalue()
+        buffer.close()
+        
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="ticket-{ticket.ticket_code}.pdf"'
+        return response
+
+
+class OrderTicketsPDFView(APIView):
+    """Download all tickets for an order as a single PDF."""
+    permission_classes = [IsAuthenticated]
+    
+    @extend_schema(summary="Download all order tickets as PDF")
+    def get(self, request, order_id):
+        from django.http import HttpResponse
+        from io import BytesIO
+        import qrcode
+        from reportlab.lib import colors
+        from reportlab.lib.pagesizes import letter
+        from reportlab.lib.units import inch
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle, PageBreak
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.enums import TA_CENTER
+        
+        order = get_object_or_404(
+            Order.objects.prefetch_related('tickets__ticket_type'),
+            id=order_id,
+            buyer=request.user
+        )
+        
+        tickets = order.tickets.all()
+        if not tickets:
+            return Response({
+                'success': False,
+                'error': {'message': 'No tickets found for this order'}
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # Create PDF
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        title_style = ParagraphStyle('Title', parent=styles['Heading1'], alignment=TA_CENTER, fontSize=24, spaceAfter=20)
+        subtitle_style = ParagraphStyle('Subtitle', parent=styles['Normal'], alignment=TA_CENTER, fontSize=14, textColor=colors.grey)
+        footer_style = ParagraphStyle('Footer', parent=styles['Normal'], alignment=TA_CENTER, fontSize=10, textColor=colors.grey)
+        
+        for idx, ticket in enumerate(tickets):
+            if idx > 0:
+                elements.append(PageBreak())
+            
+            # Generate QR code
+            qr_data = QRCodeService.generate_qr_data(ticket)
+            qr = qrcode.QRCode(version=1, box_size=10, border=4)
+            qr.add_data(qr_data)
+            qr.make(fit=True)
+            qr_img = qr.make_image(fill_color="black", back_color="white")
+            
+            qr_buffer = BytesIO()
+            qr_img.save(qr_buffer, format='PNG')
+            qr_buffer.seek(0)
+            
+            # Header
+            elements.append(Paragraph("🎪 OC MENA Festival", title_style))
+            elements.append(Paragraph(f"Ticket {idx + 1} of {len(tickets)}", subtitle_style))
+            elements.append(Spacer(1, 30))
+            
+            # QR Code
+            qr_image = Image(qr_buffer, width=2.5*inch, height=2.5*inch)
+            qr_image.hAlign = 'CENTER'
+            elements.append(qr_image)
+            elements.append(Spacer(1, 20))
+            
+            # Ticket details
+            details_data = [
+                ['Ticket Type:', ticket.ticket_type.name],
+                ['Ticket Code:', ticket.ticket_code],
+                ['Valid Days:', ', '.join(ticket.ticket_type.valid_days) if ticket.ticket_type.valid_days else 'All Days'],
+                ['Holder:', ticket.holder.full_name],
+                ['Order #:', order.order_number],
+            ]
+            
+            details_table = Table(details_data, colWidths=[2*inch, 4*inch])
+            details_table.setStyle(TableStyle([
+                ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, -1), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+                ('TOPPADDING', (0, 0), (-1, -1), 10),
+                ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+                ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+            ]))
+            elements.append(details_table)
+            elements.append(Spacer(1, 30))
+            
+            # Location
+            elements.append(Paragraph("<b>Location:</b> OC Fair & Event Center", styles['Normal']))
+            elements.append(Paragraph("88 Fair Drive, Costa Mesa, CA 92626", styles['Normal']))
+            elements.append(Spacer(1, 20))
+            
+            # Footer
+            elements.append(Paragraph("Present this QR code at the entrance for scanning", footer_style))
+        
+        doc.build(elements)
+        
+        pdf = buffer.getvalue()
+        buffer.close()
+        
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="tickets-{order.order_number}.pdf"'
+        return response
