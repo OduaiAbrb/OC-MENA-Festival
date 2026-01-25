@@ -402,3 +402,151 @@
     flex-direction: column;
   }
 }
+
+/* Orders Tab */
+.orders-tab h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+}
+
+.orders-summary {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.order-stat {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.25rem 1.5rem;
+  border-radius: 10px;
+  min-width: 150px;
+}
+
+.order-stat h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.order-count {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.refund-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: #e94560;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.refund-btn:hover {
+  background: #d63851;
+  transform: translateY(-1px);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #1a1a2e;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 450px;
+  width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-content h3 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+.modal-content p {
+  margin: 0.5rem 0;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.modal-content .form-group {
+  margin: 1.5rem 0;
+}
+
+.modal-content .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.modal-content textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+.modal-content textarea:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.cancel-btn {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.confirm-btn {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  background: #e94560;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.confirm-btn:hover:not(:disabled) {
+  background: #d63851;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

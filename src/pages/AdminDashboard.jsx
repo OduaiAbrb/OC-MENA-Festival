@@ -19,6 +19,10 @@ const AdminDashboard = () => {
   const [allTickets, setAllTickets] = useState([]);
   const [bazaarRegistrations, setBazaarRegistrations] = useState([]);
   const [foodRegistrations, setFoodRegistrations] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [refundModal, setRefundModal] = useState({ open: false, order: null });
+  const [refundReason, setRefundReason] = useState('');
+  const [refundLoading, setRefundLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -109,8 +113,40 @@ const AdminDashboard = () => {
         console.log('Vendor data not available');
       }
 
+      // Fetch orders
+      try {
+        const ordersResponse = await api.getAdminOrders();
+        if (ordersResponse.success) {
+          setOrders(ordersResponse.data || []);
+        }
+      } catch (err) {
+        console.log('Orders data not available');
+      }
+
     } catch (err) {
       console.error('Error fetching data:', err);
+    }
+  };
+
+  const handleRefund = async () => {
+    if (!refundModal.order || !refundReason.trim()) return;
+    
+    setRefundLoading(true);
+    try {
+      const response = await api.processRefund(refundModal.order.id, refundReason);
+      if (response.success) {
+        alert('Refund processed successfully!');
+        setRefundModal({ open: false, order: null });
+        setRefundReason('');
+        await fetchAllData();
+      } else {
+        alert('Failed to process refund: ' + (response.error?.message || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Refund error:', err);
+      alert('Failed to process refund');
+    } finally {
+      setRefundLoading(false);
     }
   };
 
@@ -175,6 +211,12 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab('vendors')}
         >
           🏪 Vendors
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
+          onClick={() => setActiveTab('orders')}
+        >
+          📦 Orders
         </button>
       </nav>
 
@@ -427,7 +469,113 @@ const AdminDashboard = () => {
           </div>
         )}
 
+        {activeTab === 'orders' && (
+          <div className="orders-tab">
+            <h2>📦 Orders Management</h2>
+            
+            <div className="orders-summary">
+              <div className="order-stat">
+                <h4>Total Orders</h4>
+                <p className="order-count">{orders.length}</p>
+              </div>
+              <div className="order-stat">
+                <h4>Paid Orders</h4>
+                <p className="order-count">{orders.filter(o => o.status === 'PAID').length}</p>
+              </div>
+              <div className="order-stat">
+                <h4>Refunded</h4>
+                <p className="order-count">{orders.filter(o => o.status === 'REFUNDED').length}</p>
+              </div>
+            </div>
+
+            <div className="data-table-container">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Email</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map(order => (
+                    <tr key={order.id}>
+                      <td><strong>{order.order_number}</strong></td>
+                      <td>{order.buyer_name || 'N/A'}</td>
+                      <td>{order.buyer_email}</td>
+                      <td>{order.items_count || order.items?.length || 0}</td>
+                      <td>{formatCurrency(order.total_cents)}</td>
+                      <td>
+                        <span className={`status-badge ${order.status?.toLowerCase()}`}>
+                          {order.status}
+                        </span>
+                      </td>
+                      <td>{new Date(order.created_at).toLocaleDateString()}</td>
+                      <td>
+                        {order.status === 'PAID' && (
+                          <button 
+                            className="refund-btn"
+                            onClick={() => setRefundModal({ open: true, order })}
+                          >
+                            💸 Refund
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {orders.length === 0 && (
+                    <tr>
+                      <td colSpan="8" style={{textAlign: 'center', padding: '2rem', color: '#666'}}>
+                        No orders yet
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
       </main>
+
+      {refundModal.open && (
+        <div className="modal-overlay" onClick={() => setRefundModal({ open: false, order: null })}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3>Process Refund</h3>
+            <p>Order: <strong>{refundModal.order?.order_number}</strong></p>
+            <p>Amount: <strong>{formatCurrency(refundModal.order?.total_cents)}</strong></p>
+            <div className="form-group">
+              <label>Refund Reason:</label>
+              <textarea
+                value={refundReason}
+                onChange={(e) => setRefundReason(e.target.value)}
+                placeholder="Enter reason for refund..."
+                rows={3}
+              />
+            </div>
+            <div className="modal-actions">
+              <button 
+                className="cancel-btn"
+                onClick={() => setRefundModal({ open: false, order: null })}
+              >
+                Cancel
+              </button>
+              <button 
+                className="confirm-btn"
+                onClick={handleRefund}
+                disabled={refundLoading || !refundReason.trim()}
+              >
+                {refundLoading ? 'Processing...' : 'Confirm Refund'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="admin-footer">
         <p>OC MENA Festival 2026 - Stakeholder Dashboard</p>

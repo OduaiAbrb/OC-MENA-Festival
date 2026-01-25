@@ -340,6 +340,35 @@ class ApiService {
     return this.request('/vendors/admin/food-registrations/');
   }
 
+  // ==================== ADMIN ORDERS ====================
+
+  async getAdminOrders() {
+    return this.request('/tickets/staff/orders/');
+  }
+
+  async getAdminOrderDetail(orderId) {
+    return this.request(`/tickets/staff/orders/${orderId}/`);
+  }
+
+  async processRefund(orderId, reason) {
+    return this.request('/tickets/staff/refund/', {
+      method: 'POST',
+      body: JSON.stringify({ order_id: orderId, reason })
+    });
+  }
+
+  async issueCompTicket(email, ticketTypeId, quantity, reason) {
+    return this.request('/tickets/staff/comp/', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        email, 
+        ticket_type_id: ticketTypeId, 
+        quantity,
+        reason 
+      })
+    });
+  }
+
   // ==================== SCANNING ====================
 
   async quickScan(qrData) {
