@@ -50,31 +50,38 @@ class TestEmailView(APIView):
                     user.save()
                     logger.info(f"Created test user: {test_email}")
                 
-                # Just send a simple test email without creating order
-                from django.core.mail import send_mail
+                # Test SendGrid API directly
+                from sendgrid import SendGridAPIClient
+                from sendgrid.helpers.mail import Mail
                 
                 try:
-                    send_mail(
-                        'Test Email from OC MENA Festival',
-                        'This is a test email to verify email sending works.',
-                        settings.DEFAULT_FROM_EMAIL,
-                        [test_email],
-                        fail_silently=False,
+                    message = Mail(
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        to_emails=test_email,
+                        subject='Test Email from OC MENA Festival',
+                        plain_text_content='This is a test email to verify SendGrid is working correctly.',
+                        html_content='<strong>This is a test email to verify SendGrid is working correctly.</strong>'
                     )
+                    
+                    sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+                    response = sg.send(message)
                     
                     return Response({
                         'success': True,
                         'message': 'Test email sent successfully!',
                         'data': {
                             'recipient': test_email,
-                            'note': 'Simple test email sent without order creation'
+                            'status_code': response.status_code,
+                            'note': 'Email sent via SendGrid API'
                         }
                     })
                 except Exception as e:
                     logger.error(f"Failed to send test email: {e}")
+                    import traceback
                     return Response({
                         'success': False,
-                        'error': f'Failed to send email: {str(e)}'
+                        'error': f'Failed to send email: {str(e)}',
+                        'traceback': traceback.format_exc()
                     }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
                 # Create test order
