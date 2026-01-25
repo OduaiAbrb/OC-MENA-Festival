@@ -118,29 +118,6 @@ const Checkout = () => {
   const handlePlaceOrder = async () => {
     if (loading) return;
 
-    // Check if cart contains vendor booth items
-    const hasVendorBooth = cartItems.some(item => item.type === 'vendor-booth');
-    
-    if (hasVendorBooth) {
-      // Get the first vendor booth item to determine type
-      const vendorItem = cartItems.find(item => item.type === 'vendor-booth');
-      const boothType = vendorItem.boothDetails?.boothType || vendorItem.ticket_type_id;
-      
-      // Save cart to localStorage so it persists after registration
-      localStorage.setItem('cart', JSON.stringify({
-        items: cartItems,
-        total: calculateTotal()
-      }));
-      
-      // Redirect to appropriate vendor registration page
-      if (boothType.includes('food')) {
-        navigate('/food-vendor');
-      } else {
-        navigate('/bazaar-vendor');
-      }
-      return;
-    }
-
     // Validate required fields
     if (!formData.email || !formData.firstName || !formData.lastName || 
         !formData.streetAddress || !formData.city || !formData.state || !formData.zipCode) {

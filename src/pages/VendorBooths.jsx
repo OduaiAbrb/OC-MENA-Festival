@@ -27,6 +27,19 @@ const VendorBooths = () => {
   });
 
   const [selectedBooth, setSelectedBooth] = useState(null);
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [formData, setFormData] = useState({
+    businessType: 'Arab Boutique',
+    email: '',
+    legalName: '',
+    boothName: '',
+    sameAsLegal: false,
+    phone: '',
+    instagram: '',
+    facebook: '',
+    tiktok: '',
+    acceptTerms: false
+  });
 
   const handleDayChange = (boothId, days) => {
     setSelectedDays(prev => ({
@@ -51,12 +64,19 @@ const VendorBooths = () => {
 
   const handleSelect = (boothId) => {
     if (selectedBooth === boothId) {
-      // If already selected and clicking Continue, go directly to checkout
-      handleContinueToCheckout();
+      // If already selected and clicking Continue, show registration form
+      setShowRegistration(true);
     } else {
       // Select the booth
       setSelectedBooth(boothId);
     }
+  };
+
+  const handleFormChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
 
@@ -81,11 +101,23 @@ const VendorBooths = () => {
   };
 
   const handleContinueToCheckout = () => {
+    // Validate form
+    if (!formData.email || !formData.legalName || !formData.boothName || !formData.phone) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    
+    // Only check terms acceptance for bazaar booths (where terms are shown)
+    if (selectedBooth === 'bazaar' && !formData.acceptTerms) {
+      alert('Please accept the terms to continue');
+      return;
+    }
+    
     const booth = boothOptions.find(b => b.id === selectedBooth);
     const price = calculateBoothPrice(selectedBooth);
     const daysLabel = selectedDays[selectedBooth] === '3days' ? 'Fri-Sun (3 days)' : 'Sat-Sun (2 days)';
     
-    // Create cart item for the booth (registration will happen after payment)
+    // Create cart item for the booth with registration data
     const boothCartItem = {
       id: `booth-${selectedBooth}-${Date.now()}`,
       ticket_type_id: selectedBooth,
@@ -97,7 +129,8 @@ const VendorBooths = () => {
         boothType: selectedBooth,
         days: selectedDays[selectedBooth],
         upgrade: upgrades[selectedBooth],
-        halal: halal[selectedBooth]
+        halal: halal[selectedBooth],
+        formData: formData
       }
     };
     
@@ -217,6 +250,7 @@ const VendorBooths = () => {
             Explore the booth packages and secure your spot today—spaces are limited and fill quickly each year.
           </p>
           
+          {!showRegistration ? (
           <>
             <h2 className="booths-title">Please select a booth option:</h2>
             <div className="booths-container">
@@ -307,6 +341,110 @@ const VendorBooths = () => {
               ))}
             </div>
           </>
+        ) : (
+          <div className="registration-form">
+            <h3>Vendor Registration</h3>
+            
+            <div className="form-group">
+              <label className="form-label">Email*</label>
+              <input 
+                type="email" 
+                className="form-input" 
+                placeholder="your@email.com"
+                value={formData.email}
+                onChange={(e) => handleFormChange('email', e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Legal Business Name*</label>
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="Your legal business name"
+                value={formData.legalName}
+                onChange={(e) => handleFormChange('legalName', e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Booth Name*</label>
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="Your booth display name"
+                value={formData.boothName}
+                onChange={(e) => handleFormChange('boothName', e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Phone Number*</label>
+              <input 
+                type="tel" 
+                className="form-input" 
+                placeholder="(555) 123-4567"
+                value={formData.phone}
+                onChange={(e) => handleFormChange('phone', e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Instagram Handle</label>
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="@yourbusiness"
+                value={formData.instagram}
+                onChange={(e) => handleFormChange('instagram', e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Facebook Handle</label>
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="facebook.com/yourbusiness"
+                value={formData.facebook}
+                onChange={(e) => handleFormChange('facebook', e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">TikTok Handle</label>
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="@yourbusiness"
+                value={formData.tiktok}
+                onChange={(e) => handleFormChange('tiktok', e.target.value)}
+              />
+            </div>
+
+            {selectedBooth === 'bazaar' && (
+              <>
+                <div className="important-notice">
+                  <p className="notice-text">
+                    I understand that I can set up my booth starting Friday evening and Saturday morning from 8 AM to 11 AM. After 11 AM, I won't be able to set up my booth and I won't get any refunds. Also, if I am handling any food whether it is packaged or non packaged I would require OC MENA Festival approval*
+                  </p>
+                </div>
+
+                <div className="simple-checkbox">
+                  <input 
+                    type="checkbox" 
+                    id="accept-terms"
+                    checked={formData.acceptTerms}
+                    onChange={(e) => handleFormChange('acceptTerms', e.target.checked)}
+                  />
+                  <label htmlFor="accept-terms">I accept the terms above</label>
+                </div>
+              </>
+            )}
+
+            <button className="continue-btn" onClick={handleContinueToCheckout}>Continue to Checkout</button>
+          </div>
+        )}
         </TornPaperWrapper>
 
         <div className="lanterns-container">
