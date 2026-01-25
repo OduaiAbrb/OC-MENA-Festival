@@ -50,11 +50,16 @@ class TestEmailView(APIView):
                     user.save()
                     logger.info(f"Created test user: {test_email}")
                 
-                # Test SendGrid API directly
+                # Test SendGrid API directly with detailed error handling
                 from sendgrid import SendGridAPIClient
                 from sendgrid.helpers.mail import Mail
+                from python_http_client.exceptions import HTTPError
                 
                 try:
+                    logger.info(f"SendGrid API Key present: {bool(settings.SENDGRID_API_KEY)}")
+                    logger.info(f"From email: {settings.DEFAULT_FROM_EMAIL}")
+                    logger.info(f"To email: {test_email}")
+                    
                     message = Mail(
                         from_email=settings.DEFAULT_FROM_EMAIL,
                         to_emails=test_email,
@@ -66,15 +71,30 @@ class TestEmailView(APIView):
                     sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
                     response = sg.send(message)
                     
+                    logger.info(f"SendGrid response status: {response.status_code}")
+                    logger.info(f"SendGrid response body: {response.body}")
+                    
                     return Response({
                         'success': True,
                         'message': 'Test email sent successfully!',
                         'data': {
                             'recipient': test_email,
                             'status_code': response.status_code,
+                            'response_body': str(response.body),
                             'note': 'Email sent via SendGrid API'
                         }
                     })
+                except HTTPError as e:
+                    logger.error(f"SendGrid HTTPError: {e}")
+                    logger.error(f"Status code: {e.status_code}")
+                    logger.error(f"Body: {e.body}")
+                    logger.error(f"Headers: {e.headers}")
+                    return Response({
+                        'success': False,
+                        'error': f'SendGrid HTTP Error {e.status_code}',
+                        'details': str(e.body),
+                        'headers': str(e.headers)
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 except Exception as e:
                     logger.error(f"Failed to send test email: {e}")
                     import traceback
