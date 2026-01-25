@@ -47,6 +47,9 @@ class TicketEmailService:
         Returns True if successful, False otherwise.
         """
         try:
+            from sendgrid import SendGridAPIClient
+            from sendgrid.helpers.mail import Mail
+            
             tickets = order.tickets.select_related('ticket_type').all()
             
             subject = f"Your OC MENA Festival Tickets - Order #{order.order_number}"
@@ -331,16 +334,19 @@ OC MENA Festival Team
 </html>
             """
             
-            email = EmailMultiAlternatives(
-                subject=subject,
-                body=text_content,
+            # Use SendGrid API directly for faster, more reliable sending
+            message = Mail(
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[order.buyer.email]
+                to_emails=order.buyer.email,
+                subject=subject,
+                plain_text_content=text_content,
+                html_content=html_content
             )
-            email.attach_alternative(html_content, "text/html")
-            email.send(fail_silently=False)
             
-            logger.info(f"Order confirmation email sent for order {order.order_number}")
+            sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+            response = sg.send(message)
+            
+            logger.info(f"Order confirmation email sent for order {order.order_number}, status: {response.status_code}")
             return True
             
         except Exception as e:
