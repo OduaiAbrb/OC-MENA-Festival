@@ -50,14 +50,32 @@ class TestEmailView(APIView):
                     user.save()
                     logger.info(f"Created test user: {test_email}")
                 
-                # Get first available ticket type
-                ticket_type = TicketType.objects.filter(is_active=True).first()
+                # Just send a simple test email without creating order
+                from django.core.mail import send_mail
                 
-                if not ticket_type:
+                try:
+                    send_mail(
+                        'Test Email from OC MENA Festival',
+                        'This is a test email to verify email sending works.',
+                        settings.DEFAULT_FROM_EMAIL,
+                        [test_email],
+                        fail_silently=False,
+                    )
+                    
+                    return Response({
+                        'success': True,
+                        'message': 'Test email sent successfully!',
+                        'data': {
+                            'recipient': test_email,
+                            'note': 'Simple test email sent without order creation'
+                        }
+                    })
+                except Exception as e:
+                    logger.error(f"Failed to send test email: {e}")
                     return Response({
                         'success': False,
-                        'error': 'No active ticket types found. Create one in admin first.'
-                    }, status=status.HTTP_400_BAD_REQUEST)
+                        'error': f'Failed to send email: {str(e)}'
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
                 # Create test order
                 order = OrderService.create_order(
