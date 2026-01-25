@@ -11,7 +11,6 @@ from django.conf import settings
 from django.utils import timezone
 
 from .models import Order, Ticket
-from .services import QRCodeService
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +22,9 @@ class TicketEmailService:
     def _generate_qr_code_base64(ticket: Ticket) -> str:
         """Generate QR code as base64 string for email embedding."""
         try:
+            # Import here to avoid circular import
+            from .services import QRCodeService
+            
             qr_data = QRCodeService.generate_qr_data(ticket)
             qr = qrcode.QRCode(version=1, box_size=10, border=4)
             qr.add_data(qr_data)
