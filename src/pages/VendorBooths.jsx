@@ -106,7 +106,8 @@ const VendorBooths = () => {
       return;
     }
     
-    if (!formData.acceptTerms) {
+    // Only check terms acceptance for bazaar booths (where terms are shown)
+    if (selectedBooth === 'bazaar' && !formData.acceptTerms) {
       alert('Please accept the terms to continue');
       return;
     }
@@ -566,7 +567,7 @@ const VendorBooths = () => {
               </>
             )}
 
-            {!selectedBooth || selectedBooth !== 'food-truck' ? (
+            {selectedBooth === 'bazaar' ? (
               <>
                 <div className="important-notice">
                   <p className="notice-text">
