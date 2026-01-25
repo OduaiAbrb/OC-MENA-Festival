@@ -22,10 +22,13 @@ class TicketEmailService:
     def _generate_qr_code_base64(ticket: Ticket) -> str:
         """Generate QR code as base64 string for email embedding."""
         try:
+            logger.info(f"Generating QR code for ticket {ticket.ticket_code}")
             # Import here to avoid circular import
             from .services import QRCodeService
             
             qr_data = QRCodeService.generate_qr_data(ticket)
+            logger.info(f"QR data generated: {qr_data[:50]}...")
+            
             qr = qrcode.QRCode(version=1, box_size=10, border=4)
             qr.add_data(qr_data)
             qr.make(fit=True)
@@ -35,9 +38,12 @@ class TicketEmailService:
             img.save(buffer, format='PNG')
             buffer.seek(0)
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            logger.info(f"QR code generated successfully, base64 length: {len(img_base64)}")
             return f"data:image/png;base64,{img_base64}"
         except Exception as e:
             logger.error(f"Failed to generate QR code: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
             return ""
     
     @staticmethod
