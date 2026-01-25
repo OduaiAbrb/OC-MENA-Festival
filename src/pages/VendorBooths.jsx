@@ -217,7 +217,6 @@ const VendorBooths = () => {
             Explore the booth packages and secure your spot today—spaces are limited and fill quickly each year.
           </p>
           
-          {!showRegistration ? (
           <>
             <h2 className="booths-title">Please select a booth option:</h2>
             <div className="booths-container">
@@ -308,9 +307,6 @@ const VendorBooths = () => {
               ))}
             </div>
           </>
-        ) : (
-          <></>
-        )}
         </TornPaperWrapper>
 
         <div className="lanterns-container">
