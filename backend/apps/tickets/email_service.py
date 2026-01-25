@@ -94,10 +94,14 @@ See you at the festival!
 OC MENA Festival Team
             """
             
-            # Get first ticket for main QR code
-            main_ticket = tickets[0] if tickets else None
-            # Generate QR code for the first ticket
-            qr_code_base64 = TicketEmailService._generate_qr_code_base64(main_ticket) if main_ticket else ""
+            # Generate QR codes for ALL tickets
+            ticket_qr_codes = []
+            for ticket in tickets:
+                qr_code = TicketEmailService._generate_qr_code_base64(ticket)
+                ticket_qr_codes.append({
+                    'ticket': ticket,
+                    'qr_code': qr_code
+                })
             
             # HTML version matching the provided design
             html_content = f"""
@@ -260,18 +264,27 @@ OC MENA Festival Team
         </div>
         
         <div class="qr-section">
-            {f'<img src="{qr_code_base64}" alt="QR Code" class="qr-code">' if qr_code_base64 else '<p>QR Code will be available in your dashboard</p>'}
-            
-            <div style="margin-top: 20px;">
-                <a href="#" class="wallet-button">🍎 Add to Apple Wallet</a>
-            </div>
-            <div>
-                <a href="#" class="download-button">Download PDF</a>
-            </div>
-            <div>
+            <div style="margin-bottom: 20px;">
                 <a href="{settings.FRONTEND_URL}/login" class="login-button">Login</a>
             </div>
-        </div>
+        </div>"""
+            
+            # Add each ticket with its QR code
+            for idx, item in enumerate(ticket_qr_codes):
+                ticket = item['ticket']
+                qr_code = item['qr_code']
+                html_content += f"""
+        <div style="text-align: center; padding: 30px 20px; background: #fafafa; border-top: 1px solid #eee;">
+            <h3 style="margin: 0 0 10px; color: #333;">Ticket {idx + 1}: {ticket.ticket_type.name}</h3>
+            <p style="margin: 0 0 15px; color: #666; font-size: 12px;">Code: {ticket.ticket_code}</p>
+            {f'<img src="{qr_code}" alt="QR Code for {ticket.ticket_code}" style="width: 200px; height: 200px; margin: 10px auto; display: block;">' if qr_code else '<p style="color: #999;">QR Code unavailable</p>'}
+            <div style="margin-top: 15px;">
+                <a href="#" style="display: inline-block; background: #000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-size: 12px; margin: 5px;">Add to Apple Wallet</a>
+                <a href="#" style="display: inline-block; background: white; color: #000; border: 1px solid #ddd; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-size: 12px; margin: 5px;">Download PDF</a>
+            </div>
+        </div>"""
+            
+            html_content += f"""
         
         <div class="details-section">
             <h2 class="section-title">Ticket Details</h2>
