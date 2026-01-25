@@ -192,11 +192,13 @@ class OrderService:
             invoice_number=Invoice.generate_invoice_number(order)
         )
         
-        # Send order confirmation email
+        # Send order confirmation email (non-blocking)
         try:
-            TicketEmailService.send_order_confirmation(order)
+            from threading import Thread
+            email_thread = Thread(target=TicketEmailService.send_order_confirmation, args=(order,))
+            email_thread.start()
         except Exception as e:
-            logger.error(f"Failed to send confirmation email for order {order.order_number}: {e}")
+            logger.error(f"Failed to queue confirmation email for order {order.order_number}: {e}")
         
         logger.info(f"Order {order.order_number} finalized successfully")
         

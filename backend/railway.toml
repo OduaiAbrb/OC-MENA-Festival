@@ -3,6 +3,6 @@ builder = "NIXPACKS"
 nixpacksConfigPath = "nixpacks.toml"
 
 [deploy]
-startCommand = "python manage.py migrate --noinput && python manage.py seed_event_config && python manage.py seed_tickets && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --workers 2"
+startCommand = "sh -c 'python manage.py migrate --noinput && python manage.py seed_event_config && python manage.py seed_tickets && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120'"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 5
