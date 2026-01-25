@@ -27,19 +27,6 @@ const VendorBooths = () => {
   });
 
   const [selectedBooth, setSelectedBooth] = useState(null);
-  const [showRegistration, setShowRegistration] = useState(false);
-  const [formData, setFormData] = useState({
-    businessType: 'Arab Boutique',
-    email: '',
-    legalName: '',
-    boothName: '',
-    sameAsLegal: false,
-    phone: '',
-    instagram: '',
-    facebook: '',
-    tiktok: '',
-    acceptTerms: false
-  });
 
   const handleDayChange = (boothId, days) => {
     setSelectedDays(prev => ({
@@ -64,20 +51,14 @@ const VendorBooths = () => {
 
   const handleSelect = (boothId) => {
     if (selectedBooth === boothId) {
-      // If already selected and clicking Continue, show registration form
-      setShowRegistration(true);
+      // If already selected and clicking Continue, go directly to checkout
+      handleContinueToCheckout();
     } else {
       // Select the booth
       setSelectedBooth(boothId);
     }
   };
 
-  const handleFormChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
 
   const calculateBoothPrice = (boothId) => {
     const booth = boothOptions.find(b => b.id === boothId);
@@ -100,23 +81,11 @@ const VendorBooths = () => {
   };
 
   const handleContinueToCheckout = () => {
-    // Validate form
-    if (!formData.email || !formData.legalName || !formData.boothName || !formData.phone) {
-      alert('Please fill in all required fields');
-      return;
-    }
-    
-    // Only check terms acceptance for bazaar booths (where terms are shown)
-    if (selectedBooth === 'bazaar' && !formData.acceptTerms) {
-      alert('Please accept the terms to continue');
-      return;
-    }
-    
     const booth = boothOptions.find(b => b.id === selectedBooth);
     const price = calculateBoothPrice(selectedBooth);
     const daysLabel = selectedDays[selectedBooth] === '3days' ? 'Fri-Sun (3 days)' : 'Sat-Sun (2 days)';
     
-    // Create cart item for the booth
+    // Create cart item for the booth (registration will happen after payment)
     const boothCartItem = {
       id: `booth-${selectedBooth}-${Date.now()}`,
       ticket_type_id: selectedBooth,
@@ -125,10 +94,10 @@ const VendorBooths = () => {
       price: price,
       type: 'vendor-booth',
       boothDetails: {
+        boothType: selectedBooth,
         days: selectedDays[selectedBooth],
         upgrade: upgrades[selectedBooth],
-        halal: halal[selectedBooth],
-        formData: formData
+        halal: halal[selectedBooth]
       }
     };
     
@@ -340,255 +309,7 @@ const VendorBooths = () => {
             </div>
           </>
         ) : (
-          <div className="registration-form">
-            <div className="registration-header">
-              <h2 className="registration-title">Bazaar Vendor Registration</h2>
-              <p className="registration-subtitle">Please fill out the form below to reserve your booth</p>
-            </div>
-            
-            <div className="form-group">
-              <label className="form-label">Choose what fits your business*</label>
-              {selectedBooth === 'bazaar' && (
-                <select 
-                  className="form-select"
-                  value={formData.businessType}
-                  onChange={(e) => handleFormChange('businessType', e.target.value)}
-                >
-                  <option value="Arab Boutique">Arab Boutique</option>
-                  <option value="North African Boutique">North African Boutique</option>
-                  <option value="Desi Boutique">Desi Boutique</option>
-                  <option value="American Boutique">American Boutique</option>
-                  <option value="Men's Boutique">Men's Boutique</option>
-                  <option value="Women's Boutique">Women's Boutique</option>
-                  <option value="Hijab, Accessories, and Jewellery">Hijab, Accessories, and Jewellery</option>
-                  <option value="Books">Books</option>
-                  <option value="Business">Business</option>
-                  <option value="Art Items">Art Items</option>
-                  <option value="Kids">Kids</option>
-                  <option value="Perfumes/Oils">Perfumes/Oils</option>
-                  <option value="Other">Other</option>
-                </select>
-              )}
-              {selectedBooth === 'food-truck' && (
-                <select 
-                  className="form-select"
-                  value={formData.businessType}
-                  onChange={(e) => handleFormChange('businessType', e.target.value)}
-                >
-                  <option value="Arab Food">Arab Food</option>
-                  <option value="North African Food">North African Food</option>
-                  <option value="American Food">American Food</option>
-                  <option value="General Food">General Food</option>
-                  <option value="Dessert">Dessert</option>
-                  <option value="Beverage">Beverage</option>
-                </select>
-              )}
-              {selectedBooth === 'food-booth' && (
-                <select 
-                  className="form-select"
-                  value={formData.businessType}
-                  onChange={(e) => handleFormChange('businessType', e.target.value)}
-                >
-                  <option value="Arab Food">Arab Food</option>
-                  <option value="North African Food">North African Food</option>
-                  <option value="American Food">American Food</option>
-                  <option value="General Food">General Food</option>
-                  <option value="Dessert">Dessert</option>
-                  <option value="Beverage">Beverage</option>
-                </select>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Contact Email*</label>
-              <input 
-                type="email" 
-                className="form-input" 
-                placeholder="your@email.com"
-                value={formData.email}
-                onChange={(e) => handleFormChange('email', e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Legal Business Name*</label>
-              <input 
-                type="text" 
-                className="form-input" 
-                placeholder="Your legal business name"
-                value={formData.legalName}
-                onChange={(e) => handleFormChange('legalName', e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Booth Name*</label>
-              <input 
-                type="text" 
-                className="form-input" 
-                placeholder="Your booth display name"
-                value={formData.boothName}
-                onChange={(e) => handleFormChange('boothName', e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  id="same-business" 
-                  checked={formData.sameAsLegal}
-                  onChange={(e) => {
-                    handleFormChange('sameAsLegal', e.target.checked);
-                    if (e.target.checked) {
-                      handleFormChange('boothName', formData.legalName);
-                    }
-                  }}
-                  className="checkbox-input"
-                />
-                <span className="checkbox-custom"></span>
-                <span>Same as legal business name?</span>
-              </label>
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Phone Number*</label>
-              <input 
-                type="tel" 
-                className="form-input" 
-                placeholder="(555) 123-4567"
-                value={formData.phone}
-                onChange={(e) => handleFormChange('phone', e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Instagram Handle</label>
-              <input 
-                type="text" 
-                className="form-input" 
-                placeholder="@yourbusiness"
-                value={formData.instagram}
-                onChange={(e) => handleFormChange('instagram', e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Facebook Handle</label>
-              <input 
-                type="text" 
-                className="form-input" 
-                placeholder="facebook.com/yourbusiness"
-                value={formData.facebook}
-                onChange={(e) => handleFormChange('facebook', e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">TikTok Handle</label>
-              <input 
-                type="text" 
-                className="form-input" 
-                placeholder="@yourbusiness"
-                value={formData.tiktok}
-                onChange={(e) => handleFormChange('tiktok', e.target.value)}
-              />
-            </div>
-
-            {selectedBooth === 'food-truck' && (
-              <>
-                <div className="health-permit-section">
-                  <p className="health-permit-text">Do you have OC Health Permit? (TFF)*</p>
-                  <div className="health-permit-options">
-                    <label className="checkbox-label">
-                      <input
-                        type="checkbox"
-                        name="health-permit"
-                        value="yes"
-                        className="checkbox-input"
-                      />
-                      <span className="checkbox-custom"></span>
-                      Yes
-                    </label>
-                  </div>
-                </div>
-
-                <div className="mandate-section">
-                  <div className="mandate-box">
-                    <p className="mandate-text">
-                      Mandate by the Property Owner: I Understand I can only sell Pepsi Beverages for water and Soda. For water, I can only get AquaFina, and for standard soda, I need to get Pepsi products. I can get ethnic products that are not mainstream like Salaam Cola, Hawa Cola, Palestina or Shaista *
-                    </p>
-                  </div>
-                  <label className="checkbox-label">
-                    <input type="checkbox" id="mandate-pepsi-single" className="checkbox-input" />
-                    <span className="checkbox-custom"></span>
-                    <span>I accept the terms above</span>
-                  </label>
-                </div>
-
-                <div className="mandate-section">
-                  <div className="mandate-box">
-                    <p className="mandate-text">
-                      I will bring a handwashing station for my booth which is required by OC Health Department. I can get a 5 Gallon water dispenser with a tap on the bottle and a collection vessel for used water*
-                    </p>
-                  </div>
-                  <label className="checkbox-label">
-                    <input type="checkbox" id="handwashing-single" className="checkbox-input" />
-                    <span className="checkbox-custom"></span>
-                    <span>I accept the terms above</span>
-                  </label>
-                </div>
-
-                <div className="mandate-section">
-                  <div className="mandate-box">
-                    <p className="mandate-text">
-                      I will review the presentation to understand the requirements by OC Health Department. The link if provided to me on my confirmation email*
-                    </p>
-                  </div>
-                  <label className="checkbox-label">
-                    <input type="checkbox" id="review-single" className="checkbox-input" />
-                    <span className="checkbox-custom"></span>
-                    <span>I accept the terms above</span>
-                  </label>
-                </div>
-
-                <div className="mandate-section">
-                  <div className="mandate-box">
-                    <p className="mandate-text">
-                      I understand that I can set up my booth starting Friday evening and Saturday morning from 8 AM to 11 AM. After 11 AM, I won't be able to set up my booth and I won't get any refunds.Also, if I am handling any food whether it is packaged or non packaged I would require OC MENA Festival*
-                    </p>
-                  </div>
-                  <label className="checkbox-label">
-                    <input type="checkbox" id="setup-single" className="checkbox-input" />
-                    <span className="checkbox-custom"></span>
-                    <span>I accept the terms above</span>
-                  </label>
-                </div>
-              </>
-            )}
-
-            {selectedBooth === 'bazaar' ? (
-              <>
-                <div className="important-notice">
-                  <p className="notice-text">
-                    I understand that I can set up my booth starting Friday evening and Saturday morning from 8 AM to 11 AM. After 11 AM, I won't be able to set up my booth and I won't get any refunds. Also, if I am handling any food whether it is packaged or non packaged I would require OC MENA Festival approval*
-                  </p>
-                </div>
-
-                <div className="simple-checkbox">
-                  <input 
-                    type="checkbox" 
-                    id="accept-terms"
-                    checked={formData.acceptTerms}
-                    onChange={(e) => handleFormChange('acceptTerms', e.target.checked)}
-                  />
-                  <label htmlFor="accept-terms">I accept the terms above</label>
-                </div>
-              </>
-            ) : null}
-
-            <button className="continue-btn" onClick={handleContinueToCheckout}>Continue</button>
-          </div>
+          <></>
         )}
         </TornPaperWrapper>
 
