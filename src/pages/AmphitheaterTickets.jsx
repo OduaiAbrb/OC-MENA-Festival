@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -12,6 +12,7 @@ const AmphitheaterTickets = () => {
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [ticketQuantity, setTicketQuantity] = useState(2);
   const mapRef = useRef(null);
+  const panelRef = useRef(null);
 
   // NOTE for manual edits: tweak the polygon points below (viewBox 1024x662) for perfect alignment
   const sectionsMeta = useMemo(() => [
@@ -141,7 +142,6 @@ const AmphitheaterTickets = () => {
   };
 
   const handleTouchStart = (e, section) => {
-    e.preventDefault();
     const touch = e.touches[0];
     if (mapRef.current) {
       const rect = mapRef.current.getBoundingClientRect();
@@ -154,8 +154,7 @@ const AmphitheaterTickets = () => {
   };
 
   const handleTouchEnd = (e, section) => {
-    e.preventDefault();
-    handleSectionClick(section);
+    e.stopPropagation();
     setHoveredSection(null);
   };
 
@@ -164,6 +163,15 @@ const AmphitheaterTickets = () => {
     const pos = getSectionCentroid(section);
     setTooltipPos(pos);
   };
+
+  // Scroll to panel on mobile when section is selected
+  useEffect(() => {
+    if (selectedSection && panelRef.current && window.innerWidth <= 900) {
+      setTimeout(() => {
+        panelRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [selectedSection]);
 
   return (
     <div className="page-wrapper amphitheater-page">
@@ -227,6 +235,7 @@ const AmphitheaterTickets = () => {
                       onMouseLeave={() => setHoveredSection(null)}
                       onTouchStart={(e) => handleTouchStart(e, section)}
                       onTouchEnd={(e) => handleTouchEnd(e, section)}
+                      style={{ pointerEvents: 'all' }}
                     />
                   ))}
                 </svg>
@@ -250,7 +259,7 @@ const AmphitheaterTickets = () => {
 
               
               {/* Right Panel - Ticket List or Selection */}
-              <div className="sg-panel">
+              <div className="sg-panel" ref={panelRef}>
                 {!selectedSection ? (
                   <>
                     <div className="sg-panel-header">

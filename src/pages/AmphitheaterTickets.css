@@ -11,6 +11,12 @@
   margin-bottom: 20px;
 }
 
+@media (max-width: 768px) {
+  .sg-header {
+    margin-bottom: 10px;
+  }
+}
+
 .sg-event-info {
   text-align: center;
 }
@@ -46,6 +52,13 @@
   margin-bottom: 20px;
 }
 
+@media (max-width: 768px) {
+  .sg-quantity-bar {
+    margin-bottom: 10px;
+    padding: 12px;
+  }
+}
+
 .sg-quantity-label {
   font-size: 14px;
   font-weight: 600;
@@ -66,12 +79,13 @@
   }
   
   .sg-map-container {
-    min-height: 480px;
-    margin: 0 -15px;
+    min-height: 600px;
+    margin: 0 -20px;
+    border-radius: 0;
   }
   
   .sg-seating-image {
-    min-height: 480px;
+    min-height: 600px;
     object-fit: contain;
   }
   
@@ -92,12 +106,13 @@
   }
   
   .sg-map-container {
-    min-height: 520px;
+    min-height: 650px;
     margin: 0 -20px;
+    border-radius: 0;
   }
   
   .sg-seating-image {
-    min-height: 520px;
+    min-height: 650px;
     object-fit: contain;
   }
 }
@@ -189,21 +204,21 @@
 
 .sg-section-polygon:hover,
 .sg-section-polygon.hovered {
-  fill: rgba(220, 38, 38, 0.1);
-  stroke: rgba(220, 38, 38, 0.3);
-  stroke-width: 2;
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 0;
 }
 
 .sg-section-polygon:active {
-  fill: rgba(220, 38, 38, 0.2);
-  stroke: rgba(220, 38, 38, 0.5);
-  stroke-width: 3;
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 0;
 }
 
 .sg-section-polygon.selected {
-  fill: rgba(220, 38, 38, 0.15);
-  stroke: #dc2626;
-  stroke-width: 2;
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 0;
 }
 
 /* ===== Tooltip ===== */
@@ -260,6 +275,13 @@
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(0,0,0,0.04);
+}
+
+@media (max-width: 900px) {
+  .sg-panel {
+    margin-top: 20px;
+    border-radius: 16px;
+  }
 }
 
 .sg-panel-header {
@@ -350,6 +372,13 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 400px;
+}
+
+@media (max-width: 900px) {
+  .sg-selection {
+    min-height: 450px;
+  }
 }
 
 .sg-back-btn {
@@ -439,12 +468,18 @@
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.2s ease;
+  margin-top: auto;
 }
 
 .sg-add-btn:hover {
   background: #b91c1c;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.sg-add-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
 }
 
 .sg-disclaimer {
@@ -481,20 +516,23 @@
 @media (max-width: 900px) {
   .sg-main {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
   
   .sg-map-container {
-    min-height: 450px;
+    min-height: 550px;
     margin: 0 -15px;
+    border-radius: 0;
   }
   
   .sg-seating-image {
-    min-height: 450px;
+    min-height: 550px;
     object-fit: contain;
   }
   
   .sg-panel {
-    min-height: 400px;
+    min-height: 450px;
+    position: relative;
   }
   
   .sg-info-banner {
@@ -521,13 +559,13 @@
   }
   
   .sg-map-container {
-    min-height: 500px;
+    min-height: 620px;
     margin: 0 -20px;
     border-radius: 0;
   }
   
   .sg-seating-image {
-    min-height: 500px;
+    min-height: 620px;
     object-fit: contain;
   }
   
@@ -549,19 +587,6 @@
   
   .sg-tooltip-price {
     font-size: 22px;
-  }
-  
-  .sg-section-polygon:hover,
-  .sg-section-polygon.hovered {
-    fill: rgba(220, 38, 38, 0.15);
-    stroke: rgba(220, 38, 38, 0.4);
-    stroke-width: 3;
-  }
-  
-  .sg-section-polygon:active {
-    fill: rgba(220, 38, 38, 0.25);
-    stroke: rgba(220, 38, 38, 0.6);
-    stroke-width: 4;
   }
 }
 
