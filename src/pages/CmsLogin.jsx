@@ -1,49 +1,50 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 import './CmsLogin.css';
 
 const CmsLogin = () => {
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Static admin credentials (will be replaced with backend auth later)
-  const ADMIN_CREDENTIALS = {
-    username: 'admin',
-    password: 'OCMena2026!'
-  };
+  useEffect(() => {
+    const checkAdminAccess = async () => {
+      // Check if user is logged in
+      if (!api.isAuthenticated()) {
+        setError('Please log in to your admin account first');
+        setLoading(false);
+        setTimeout(() => {
+          navigate('/login?redirect=/oc-admin-login-2026');
+        }, 2000);
+        return;
+      }
 
-  const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
-    setError('');
-  };
+      // Get user profile to check if admin
+      try {
+        const user = api.getUser();
+        
+        if (user && user.is_staff) {
+          // User is admin, grant CMS access
+          sessionStorage.setItem('cmsAdmin', JSON.stringify({
+            isAuthenticated: true,
+            username: user.email,
+            loginTime: new Date().toISOString()
+          }));
+          navigate('/oc-admin-cms-2026');
+        } else {
+          setError('Access denied. Admin privileges required.');
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error('Error checking admin status:', err);
+        setError('Error verifying admin access. Please try logging in again.');
+        setLoading(false);
+      }
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    if (
-      credentials.username === ADMIN_CREDENTIALS.username &&
-      credentials.password === ADMIN_CREDENTIALS.password
-    ) {
-      // Store admin session (will be replaced with proper auth later)
-      sessionStorage.setItem('cmsAdmin', JSON.stringify({
-        isAuthenticated: true,
-        username: credentials.username,
-        loginTime: new Date().toISOString()
-      }));
-      navigate('/oc-admin-cms-2026');
-    } else {
-      setError('Invalid username or password');
-    }
-
-    setLoading(false);
-  };
+    checkAdminAccess();
+  }, [navigate]);
 
   return (
     <div className="cms-login-container">
@@ -54,41 +55,16 @@ const CmsLogin = () => {
           <p>Content Management System</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="cms-login-form">
-          <div className="cms-form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={credentials.username}
-              onChange={handleChange}
-              placeholder="Enter username"
-              required
-              autoComplete="username"
-            />
-          </div>
-
-          <div className="cms-form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={credentials.password}
-              onChange={handleChange}
-              placeholder="Enter password"
-              required
-              autoComplete="current-password"
-            />
-          </div>
-
-          {error && <div className="cms-error-message">{error}</div>}
-
-          <button type="submit" className="cms-login-btn" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
+        <div className="cms-login-form">
+          {loading ? (
+            <div className="cms-loading">
+              <div className="cms-spinner"></div>
+              <p>Verifying admin access...</p>
+            </div>
+          ) : error ? (
+            <div className="cms-error-message">{error}</div>
+          ) : null}
+        </div>
 
         <div className="cms-login-footer">
           <p>Authorized personnel only</p>
