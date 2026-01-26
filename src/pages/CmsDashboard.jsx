@@ -71,18 +71,6 @@ const CmsDashboard = () => {
     setHasChanges(true);
   };
 
-  const handleNestedArrayChange = (section, field, nestedField, index, subField, value) => {
-    setCmsData(prev => {
-      const newData = { ...prev };
-      newData[section] = { ...newData[section] };
-      newData[section][field] = { ...newData[section][field] };
-      newData[section][field][nestedField] = [...newData[section][field][nestedField]];
-      newData[section][field][nestedField][index] = value;
-      return newData;
-    });
-    setHasChanges(true);
-  };
-
   const handleSave = () => {
     saveCmsData(cmsData);
     setSaveStatus('Changes saved successfully!');

@@ -75,12 +75,32 @@ class ScanService:
     @classmethod
     def _check_ticket_status(cls, ticket: Ticket, payload: dict) -> dict:
         """Check if ticket is valid for entry."""
+        # Check if this is an amphitheater ticket
+        is_amphitheater = hasattr(ticket, 'amphitheater_ticket')
+        
         base_result = {
             'valid': True,
             'ticket_code': ticket.ticket_code,
             'ticket_type': ticket.ticket_type.name,
             'owner_name': ticket.owner.full_name,
+            'is_amphitheater': is_amphitheater,
         }
+        
+        # If amphitheater ticket, add seat info
+        if is_amphitheater:
+            amph_ticket = ticket.amphitheater_ticket
+            base_result.update({
+                'section': amph_ticket.seat_block.section.name,
+                'row': amph_ticket.row,
+                'seat': amph_ticket.seat_number,
+                'event_date': str(amph_ticket.event_date),
+                'includes_festival_access': amph_ticket.includes_festival_access,
+            })
+            
+            # Check if amphitheater ticket grants festival access for today
+            if amph_ticket.includes_festival_access and amph_ticket.event_date == date.today():
+                base_result['festival_access_granted'] = True
+                base_result['message'] = f'Amphitheater ticket grants festival access for today'
         
         # Already used
         if ticket.status == Ticket.Status.USED:

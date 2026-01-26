@@ -1,6 +1,9 @@
 from django.contrib import admin
 from .models import TicketType, Order, OrderItem, Ticket, TicketTransfer, TicketUpgrade, Refund, Comp, Invoice
 
+# Import amphitheater admin
+from .amphitheater_admin import *
+
 
 @admin.register(TicketType)
 class TicketTypeAdmin(admin.ModelAdmin):

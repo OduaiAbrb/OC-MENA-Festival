@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -48,7 +48,7 @@ const AmphitheaterTickets = () => {
     };
   };
 
-  const getPointsFromRect = (r) => {
+  const getPointsFromRect = useCallback((r) => {
     const rot = r.rotation || 0;
     const cx = r.x + r.w / 2;
     const cy = r.y + r.h / 2;
@@ -60,7 +60,7 @@ const AmphitheaterTickets = () => {
     ];
     const rotated = corners.map(c => rotatePoint(c.x, c.y, cx, cy, rot));
     return rotated.map(p => `${p.x},${p.y}`).join(' ');
-  };
+  }, []);
 
   const sections = useMemo(() => (
     sectionsMeta.map(meta => {
@@ -70,7 +70,7 @@ const AmphitheaterTickets = () => {
         points: getPointsFromRect(r)
       };
     })
-  ), [rects]);
+  ), [rects, sectionsMeta, getPointsFromRect]);
 
   const handleSectionClick = (section) => {
     setSelectedSection(section);

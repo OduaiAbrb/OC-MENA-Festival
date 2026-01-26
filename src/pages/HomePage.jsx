@@ -38,7 +38,7 @@ const HomePage = ({ onGetTicketsClick }) => {
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [cms.countdownTargetDate]);
 
   return (
     <div className="page-wrapper">

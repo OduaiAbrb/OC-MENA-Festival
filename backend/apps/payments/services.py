@@ -248,20 +248,29 @@ class StripeService:
         """Handle successful payment - finalize order and issue tickets."""
         payment_intent_id = data.id
         order_id = data.metadata.get('order_id')
+        is_amphitheater = data.metadata.get('amphitheater') == 'true'
         
         if not order_id:
             logger.error(f"Payment intent {payment_intent_id} missing order_id")
             return {'status': 'error', 'message': 'Missing order_id'}
         
         try:
-            order = OrderService.finalize_order(order_id, payment_intent_id)
+            # Use amphitheater checkout service if this is an amphitheater order
+            if is_amphitheater:
+                from .amphitheater_checkout import AmphitheaterCheckoutService
+                order = AmphitheaterCheckoutService.finalize_amphitheater_order(
+                    order_id=order_id,
+                    payment_intent_id=payment_intent_id
+                )
+            else:
+                order = OrderService.finalize_order(order_id, payment_intent_id)
             
             # Update payment attempt
             PaymentAttempt.objects.filter(
                 stripe_payment_intent_id=payment_intent_id
             ).update(status=PaymentAttempt.Status.SUCCEEDED)
             
-            logger.info(f"Payment succeeded for order {order.order_number}")
+            logger.info(f"Payment succeeded for order {order.order_number} (amphitheater={is_amphitheater})")
             
             return {'status': 'success', 'order_number': order.order_number}
             
