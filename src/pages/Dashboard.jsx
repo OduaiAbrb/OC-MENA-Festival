@@ -13,8 +13,7 @@ const Dashboard = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [activeSection, setActiveSection] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [vendorTickets, setVendorTickets] = useState([]);
-  const [regularTickets, setRegularTickets] = useState([]);
+  const [tickets, setTickets] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [transferModal, setTransferModal] = useState({ open: false, ticket: null });
@@ -53,24 +52,7 @@ const Dashboard = () => {
         api.getMyOrders()
       ]);
       if (ticketsRes?.success) {
-        const allTickets = ticketsRes.data;
-        
-        // Separate vendor booth tickets from regular tickets
-        const vendor = allTickets.filter(ticket => {
-          const name = ticket.ticket_type_name?.toLowerCase() || '';
-          return name.includes('vendor') || name.includes('booth') || 
-                 name.includes('bazaar') || name.includes('food truck') || 
-                 name.includes('food booth');
-        });
-        const regular = allTickets.filter(ticket => {
-          const name = ticket.ticket_type_name?.toLowerCase() || '';
-          return !name.includes('vendor') && !name.includes('booth') && 
-                 !name.includes('bazaar') && !name.includes('food truck') && 
-                 !name.includes('food booth');
-        });
-        
-        setVendorTickets(vendor);
-        setRegularTickets(regular);
+        setTickets(ticketsRes.data);
       }
       if (ordersRes?.success) setOrders(ordersRes.data);
     } catch (err) {
@@ -121,7 +103,6 @@ const Dashboard = () => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'tickets', label: 'Tickets' },
-    { id: 'vendor-booth', label: 'Vendor Booth' },
     { id: 'orders', label: 'Orders' },
     { id: 'downloads', label: 'Downloads' },
     { id: 'addresses', label: 'Addresses' },
@@ -145,7 +126,7 @@ const Dashboard = () => {
             <h2 className="section-title">Hello {userName}</h2>
             <p className="section-subtitle">(<span onClick={handleLogout} style={{cursor: 'pointer', textDecoration: 'underline'}}>not {userName}? Log out</span>)</p>
             <div className="dashboard-buttons">
-              <button className="action-button" onClick={() => setActiveSection('tickets')}>View tickets ({regularTickets.length})</button>
+              <button className="action-button" onClick={() => setActiveSection('tickets')}>View tickets ({tickets.length})</button>
               <button className="action-button" onClick={() => setActiveSection('orders')}>View orders ({orders.length})</button>
               {userProfile?.is_superuser && (
                 <button className="action-button" style={{backgroundColor: '#dc2626', borderColor: '#dc2626'}} onClick={() => navigate('/admin-dashboard')}>
@@ -165,82 +146,41 @@ const Dashboard = () => {
           <div className="content-section">
             <h2 className="section-title">My Tickets</h2>
             <div className="static-content">
-              {regularTickets.length === 0 ? (
+              {tickets.length === 0 ? (
                 <p>No tickets yet. <a href="/tickets" style={{color: '#0284c7'}}>Purchase tickets</a> to get started!</p>
               ) : (
-                regularTickets.map(ticket => (
-                  <div key={ticket.id} style={{border: '1px solid #e5e7eb', borderRadius: '12px', padding: '1.5rem', marginBottom: '1rem', backgroundColor: '#fff'}}>
+                tickets.map(ticket => (
+                  <div key={ticket.id} style={{
+                    border: ticket.ticket_type_name?.toLowerCase().includes('vendor') || 
+                           ticket.ticket_type_name?.toLowerCase().includes('booth') ? 
+                           '2px solid #9333ea' : '1px solid #e5e7eb',
+                    borderRadius: '12px',
+                    padding: '1.5rem',
+                    marginBottom: '1rem',
+                    backgroundColor: ticket.ticket_type_name?.toLowerCase().includes('vendor') || 
+                                   ticket.ticket_type_name?.toLowerCase().includes('booth') ? 
+                                   '#faf5ff' : '#fff'
+                  }}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem'}}>
                       <div style={{flex: 1, minWidth: '200px'}}>
-                        <h3 style={{margin: '0 0 0.5rem 0', color: '#111'}}>{ticket.ticket_type_name}</h3>
-                        <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Code:</strong> {ticket.ticket_code}</p>
-                        <p style={{margin: '0.25rem 0'}}>
-                          <strong>Status:</strong>{' '}
-                          <span style={{
-                            padding: '2px 8px',
-                            borderRadius: '4px',
-                            fontSize: '0.85rem',
-                            fontWeight: 'bold',
-                            backgroundColor: ticket.status === 'ISSUED' ? '#dcfce7' : ticket.status === 'USED' ? '#fee2e2' : '#fef3c7',
-                            color: ticket.status === 'ISSUED' ? '#166534' : ticket.status === 'USED' ? '#991b1b' : '#92400e'
-                          }}>
-                            {ticket.status}
-                          </span>
-                        </p>
-                        {ticket.status === 'ISSUED' && (
-                          <button 
-                            onClick={() => {
-                              setTransferModal({ open: true, ticket });
-                              setTransferEmail('');
-                              setTransferError('');
-                              setTransferSuccess('');
-                            }}
-                            style={{
-                              marginTop: '1rem',
-                              padding: '0.5rem 1rem',
-                              backgroundColor: '#3b82f6',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '6px',
-                              cursor: 'pointer',
-                              fontSize: '0.9rem'
-                            }}
-                          >
-                            Transfer Ticket
-                          </button>
-                        )}
-                      </div>
-                      {ticket.qr_code && (
-                        <div style={{textAlign: 'center'}}>
-                          <img src={ticket.qr_code} alt={`QR Code for ${ticket.ticket_code}`} style={{width: '150px', height: '150px', border: '1px solid #ddd', padding: '8px', backgroundColor: 'white', borderRadius: '8px'}} />
-                          <p style={{fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', maxWidth: '150px'}}>
-                            Scan to validate
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        );
-      case 'vendor-booth':
-        return (
-          <div className="content-section">
-            <h2 className="section-title">Vendor Booth</h2>
-            <div className="static-content">
-              {vendorTickets.length === 0 ? (
-                <p>No vendor booths yet. <a href="/vendor-booths" style={{color: '#9333ea'}}>Reserve a booth</a> to get started!</p>
-              ) : (
-                vendorTickets.map(ticket => (
-                  <div key={ticket.id} style={{border: '2px solid #9333ea', borderRadius: '12px', padding: '1.5rem', marginBottom: '1rem', backgroundColor: '#faf5ff'}}>
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem'}}>
-                      <div style={{flex: 1, minWidth: '200px'}}>
-                        <h3 style={{margin: '0 0 0.5rem 0', color: '#6b21a8', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-                          🏪 {ticket.ticket_type_name}
+                        <h3 style={{
+                          margin: '0 0 0.5rem 0',
+                          color: ticket.ticket_type_name?.toLowerCase().includes('vendor') || 
+                                 ticket.ticket_type_name?.toLowerCase().includes('booth') ? 
+                                 '#6b21a8' : '#111',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem'
+                        }}>
+                          {(ticket.ticket_type_name?.toLowerCase().includes('vendor') || 
+                            ticket.ticket_type_name?.toLowerCase().includes('booth')) && '🏪 '}
+                          {ticket.ticket_type_name}
                         </h3>
-                        <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Booth Code:</strong> {ticket.ticket_code}</p>
+                        <p style={{margin: '0.25rem 0', color: '#666'}}>
+                          <strong>{(ticket.ticket_type_name?.toLowerCase().includes('vendor') || 
+                                    ticket.ticket_type_name?.toLowerCase().includes('booth')) ? 
+                                   'Booth Code:' : 'Code:'}</strong> {ticket.ticket_code}
+                        </p>
                         {ticket.metadata?.booth_name && (
                           <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Booth Name:</strong> {ticket.metadata.booth_name}</p>
                         )}
@@ -266,30 +206,71 @@ const Dashboard = () => {
                             {ticket.status}
                           </span>
                         </p>
+                        {ticket.status === 'ISSUED' && 
+                         !ticket.ticket_type_name?.toLowerCase().includes('vendor') && 
+                         !ticket.ticket_type_name?.toLowerCase().includes('booth') && (
+                          <button 
+                            onClick={() => {
+                              setTransferModal({ open: true, ticket });
+                              setTransferEmail('');
+                              setTransferError('');
+                              setTransferSuccess('');
+                            }}
+                            style={{
+                              marginTop: '1rem',
+                              padding: '0.5rem 1rem',
+                              backgroundColor: '#3b82f6',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontSize: '0.9rem'
+                            }}
+                          >
+                            Transfer Ticket
+                          </button>
+                        )}
                       </div>
                       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem'}}>
                         {ticket.qr_code && (
-                          <img 
-                            src={ticket.qr_code} 
-                            alt="Vendor Booth QR Code" 
-                            style={{width: '150px', height: '150px', border: '2px solid #9333ea', borderRadius: '8px'}}
-                          />
+                          <>
+                            <img 
+                              src={ticket.qr_code} 
+                              alt={`QR Code for ${ticket.ticket_code}`} 
+                              style={{
+                                width: '150px',
+                                height: '150px',
+                                border: ticket.ticket_type_name?.toLowerCase().includes('vendor') || 
+                                       ticket.ticket_type_name?.toLowerCase().includes('booth') ? 
+                                       '2px solid #9333ea' : '1px solid #ddd',
+                                padding: '8px',
+                                backgroundColor: 'white',
+                                borderRadius: '8px'
+                              }} 
+                            />
+                            <p style={{fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', maxWidth: '150px', textAlign: 'center'}}>
+                              Scan to validate
+                            </p>
+                            {(ticket.ticket_type_name?.toLowerCase().includes('vendor') || 
+                              ticket.ticket_type_name?.toLowerCase().includes('booth')) && (
+                              <a 
+                                href={ticket.qr_code} 
+                                download={`vendor-booth-${ticket.ticket_code}.png`}
+                                style={{
+                                  padding: '0.5rem 1rem',
+                                  backgroundColor: '#9333ea',
+                                  color: 'white',
+                                  textDecoration: 'none',
+                                  borderRadius: '6px',
+                                  fontSize: '0.9rem',
+                                  fontWeight: '600'
+                                }}
+                              >
+                                Download QR
+                              </a>
+                            )}
+                          </>
                         )}
-                        <a 
-                          href={ticket.qr_code} 
-                          download={`vendor-booth-${ticket.ticket_code}.png`}
-                          style={{
-                            padding: '0.5rem 1rem',
-                            backgroundColor: '#9333ea',
-                            color: 'white',
-                            textDecoration: 'none',
-                            borderRadius: '6px',
-                            fontSize: '0.9rem',
-                            fontWeight: '600'
-                          }}
-                        >
-                          Download QR
-                        </a>
                       </div>
                     </div>
                   </div>
