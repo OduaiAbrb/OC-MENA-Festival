@@ -14,6 +14,7 @@ const AmphitheaterTickets = () => {
   const [debugMode, setDebugMode] = useState(false);
   const [editingRects, setEditingRects] = useState([]);
   const [dragState, setDragState] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
   const mapRef = useRef(null);
   const panelRef = useRef(null);
 
@@ -64,6 +65,16 @@ const AmphitheaterTickets = () => {
     ];
     const rotated = corners.map(c => rotatePoint(c.x, c.y, cx, cy, rot));
     return rotated.map(p => `${p.x},${p.y}`).join(' ');
+  }, []);
+
+  // Check if mobile on mount
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 900);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Initialize editing rects from initial rects
@@ -298,7 +309,7 @@ const AmphitheaterTickets = () => {
             </div>
 
             {/* Debug Mode Toggle (Mobile Only) */}
-            {window.innerWidth <= 900 && (
+            {isMobile && (
               <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '10px' }}>
                 <button
                   onClick={() => setDebugMode(!debugMode)}
