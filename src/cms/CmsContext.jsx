@@ -17,11 +17,27 @@ export const CmsProvider = ({ children }) => {
 
   useEffect(() => {
     const handleCmsUpdate = (event) => {
-      setCmsContent(event.detail);
+      // Force reload from localStorage to ensure we have the latest data
+      const latestData = getCmsData();
+      setCmsContent(latestData);
     };
 
     window.addEventListener('cmsDataUpdated', handleCmsUpdate);
-    return () => window.removeEventListener('cmsDataUpdated', handleCmsUpdate);
+    
+    // Also listen for storage events (for cross-tab updates)
+    const handleStorageChange = (e) => {
+      if (e.key === 'cmsData') {
+        const latestData = getCmsData();
+        setCmsContent(latestData);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('cmsDataUpdated', handleCmsUpdate);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const updateContent = (newContent) => {
