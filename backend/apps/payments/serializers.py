@@ -6,8 +6,12 @@ from rest_framework import serializers
 
 class CheckoutItemSerializer(serializers.Serializer):
     """Serializer for checkout items."""
-    ticket_type_id = serializers.UUIDField()
+    ticket_type_id = serializers.UUIDField(required=False, allow_null=True)
     quantity = serializers.IntegerField(min_value=1, max_value=10)
+    type = serializers.CharField(required=False, allow_blank=True)
+    section = serializers.CharField(required=False, allow_blank=True)
+    price = serializers.IntegerField(required=False, allow_null=True)
+    metadata = serializers.DictField(required=False, allow_null=True)
 
 
 class CreatePaymentIntentSerializer(serializers.Serializer):

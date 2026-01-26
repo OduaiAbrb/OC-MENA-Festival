@@ -122,28 +122,48 @@ class OrderService:
         
         subtotal = 0
         for item in items:
-            ticket_type = TicketType.objects.select_for_update().get(
-                id=item['ticket_type_id']
-            )
-            
-            if not ticket_type.is_available:
-                raise ValueError(f"Ticket type {ticket_type.name} is not available")
-            
-            if ticket_type.capacity:
-                if ticket_type.remaining_capacity < item['quantity']:
-                    raise ValueError(f"Not enough {ticket_type.name} tickets available")
-            
-            item_total = ticket_type.price_cents * item['quantity']
-            
-            OrderItem.objects.create(
-                order=order,
-                ticket_type=ticket_type,
-                quantity=item['quantity'],
-                unit_price_cents=ticket_type.price_cents,
-                total_cents=item_total
-            )
-            
-            subtotal += item_total
+            # Handle amphitheater tickets separately
+            if item.get('type') == 'amphitheater':
+                # For amphitheater tickets, create a placeholder order item
+                # The actual amphitheater ticket will be created in finalize_order
+                price_cents = item.get('price', 0) * 100  # Convert dollars to cents
+                item_total = price_cents * item['quantity']
+                
+                # Create order item without ticket_type (will be handled by amphitheater service)
+                OrderItem.objects.create(
+                    order=order,
+                    ticket_type=None,  # No ticket type for amphitheater
+                    quantity=item['quantity'],
+                    unit_price_cents=price_cents,
+                    total_cents=item_total,
+                    metadata=item.get('metadata', {})
+                )
+                
+                subtotal += item_total
+            else:
+                # Regular ticket with ticket_type_id
+                ticket_type = TicketType.objects.select_for_update().get(
+                    id=item['ticket_type_id']
+                )
+                
+                if not ticket_type.is_available:
+                    raise ValueError(f"Ticket type {ticket_type.name} is not available")
+                
+                if ticket_type.capacity:
+                    if ticket_type.remaining_capacity < item['quantity']:
+                        raise ValueError(f"Not enough {ticket_type.name} tickets available")
+                
+                item_total = ticket_type.price_cents * item['quantity']
+                
+                OrderItem.objects.create(
+                    order=order,
+                    ticket_type=ticket_type,
+                    quantity=item['quantity'],
+                    unit_price_cents=ticket_type.price_cents,
+                    total_cents=item_total
+                )
+                
+                subtotal += item_total
         
         # Calculate fees (e.g., 3% processing fee)
         fees = int(subtotal * 0.03)
