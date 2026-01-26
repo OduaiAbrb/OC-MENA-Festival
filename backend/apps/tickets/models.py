@@ -221,6 +221,9 @@ class Ticket(models.Model):
         related_name='tickets'
     )
     
+    # Metadata for storing additional ticket information (e.g., amphitheater details)
+    metadata = models.JSONField(default=dict, blank=True)
+    
     # Timestamps
     issued_at = models.DateTimeField(default=timezone.now)
     used_at = models.DateTimeField(null=True, blank=True)
