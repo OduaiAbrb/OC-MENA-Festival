@@ -140,6 +140,25 @@ const AmphitheaterTickets = () => {
     setHoveredSection(section);
   };
 
+  const handleTouchStart = (e, section) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    if (mapRef.current) {
+      const rect = mapRef.current.getBoundingClientRect();
+      setTooltipPos({
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top - 15
+      });
+    }
+    setHoveredSection(section);
+  };
+
+  const handleTouchEnd = (e, section) => {
+    e.preventDefault();
+    handleSectionClick(section);
+    setHoveredSection(null);
+  };
+
   const handlePanelHover = (section) => {
     setHoveredSection(section);
     const pos = getSectionCentroid(section);
@@ -206,6 +225,8 @@ const AmphitheaterTickets = () => {
                       onMouseEnter={(e) => handleMouseMove(e, section)}
                       onMouseMove={(e) => handleMouseMove(e, section)}
                       onMouseLeave={() => setHoveredSection(null)}
+                      onTouchStart={(e) => handleTouchStart(e, section)}
+                      onTouchEnd={(e) => handleTouchEnd(e, section)}
                     />
                   ))}
                 </svg>
