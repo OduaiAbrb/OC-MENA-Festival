@@ -147,7 +147,20 @@ const CheckoutForm = () => {
       const ticketItems = [];
       
       for (const item of cartItems) {
-        if (item.type === 'vendor-booth') {
+        if (item.type === 'amphitheater') {
+          // Amphitheater tickets - add directly with amphitheater-specific data
+          ticketItems.push({
+            type: 'amphitheater',
+            section: item.section,
+            quantity: item.quantity,
+            price: item.price,
+            metadata: {
+              section_name: item.section,
+              includes_festival_access: item.includesFestival || true,
+              ticket_name: item.name
+            }
+          });
+        } else if (item.type === 'vendor-booth') {
           // Convert vendor booth to ticket type ID based on booth type and days
           const boothDetails = item.boothDetails || {};
           const days = boothDetails.days || '3days';
