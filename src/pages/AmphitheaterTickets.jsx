@@ -11,6 +11,9 @@ const AmphitheaterTickets = () => {
   const [hoveredSection, setHoveredSection] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [ticketQuantity, setTicketQuantity] = useState(2);
+  const [debugMode, setDebugMode] = useState(false);
+  const [editingRects, setEditingRects] = useState([]);
+  const [dragState, setDragState] = useState(null);
   const mapRef = useRef(null);
   const panelRef = useRef(null);
 
@@ -26,7 +29,7 @@ const AmphitheaterTickets = () => {
     { id: 8, name: 'Section 8', rows: 'A-Y', price: 119, available: 48 },
   ], []);
 
-  const rects = useMemo(() => [
+  const initialRects = useMemo(() => [
     { id: 1, x: 291.62011173184356, y: 333.2668733603625, w: 129.89944134078212, h: 143.47579298831386, rotation: 0 },
     { id: 2, x: 428.65921787709493, y: 287.9961841163844, w: 175.55307262569832, h: 144.0144125924159, rotation: 0 },
     { id: 3, x: 609.9441340782123, y: 311.7948962556642, w: 135.62011173184356, h: 167.47388504650607, rotation: 0 },
@@ -63,15 +66,24 @@ const AmphitheaterTickets = () => {
     return rotated.map(p => `${p.x},${p.y}`).join(' ');
   }, []);
 
+  // Initialize editing rects from initial rects
+  useEffect(() => {
+    if (editingRects.length === 0) {
+      setEditingRects(initialRects);
+    }
+  }, [initialRects, editingRects.length]);
+
+  const activeRects = debugMode ? editingRects : initialRects;
+
   const sections = useMemo(() => (
     sectionsMeta.map(meta => {
-      const r = rects.find(rr => rr.id === meta.id) || { x: 0, y: 0, w: 0, h: 0 };
+      const r = activeRects.find(rr => rr.id === meta.id) || { x: 0, y: 0, w: 0, h: 0 };
       return {
         ...meta,
         points: getPointsFromRect(r)
       };
     })
-  ), [rects, sectionsMeta, getPointsFromRect]);
+  ), [activeRects, sectionsMeta, getPointsFromRect]);
 
   const handleSectionClick = (section) => {
     setSelectedSection(section);
@@ -164,14 +176,105 @@ const AmphitheaterTickets = () => {
     setTooltipPos(pos);
   };
 
-  // Scroll to panel on mobile when section is selected
+  // Debug mode handlers
+  const handleMouseDownDebug = (e, rect, handle = null) => {
+    if (!debugMode) return;
+    e.stopPropagation();
+    e.preventDefault();
+    const mapEl = mapRef.current;
+    if (!mapEl) return;
+    const mapRect = mapEl.getBoundingClientRect();
+    const scaleX = 1024 / mapRect.width;
+    const scaleY = 662 / mapRect.height;
+    
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    
+    setDragState({
+      rectId: rect.id,
+      handle,
+      startX: clientX,
+      startY: clientY,
+      startRect: { ...rect },
+      scaleX,
+      scaleY
+    });
+  };
+
+  const handleMouseMoveDebug = useCallback((e) => {
+    if (!dragState) return;
+    e.preventDefault();
+    
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    
+    const dx = (clientX - dragState.startX) * dragState.scaleX;
+    const dy = (clientY - dragState.startY) * dragState.scaleY;
+    
+    setEditingRects(prev => prev.map(r => {
+      if (r.id !== dragState.rectId) return r;
+      
+      const updated = { ...dragState.startRect };
+      
+      if (!dragState.handle) {
+        // Moving
+        updated.x = dragState.startRect.x + dx;
+        updated.y = dragState.startRect.y + dy;
+      } else {
+        // Resizing
+        if (dragState.handle.includes('t')) {
+          updated.y = dragState.startRect.y + dy;
+          updated.h = dragState.startRect.h - dy;
+        }
+        if (dragState.handle.includes('b')) {
+          updated.h = dragState.startRect.h + dy;
+        }
+        if (dragState.handle.includes('l')) {
+          updated.x = dragState.startRect.x + dx;
+          updated.w = dragState.startRect.w - dx;
+        }
+        if (dragState.handle.includes('r')) {
+          updated.w = dragState.startRect.w + dx;
+        }
+      }
+      
+      return updated;
+    }));
+  }, [dragState]);
+
+  const handleMouseUpDebug = useCallback(() => {
+    setDragState(null);
+  }, []);
+
   useEffect(() => {
-    if (selectedSection && panelRef.current && window.innerWidth <= 900) {
-      setTimeout(() => {
-        panelRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+    if (dragState) {
+      window.addEventListener('mousemove', handleMouseMoveDebug);
+      window.addEventListener('mouseup', handleMouseUpDebug);
+      window.addEventListener('touchmove', handleMouseMoveDebug, { passive: false });
+      window.addEventListener('touchend', handleMouseUpDebug);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMoveDebug);
+        window.removeEventListener('mouseup', handleMouseUpDebug);
+        window.removeEventListener('touchmove', handleMouseMoveDebug);
+        window.removeEventListener('touchend', handleMouseUpDebug);
+      };
     }
-  }, [selectedSection]);
+  }, [dragState, handleMouseMoveDebug, handleMouseUpDebug]);
+
+  const handleDoneDebug = () => {
+    console.log('=== CORRECTED COORDINATES ===');
+    console.log('Copy and paste this into your code:');
+    console.log('');
+    console.log('const rects = useMemo(() => [');
+    editingRects.forEach((r, i) => {
+      const comma = i < editingRects.length - 1 ? ',' : '';
+      console.log(`  { id: ${r.id}, x: ${r.x}, y: ${r.y}, w: ${r.w}, h: ${r.h}, rotation: ${r.rotation || 0} }${comma}`);
+    });
+    console.log('], []);');
+    console.log('');
+    console.log('=== END COORDINATES ===');
+    alert('Coordinates logged to console! Check the browser console (F12).');
+  };
 
   return (
     <div className="page-wrapper amphitheater-page">
@@ -193,6 +296,42 @@ const AmphitheaterTickets = () => {
                 <p className="sg-date">Aug 15 - 17, 2026 · 6:00 PM</p>
               </div>
             </div>
+
+            {/* Debug Mode Toggle (Mobile Only) */}
+            {window.innerWidth <= 900 && (
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '10px' }}>
+                <button
+                  onClick={() => setDebugMode(!debugMode)}
+                  style={{
+                    padding: '10px 20px',
+                    background: debugMode ? '#dc2626' : '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {debugMode ? 'Exit Debug Mode' : 'Enter Debug Mode'}
+                </button>
+                {debugMode && (
+                  <button
+                    onClick={handleDoneDebug}
+                    style={{
+                      padding: '10px 20px',
+                      background: '#3b82f6',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Done - Log Coordinates
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* Ticket Quantity Selector */}
             <div className="sg-quantity-bar">
@@ -241,7 +380,7 @@ const AmphitheaterTickets = () => {
                 </svg>
 
                 {/* Hover Tooltip - follows cursor */}
-                {hoveredSection && (
+                {hoveredSection && !debugMode && (
                   <div 
                     className="sg-tooltip"
                     style={{
@@ -253,6 +392,64 @@ const AmphitheaterTickets = () => {
                     <div className="sg-tooltip-title">{hoveredSection.name}</div>
                     <div className="sg-tooltip-price">${hoveredSection.price}</div>
                     <div className="sg-tooltip-avail">{hoveredSection.available} tickets available</div>
+                  </div>
+                )}
+
+                {/* Debug Mode Overlay */}
+                {debugMode && (
+                  <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+                    <svg style={{ width: '100%', height: '100%', pointerEvents: 'none' }} viewBox="0 0 1024 662" preserveAspectRatio="none">
+                      {editingRects.map((rect) => {
+                        const section = sectionsMeta.find(s => s.id === rect.id);
+                        return (
+                          <g key={rect.id}>
+                            {/* Main draggable rectangle */}
+                            <rect
+                              x={rect.x}
+                              y={rect.y}
+                              width={rect.w}
+                              height={rect.h}
+                              fill="rgba(220, 38, 38, 0.3)"
+                              stroke="#dc2626"
+                              strokeWidth="3"
+                              style={{ pointerEvents: 'all', cursor: 'move', touchAction: 'none' }}
+                              onMouseDown={(e) => handleMouseDownDebug(e, rect)}
+                              onTouchStart={(e) => handleMouseDownDebug(e, rect)}
+                            />
+                            {/* Section label */}
+                            <text
+                              x={rect.x + rect.w / 2}
+                              y={rect.y + rect.h / 2}
+                              textAnchor="middle"
+                              dominantBaseline="middle"
+                              fill="white"
+                              fontSize="32"
+                              fontWeight="bold"
+                              style={{ pointerEvents: 'none', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
+                            >
+                              {section?.id || rect.id}
+                            </text>
+                            {/* Resize handles */}
+                            <circle cx={rect.x} cy={rect.y} r="12" fill="#dc2626" stroke="white" strokeWidth="2" 
+                              style={{ pointerEvents: 'all', cursor: 'nw-resize', touchAction: 'none' }}
+                              onMouseDown={(e) => handleMouseDownDebug(e, rect, 'tl')}
+                              onTouchStart={(e) => handleMouseDownDebug(e, rect, 'tl')} />
+                            <circle cx={rect.x + rect.w} cy={rect.y} r="12" fill="#dc2626" stroke="white" strokeWidth="2"
+                              style={{ pointerEvents: 'all', cursor: 'ne-resize', touchAction: 'none' }}
+                              onMouseDown={(e) => handleMouseDownDebug(e, rect, 'tr')}
+                              onTouchStart={(e) => handleMouseDownDebug(e, rect, 'tr')} />
+                            <circle cx={rect.x} cy={rect.y + rect.h} r="12" fill="#dc2626" stroke="white" strokeWidth="2"
+                              style={{ pointerEvents: 'all', cursor: 'sw-resize', touchAction: 'none' }}
+                              onMouseDown={(e) => handleMouseDownDebug(e, rect, 'bl')}
+                              onTouchStart={(e) => handleMouseDownDebug(e, rect, 'bl')} />
+                            <circle cx={rect.x + rect.w} cy={rect.y + rect.h} r="12" fill="#dc2626" stroke="white" strokeWidth="2"
+                              style={{ pointerEvents: 'all', cursor: 'se-resize', touchAction: 'none' }}
+                              onMouseDown={(e) => handleMouseDownDebug(e, rect, 'br')}
+                              onTouchStart={(e) => handleMouseDownDebug(e, rect, 'br')} />
+                          </g>
+                        );
+                      })}
+                    </svg>
                   </div>
                 )}
               </div>
