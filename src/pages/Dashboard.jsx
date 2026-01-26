@@ -209,14 +209,20 @@ const Dashboard = () => {
                         <p style={{margin: '0.25rem 0', color: '#666'}}>
                           <strong>Ticket Code:</strong> {ticket.ticket_code}
                         </p>
-                        {ticket.metadata?.section && (
-                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Section:</strong> {ticket.metadata.section}</p>
+                        {ticket.metadata?.section_name && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Section:</strong> {ticket.metadata.section_name}</p>
                         )}
                         {ticket.metadata?.row && (
                           <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Row:</strong> {ticket.metadata.row}</p>
                         )}
-                        {ticket.metadata?.seat && (
-                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Seat:</strong> {ticket.metadata.seat}</p>
+                        {ticket.metadata?.seat_number && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Seat:</strong> {ticket.metadata.seat_number}</p>
+                        )}
+                        {ticket.metadata?.event_date && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Event Date:</strong> {new Date(ticket.metadata.event_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        )}
+                        {ticket.metadata?.price_paid && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Price:</strong> ${(ticket.metadata.price_paid / 100).toFixed(2)}</p>
                         )}
                         <p style={{margin: '0.25rem 0'}}>
                           <strong>Status:</strong>{' '}
@@ -231,9 +237,11 @@ const Dashboard = () => {
                             {ticket.status}
                           </span>
                         </p>
-                        <p style={{margin: '0.75rem 0 0 0', padding: '8px 12px', backgroundColor: '#e0f2fe', borderRadius: '6px', fontSize: '13px', color: '#0369a1'}}>
-                          ✓ Includes same-day festival access
-                        </p>
+                        {ticket.metadata?.includes_festival_access !== false && (
+                          <p style={{margin: '0.75rem 0 0 0', padding: '8px 12px', backgroundColor: '#e0f2fe', borderRadius: '6px', fontSize: '13px', color: '#0369a1'}}>
+                            ✓ Includes same-day festival access
+                          </p>
+                        )}
                       </div>
                       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem'}}>
                         {ticket.qr_code && (
