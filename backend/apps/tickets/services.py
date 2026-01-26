@@ -130,14 +130,19 @@ class OrderService:
                 item_total = price_cents * item['quantity']
                 
                 # Create order item without ticket_type (will be handled by amphitheater service)
+                # Note: We'll store amphitheater metadata in the order's metadata field
                 OrderItem.objects.create(
                     order=order,
                     ticket_type=None,  # No ticket type for amphitheater
                     quantity=item['quantity'],
                     unit_price_cents=price_cents,
-                    total_cents=item_total,
-                    metadata=item.get('metadata', {})
+                    total_cents=item_total
                 )
+                
+                # Store amphitheater metadata in order metadata
+                if not hasattr(order, '_amphitheater_items'):
+                    order._amphitheater_items = []
+                order._amphitheater_items.append(item)
                 
                 subtotal += item_total
             else:

@@ -154,7 +154,7 @@ class OrderItem(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    ticket_type = models.ForeignKey(TicketType, on_delete=models.PROTECT)
+    ticket_type = models.ForeignKey(TicketType, on_delete=models.PROTECT, null=True, blank=True)
     quantity = models.PositiveIntegerField()
     unit_price_cents = models.PositiveIntegerField()
     total_cents = models.PositiveIntegerField()
@@ -163,7 +163,9 @@ class OrderItem(models.Model):
         db_table = 'order_items'
     
     def __str__(self):
-        return f"{self.quantity}x {self.ticket_type.name}"
+        if self.ticket_type:
+            return f"{self.quantity}x {self.ticket_type.name}"
+        return f"{self.quantity}x Amphitheater Ticket"
 
 
 class Ticket(models.Model):
