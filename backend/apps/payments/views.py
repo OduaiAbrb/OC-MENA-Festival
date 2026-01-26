@@ -199,15 +199,29 @@ class ConfirmPaymentView(APIView):
                     'error': {'message': str(e)}
                 }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Just return order status - actual confirmation comes via webhook
-        return Response({
-            'success': True,
-            'data': {
-                'order_number': order.order_number,
-                'status': order.status,
-                'message': 'Payment is being processed' if order.status == Order.Status.PAYMENT_PENDING else 'Payment confirmed'
-            }
-        })
+        # Finalize the order - generate tickets and set status
+        try:
+            payment_intent_id = serializer.validated_data['payment_intent_id']
+            finalized_order = OrderService.finalize_order(
+                order_id=str(order.id),
+                payment_intent_id=payment_intent_id
+            )
+            
+            return Response({
+                'success': True,
+                'data': {
+                    'order_number': finalized_order.order_number,
+                    'status': finalized_order.status,
+                    'message': 'Payment confirmed and tickets issued' if finalized_order.status == Order.Status.PAID else 'Payment is being processed'
+                }
+            })
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response({
+                'success': False,
+                'error': {'message': f'Failed to finalize order: {str(e)}'}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class CheckDemoModeView(APIView):
