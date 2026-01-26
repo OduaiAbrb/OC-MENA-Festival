@@ -187,7 +187,7 @@ class Ticket(models.Model):
         on_delete=models.PROTECT,
         related_name='tickets'
     )
-    ticket_type = models.ForeignKey(TicketType, on_delete=models.PROTECT)
+    ticket_type = models.ForeignKey(TicketType, on_delete=models.PROTECT, null=True, blank=True)
     order = models.ForeignKey(
         Order,
         on_delete=models.SET_NULL,

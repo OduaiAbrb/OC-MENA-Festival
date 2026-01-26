@@ -176,6 +176,13 @@ class OrderService:
         order.subtotal_cents = subtotal
         order.fees_cents = fees
         order.total_cents = subtotal + fees
+        
+        # Save amphitheater items to order metadata for later retrieval
+        if hasattr(order, '_amphitheater_items'):
+            if not order.metadata:
+                order.metadata = {}
+            order.metadata['amphitheater_items'] = order._amphitheater_items
+        
         order.save()
         
         return order
@@ -201,6 +208,10 @@ class OrderService:
         order.stripe_payment_intent_id = payment_intent_id
         order.paid_at = timezone.now()
         order.save()
+        
+        # Load amphitheater items from order metadata if they exist
+        if order.metadata and 'amphitheater_items' in order.metadata:
+            order._amphitheater_items = order.metadata['amphitheater_items']
         
         # Issue tickets
         TicketService.issue_tickets_for_order(order)
@@ -239,18 +250,88 @@ class TicketService:
         tickets = []
         
         for item in order.items.select_related('ticket_type'):
-            for _ in range(item.quantity):
-                ticket = Ticket.objects.create(
-                    ticket_code=Ticket.generate_ticket_code(),
-                    owner=order.buyer,
-                    ticket_type=item.ticket_type,
-                    order=order,
-                    status=Ticket.Status.ISSUED,
-                    issued_at=timezone.now()
-                )
-                tickets.append(ticket)
+            # Handle amphitheater tickets
+            if item.ticket_type is None:
+                # This is an amphitheater ticket - get metadata from order
+                if hasattr(order, '_amphitheater_items'):
+                    for amph_item in order._amphitheater_items:
+                        for _ in range(amph_item['quantity']):
+                            # Create main ticket for amphitheater
+                            ticket = Ticket.objects.create(
+                                ticket_code=Ticket.generate_ticket_code(),
+                                owner=order.buyer,
+                                ticket_type=None,
+                                order=order,
+                                status=Ticket.Status.ISSUED,
+                                issued_at=timezone.now(),
+                                metadata={
+                                    'type': 'amphitheater',
+                                    'section_name': amph_item.get('section', 'General'),
+                                    'price_paid': amph_item.get('price', 0) * 100,
+                                    'includes_festival_access': amph_item.get('metadata', {}).get('includes_festival_access', True),
+                                    'ticket_name': amph_item.get('metadata', {}).get('ticket_name', 'Amphitheater Ticket')
+                                }
+                            )
+                            tickets.append(ticket)
+                            
+                            # Auto-create festival access ticket
+                            festival_ticket = TicketService._create_festival_access_ticket(order, ticket)
+                            if festival_ticket:
+                                tickets.append(festival_ticket)
+            else:
+                # Regular ticket with ticket_type
+                for _ in range(item.quantity):
+                    ticket = Ticket.objects.create(
+                        ticket_code=Ticket.generate_ticket_code(),
+                        owner=order.buyer,
+                        ticket_type=item.ticket_type,
+                        order=order,
+                        status=Ticket.Status.ISSUED,
+                        issued_at=timezone.now()
+                    )
+                    tickets.append(ticket)
         
         return tickets
+    
+    @staticmethod
+    def _create_festival_access_ticket(order: Order, amphitheater_ticket: Ticket) -> Optional[Ticket]:
+        """Create a complimentary festival access ticket for amphitheater ticket holder."""
+        try:
+            # Find or create a general festival access ticket type
+            festival_ticket_type, created = TicketType.objects.get_or_create(
+                slug='festival-access-comp-amphitheater',
+                defaults={
+                    'name': 'Festival Access (Complimentary with Amphitheater)',
+                    'description': 'Complimentary festival access included with amphitheater ticket purchase',
+                    'price_cents': 0,
+                    'capacity': None,  # Unlimited
+                    'is_active': True,
+                    'is_available': True,
+                }
+            )
+            
+            # Create the festival access ticket
+            festival_ticket = Ticket.objects.create(
+                ticket_code=Ticket.generate_ticket_code(),
+                owner=order.buyer,
+                ticket_type=festival_ticket_type,
+                order=order,
+                status=Ticket.Status.ISSUED,
+                is_comp=True,
+                issued_at=timezone.now(),
+                metadata={
+                    'granted_by_amphitheater': str(amphitheater_ticket.id),
+                    'complimentary': True,
+                    'type': 'festival_access'
+                }
+            )
+            
+            logger.info(f"Created festival access ticket {festival_ticket.ticket_code} for amphitheater ticket {amphitheater_ticket.ticket_code}")
+            return festival_ticket
+            
+        except Exception as e:
+            logger.error(f"Failed to create festival access ticket: {e}")
+            return None
     
     @staticmethod
     def issue_comp_tickets(
