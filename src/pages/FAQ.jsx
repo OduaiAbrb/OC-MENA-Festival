@@ -9,7 +9,7 @@ import './FAQ.css';
 
 const FAQ = () => {
   const { content } = useCms();
-  const cms = content.faqPage;
+  const cms = content?.faqPage || {};
   
   const [openItems, setOpenItems] = useState({});
 
@@ -17,7 +17,7 @@ const FAQ = () => {
     setOpenItems(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const faqSections = cms.sections;
+  const faqSections = cms?.sections || [];
 
   return (
     <div className="page-wrapper">

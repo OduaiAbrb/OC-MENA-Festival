@@ -472,13 +472,28 @@ const cmsData = {
   },
 };
 
+// Helper function to deep merge objects
+const deepMerge = (target, source) => {
+  const result = { ...target };
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      result[key] = deepMerge(target[key] || {}, source[key]);
+    } else if (source[key] !== undefined) {
+      result[key] = source[key];
+    }
+  }
+  return result;
+};
+
 // Helper function to get CMS data (will be replaced with API call later)
 export const getCmsData = () => {
   // Try to get from localStorage first (for admin edits)
   const savedData = localStorage.getItem('cmsData');
   if (savedData) {
     try {
-      return JSON.parse(savedData);
+      const parsed = JSON.parse(savedData);
+      // Merge with default data to ensure new keys are always available
+      return deepMerge(cmsData, parsed);
     } catch (e) {
       console.error('Error parsing CMS data:', e);
     }

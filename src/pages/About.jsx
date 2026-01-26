@@ -9,7 +9,7 @@ import './About.css';
 
 const About = () => {
   const { content } = useCms();
-  const cms = content.aboutPage;
+  const cms = content?.aboutPage || {};
   
   return (
     <div className="page-wrapper">

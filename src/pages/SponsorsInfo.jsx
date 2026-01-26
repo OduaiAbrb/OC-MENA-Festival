@@ -10,7 +10,7 @@ import './SponsorsInfo.css';
 
 const SponsorsInfo = () => {
   const { content } = useCms();
-  const cms = content.sponsorsInfoPage;
+  const cms = content?.sponsorsInfoPage || {};
 
   return (
     <div className="page-wrapper">
@@ -35,7 +35,7 @@ const SponsorsInfo = () => {
             <div className="sponsorship-levels">
               <h2 className="levels-title">{cms.levelsTitle}</h2>
               <ul className="levels-list">
-                {cms.levels.map((level, idx) => (
+                {(cms?.levels || []).map((level, idx) => (
                   <li key={idx} className="level-item">{level}</li>
                 ))}
               </ul>

@@ -21,7 +21,7 @@ const AnnouncementBar = () => {
 
   return (
     <div className={`announcement-bar ${!isVisible ? 'hidden' : ''}`}>
-      {content.global.announcementBar}
+      {content?.global?.announcementBar || 'June 19-21, 2026 — OC Fair Grounds — Middle East & North Africa (MENA) Festival!'}
     </div>
   );
 };

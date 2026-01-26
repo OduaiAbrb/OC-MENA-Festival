@@ -6,8 +6,8 @@ import './Footer.css';
 
 const Footer = () => {
   const { content } = useCms();
-  const cms = content.footer;
-  const globalCms = content.global;
+  const cms = content?.footer || {};
+  const globalCms = content?.global || {};
   
   const [openDropdown, setOpenDropdown] = useState(null);
 

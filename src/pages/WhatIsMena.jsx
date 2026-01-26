@@ -9,7 +9,7 @@ import './WhatIsMena.css';
 
 const WhatIsMena = () => {
   const { content } = useCms();
-  const cms = content.whatIsMenaPage;
+  const cms = content?.whatIsMenaPage || {};
   
   return (
     <div className="page-wrapper">

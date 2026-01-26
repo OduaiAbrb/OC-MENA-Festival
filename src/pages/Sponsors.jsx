@@ -34,7 +34,7 @@ const Sponsors = () => {
           <div className="sponsorship-levels">
             <h3 className="section-heading">{cms.levelsTitle}</h3>
             <ul className="levels-list">
-              {cms.levels.map((level, idx) => (
+              {(cms?.levels || []).map((level, idx) => (
                 <li key={idx}>{level}</li>
               ))}
             </ul>

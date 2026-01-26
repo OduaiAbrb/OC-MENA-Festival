@@ -13,7 +13,7 @@ const Header = ({ onGetTicketsClick }) => {
   const location = useLocation();
   const { isAuthenticated } = useAuth();
   const { content } = useCms();
-  const cms = content.header;
+  const cms = content?.header || {};
 
   // Close menu when window is resized above mobile breakpoint
   useEffect(() => {

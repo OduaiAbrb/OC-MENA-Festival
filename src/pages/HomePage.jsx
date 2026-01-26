@@ -9,7 +9,7 @@ import './HomePage.css';
 
 const HomePage = ({ onGetTicketsClick }) => {
   const { content } = useCms();
-  const cms = content.homePage;
+  const cms = content?.homePage || {};
   
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
