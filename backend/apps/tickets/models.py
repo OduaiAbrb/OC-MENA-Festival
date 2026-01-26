@@ -116,6 +116,9 @@ class Order(models.Model):
     idempotency_key = models.CharField(max_length=100, unique=True)
     payment_method = models.CharField(max_length=20, choices=[('card', 'Card'), ('cash', 'Cash')], default='card')
     
+    # Metadata for storing additional order information (e.g., amphitheater items)
+    metadata = models.JSONField(default=dict, blank=True)
+    
     # Refund tracking
     refunded_cents = models.PositiveIntegerField(default=0)
     
