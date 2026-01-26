@@ -125,7 +125,8 @@ class CreatePaymentIntentView(APIView):
             order = OrderService.create_order(
                 buyer=request.user,
                 items=data['items'],
-                idempotency_key=data['idempotency_key']
+                idempotency_key=data['idempotency_key'],
+                payment_method=data.get('payment_method', 'card')
             )
             
             # Create payment intent

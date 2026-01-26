@@ -18,6 +18,7 @@ class CreatePaymentIntentSerializer(serializers.Serializer):
     """Serializer for creating a payment intent."""
     items = CheckoutItemSerializer(many=True, min_length=1)
     idempotency_key = serializers.CharField(max_length=100)
+    payment_method = serializers.ChoiceField(choices=['card', 'cash'], default='card')
 
 
 class ConfirmPaymentSerializer(serializers.Serializer):

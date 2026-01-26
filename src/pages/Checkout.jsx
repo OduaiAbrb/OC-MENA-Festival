@@ -219,7 +219,7 @@ const CheckoutForm = () => {
       }
 
       const idempotencyKey = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const intentResponse = await api.createPaymentIntent(ticketItems, idempotencyKey);
+      const intentResponse = await api.createPaymentIntent(ticketItems, idempotencyKey, selectedPaymentMethod);
 
       if (!intentResponse?.success) {
         throw new Error(intentResponse?.error?.message || 'Failed to create payment intent');

@@ -102,11 +102,13 @@ class OrderService:
     def create_order(
         buyer: User,
         items: list[dict],
-        idempotency_key: str
+        idempotency_key: str,
+        payment_method: str = 'card'
     ) -> Order:
         """
         Create a new order with items.
         items: [{'ticket_type_id': uuid, 'quantity': int}, ...]
+        payment_method: 'card' or 'cash'
         """
         # Check for existing order with same idempotency key
         existing = Order.objects.filter(idempotency_key=idempotency_key).first()
@@ -117,6 +119,7 @@ class OrderService:
             order_number=Order.generate_order_number(),
             buyer=buyer,
             idempotency_key=idempotency_key,
+            payment_method=payment_method,
             status=Order.Status.CREATED
         )
         
@@ -204,9 +207,14 @@ class OrderService:
         if order.status not in [Order.Status.CREATED, Order.Status.PAYMENT_PENDING]:
             raise ValueError(f"Order in invalid state for finalization: {order.status}")
         
-        # Set to PAYMENT_PENDING for manual validation in admin
-        # Admin can later change to PAID after validating payment
-        order.status = Order.Status.PAYMENT_PENDING
+        # Set status based on payment method
+        # Card payments: PAID (payment received via Stripe)
+        # Cash payments: PAYMENT_PENDING (needs manual validation in admin)
+        if order.payment_method == 'card':
+            order.status = Order.Status.PAID
+        else:  # cash
+            order.status = Order.Status.PAYMENT_PENDING
+        
         order.stripe_payment_intent_id = payment_intent_id
         order.paid_at = timezone.now()
         order.save()

@@ -241,10 +241,14 @@ class ApiService {
 
   // ==================== PAYMENTS ====================
 
-  async createPaymentIntent(items, idempotencyKey) {
+  async createPaymentIntent(items, idempotencyKey, paymentMethod = 'card') {
     return this.request('/payments/checkout/create-intent/', {
       method: 'POST',
-      body: JSON.stringify({ items, idempotency_key: idempotencyKey }),
+      body: JSON.stringify({ 
+        items, 
+        idempotency_key: idempotencyKey,
+        payment_method: paymentMethod
+      }),
     });
   }
 

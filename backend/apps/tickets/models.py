@@ -114,6 +114,7 @@ class Order(models.Model):
     # Payment
     stripe_payment_intent_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
     idempotency_key = models.CharField(max_length=100, unique=True)
+    payment_method = models.CharField(max_length=20, choices=[('card', 'Card'), ('cash', 'Cash')], default='card')
     
     # Refund tracking
     refunded_cents = models.PositiveIntegerField(default=0)
