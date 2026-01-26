@@ -140,7 +140,7 @@ const AmphitheaterTickets = () => {
 
   // Handle mouse move for tooltip positioning
   const getSectionCentroid = (section) => {
-    const r = rects.find(rr => rr.id === section.id);
+    const r = activeRects.find(rr => rr.id === section.id);
     if (!r) return { x: 512, y: 331 };
     const cx = (r.x + r.w / 2) / 1024;
     const cy = (r.y + r.h / 2) / 662;
@@ -148,8 +148,8 @@ const AmphitheaterTickets = () => {
     if (!mapEl) return { x: 512, y: 331 };
     const mapRect = mapEl.getBoundingClientRect();
     return {
-      x: cx * mapRect.width,
-      y: cy * mapRect.height - 15
+      x: mapRect.left + cx * mapRect.width,
+      y: mapRect.top + cy * mapRect.height
     };
   };
 
