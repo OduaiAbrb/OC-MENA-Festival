@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../services/api';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -8,6 +9,9 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './EventSchedule.css';
 
 const EventSchedule = () => {
+  const { content } = useCms();
+  const cms = content?.eventSchedulePage || {};
+  
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -54,17 +58,17 @@ const EventSchedule = () => {
 
         {/* Torn Paper Card */}
         <TornPaperWrapper>
-          <h1 className="card-title">Event Schedule</h1>
+          <h1 className="card-title">{cms.title}</h1>
           <p className="card-description" style={{ textAlign: 'center' }}>
-            The countdown is on. Our full lineup of performances, experiences, and special moments will be announced soon. Get ready to plan your day, discover new favorites, and catch every unforgettable moment at OC MENA Festival.
+            {cms.description}
           </p>
 
           {/* Newsletter Section - At bottom of card, centered */}
           <div className="newsletter-section" style={{ marginTop: '40px', textAlign: 'center' }}>
-            <h3 className="newsletter-heading">Subscribe to our newsletter to stay informed!</h3>
+            <h3 className="newsletter-heading">{cms.newsletterHeading}</h3>
             {success ? (
               <div className="success-message" style={{color: '#27ae60', textAlign: 'center', padding: '1rem'}}>
-                Thank you for subscribing! We'll notify you when the lineup is announced.
+                {cms.newsletterSuccess}
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="newsletter-form" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
@@ -94,7 +98,7 @@ const EventSchedule = () => {
                   width: '100%',
                   maxWidth: '450px'
                 }}>
-                  {loading ? 'Signing up...' : 'Sign Up'}
+                  {loading ? cms.newsletterButtonLoading : cms.newsletterButton}
                 </button>
               </form>
             )}

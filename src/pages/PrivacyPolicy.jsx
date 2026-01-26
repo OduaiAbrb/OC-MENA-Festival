@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -7,6 +8,9 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './PrivacyPolicy.css';
 
 const PrivacyPolicy = () => {
+  const { content } = useCms();
+  const cms = content?.privacyPolicyPage || {};
+
   return (
     <div className="page-wrapper">
       <AnnouncementBar />
@@ -18,9 +22,9 @@ const PrivacyPolicy = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">Privacy Policy</h1>
+          <h1 className="card-title">{cms.title}</h1>
           <div className="legal-content">
-            <p className="effective-date">Effective Date: January 1, 2026</p>
+            <p className="effective-date">{cms.effectiveDate}</p>
             
             <p>MENA Events, LLC ("MENA Events," "we," "us," or "our") respects your privacy and is committed to protecting your personal information. This Privacy Policy describes how we collect, use, disclose, and safeguard information in connection with OC MENA Festival and our related services.</p>
             

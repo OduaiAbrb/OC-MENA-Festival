@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { CmsProvider } from './cms/CmsContext';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -33,16 +34,19 @@ import Scanner from './pages/Scanner';
 import TicketSuccess from './pages/TicketSuccess';
 import AdminDashboard from './pages/AdminDashboard';
 import VendorDashboard from './pages/VendorDashboard';
+import CmsLogin from './pages/CmsLogin';
+import CmsDashboard from './pages/CmsDashboard';
 import GlobalTicketModal from './components/GlobalTicketModal';
 import './App.css';
 
-const RouteChangeHandler = ({ setIsScanPage }) => {
+const RouteChangeHandler = ({ setIsScanPage, setIsCmsPage }) => {
   const location = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
     setIsScanPage(location.pathname === '/scanner' || location.pathname === '/success' || location.pathname === '/admin-dashboard');
-  }, [location.pathname, setIsScanPage]);
+    setIsCmsPage(location.pathname.startsWith('/oc-admin'));
+  }, [location.pathname, setIsScanPage, setIsCmsPage]);
 
   return null;
 };
@@ -51,6 +55,7 @@ const AppWithModal = () => {
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isScanPage, setIsScanPage] = useState(false);
+  const [isCmsPage, setIsCmsPage] = useState(false);
   const [ticketQuantities, setTicketQuantities] = useState({
     '3day': 0,
     '2day': 0,
@@ -87,9 +92,9 @@ const AppWithModal = () => {
 
   return (
     <Router>
-      <RouteChangeHandler setIsScanPage={setIsScanPage} />
+      <RouteChangeHandler setIsScanPage={setIsScanPage} setIsCmsPage={setIsCmsPage} />
       <div className="app">
-        {!isScanPage && <Header onGetTicketsClick={openTicketModal} />}
+        {!isScanPage && !isCmsPage && <Header onGetTicketsClick={openTicketModal} />}
         <main className="main-content">
           <Routes>
             <Route path="/" element={<HomePage onGetTicketsClick={openTicketModal} />} />
@@ -123,6 +128,8 @@ const AppWithModal = () => {
             <Route path="/success" element={<TicketSuccess />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+            <Route path="/oc-admin-login-2026" element={<CmsLogin />} />
+            <Route path="/oc-admin-cms-2026" element={<CmsDashboard />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
@@ -147,7 +154,9 @@ const AppWithModal = () => {
 function App() {
   return (
     <AuthProvider>
-      <AppWithModal />
+      <CmsProvider>
+        <AppWithModal />
+      </CmsProvider>
     </AuthProvider>
   );
 }

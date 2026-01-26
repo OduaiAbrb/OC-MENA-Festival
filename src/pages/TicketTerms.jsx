@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -7,6 +8,9 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './TicketTerms.css';
 
 const TicketTerms = () => {
+  const { content } = useCms();
+  const cms = content?.ticketTermsPage || {};
+
   return (
     <div className="page-wrapper">
       <AnnouncementBar />
@@ -18,9 +22,9 @@ const TicketTerms = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">Ticket Terms & Conditions</h1>
+          <h1 className="card-title">{cms.title}</h1>
           <div className="legal-content">
-            <p className="effective-date">Effective Date: January 1, 2026</p>
+            <p className="effective-date">{cms.effectiveDate}</p>
             <p>Please read these OC MENA Festival Ticket Terms ("Terms" or "Agreement") carefully, as they affect your legal rights. These Terms apply to admission to OC MENA Festival (the "Event"), produced by MENA Events, LLC ("Event Producer").</p>
 
             <h2>1. Acceptance of Ticket Terms</h2>

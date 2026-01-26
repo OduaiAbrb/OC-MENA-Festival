@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -7,6 +8,9 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './CPRANotice.css';
 
 const CPRANotice = () => {
+  const { content } = useCms();
+  const cms = content?.cpraNoticePage || {};
+
   return (
     <div className="page-wrapper">
       <AnnouncementBar />
@@ -18,7 +22,7 @@ const CPRANotice = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">California Privacy Rights (CPRA Notice)</h1>
+          <h1 className="card-title">{cms.title}</h1>
           <div className="legal-content">
             <p>This section applies only to California residents and supplements the Privacy Policy above. It is provided in accordance with the California Consumer Privacy Act, as amended by the California Privacy Rights Act ("CPRA").</p>
 

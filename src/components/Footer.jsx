@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCms } from '../cms/CmsContext';
 import footerImage from '../assets/footer-image-scaled.jpg';
 import './Footer.css';
 
 const Footer = () => {
+  const { content } = useCms();
+  const cms = content.footer;
+  const globalCms = content.global;
+  
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const toggleDropdown = (section) => {
@@ -91,8 +96,8 @@ const Footer = () => {
               </a>
             </div>
             <div className="footer-newsletter">
-              <p className="footer-newsletter-label">Newsletter</p>
-              <p className="footer-newsletter-text">Join our newsletter and stay informed!</p>
+              <p className="footer-newsletter-label">{cms.newsletterLabel}</p>
+              <p className="footer-newsletter-text">{cms.newsletterText}</p>
               <form className="footer-newsletter-form" onSubmit={(e) => e.preventDefault()}>
                 <input type="email" placeholder="email@email.com" />
                 <button type="submit">→</button>
@@ -102,7 +107,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-bottom">
-          <p>© 2025-2026 OC MENA Festival. All Rights Reserved</p>
+          <p>{globalCms.copyrightText}</p>
         </div>
       </div>
     </footer>

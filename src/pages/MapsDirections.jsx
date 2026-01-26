@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -7,6 +8,9 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './MapsDirections.css';
 
 const MapsDirections = () => {
+  const { content } = useCms();
+  const cms = content?.mapsDirectionsPage || {};
+
   return (
     <div className="page-wrapper">
       <AnnouncementBar />
@@ -18,9 +22,9 @@ const MapsDirections = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">Maps & Directions</h1>
+          <h1 className="card-title">{cms.title}</h1>
           <div className="card-content">
-            <p className="card-description info-placeholder">Info here</p>
+            <p className="card-description info-placeholder">{cms.content}</p>
           </div>
         </TornPaperWrapper>
 

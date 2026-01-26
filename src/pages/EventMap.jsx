@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -7,6 +8,9 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './EventMap.css';
 
 const EventMap = () => {
+  const { content } = useCms();
+  const cms = content?.eventMapPage || {};
+
   return (
     <div className="page-wrapper">
       <AnnouncementBar />
@@ -18,10 +22,10 @@ const EventMap = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">Event Map</h1>
+          <h1 className="card-title">{cms.title}</h1>
           <div className="card-content">
             <p className="card-description">
-              Your festival adventure starts here. The OC MENA Festival event map helps you navigate the grounds with ease — from live music stages and vendor bazaars to food, drinks, restrooms, medical tents, and accessibility services. Whether you're chasing your favorite performances or discovering something new, the map makes it easy to explore, plan your route, and soak in every moment.
+              {cms.description}
             </p>
             <div className="event-map-container">
               <img src="/festival-map-2025-768x960.jpg" alt="OC MENA Festival Event Map" className="event-map-image" />

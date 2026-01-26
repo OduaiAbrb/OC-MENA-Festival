@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -7,6 +8,9 @@ import ScrollToTop from '../components/ScrollToTop';
 import './HomePage.css';
 
 const HomePage = ({ onGetTicketsClick }) => {
+  const { content } = useCms();
+  const cms = content.homePage;
+  
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -15,7 +19,7 @@ const HomePage = ({ onGetTicketsClick }) => {
   });
 
   useEffect(() => {
-    const targetDate = new Date('June 19, 2026 00:00:00').getTime();
+    const targetDate = new Date(cms.countdownTargetDate).getTime();
 
     const updateCountdown = () => {
       const now = new Date().getTime();
@@ -56,10 +60,10 @@ const HomePage = ({ onGetTicketsClick }) => {
         </div>
 
         <div className="hero-content" style={{ paddingTop: '135px' }}>
-          <h1 className="hero-title">OC MENA Festival</h1>
-          <p className="hero-subtitle">June 19-21, 2026. Orange County, CA</p>
+          <h1 className="hero-title">{cms.heroTitle}</h1>
+          <p className="hero-subtitle">{cms.heroSubtitle}</p>
           <p className="hero-description">
-            Experience three days of Middle Eastern and North African (MENA) culture, food, music, rides, shopping, and family-friendly fun—all in one lively summer festival.
+            {cms.heroDescription}
           </p>
 
           {/* Countdown */}
@@ -84,8 +88,8 @@ const HomePage = ({ onGetTicketsClick }) => {
 
           {/* CTA Buttons */}
           <div className="hero-buttons">
-            <Link to="/vendors" className="btn-outline-white">Vendor sign up</Link>
-            <Link to="/tickets" className="btn-primary-red">Get Tickets</Link>
+            <Link to="/vendors" className="btn-outline-white">{cms.ctaVendorButton}</Link>
+            <Link to="/tickets" className="btn-primary-red">{cms.ctaTicketsButton}</Link>
           </div>
         </div>
 
@@ -100,9 +104,9 @@ const HomePage = ({ onGetTicketsClick }) => {
 
             {/* Welcome Text */}
             <div className="welcome-content">
-              <h2 className="welcome-title">Welcome to OC MENA Festival</h2>
+              <h2 className="welcome-title">{cms.welcomeTitle}</h2>
               <p className="welcome-text">
-                Please browse our site for more information. You can purchase tickets, booths, and inquire about sponsorship opportunities!
+                {cms.welcomeText}
               </p>
             </div>
             

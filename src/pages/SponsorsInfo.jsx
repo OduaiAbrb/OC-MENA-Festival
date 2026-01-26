@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -8,7 +9,8 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './SponsorsInfo.css';
 
 const SponsorsInfo = () => {
-  const sponsorshipLevels = ['Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
+  const { content } = useCms();
+  const cms = content.sponsorsInfoPage;
 
   return (
     <div className="page-wrapper">
@@ -21,34 +23,34 @@ const SponsorsInfo = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">Sponsors</h1>
+          <h1 className="card-title">{cms.title}</h1>
           <div className="card-content">
             <p className="card-description">
-              OC MENA Festival partners with brands and organizations that support culture, community, and live experiences. Sponsorship opportunities are designed to create meaningful engagement with our audience while aligning your brand with one of Orange County's premier cultural events.
+              {cms.paragraph1}
             </p>
             <p className="card-description">
-              We offer multiple sponsorship tiers with customizable benefits, including on-site visibility, digital promotion, experiential activations, and branded integrations throughout the festival.
+              {cms.paragraph2}
             </p>
             
             <div className="sponsorship-levels">
-              <h2 className="levels-title">Sponsorship Levels:</h2>
+              <h2 className="levels-title">{cms.levelsTitle}</h2>
               <ul className="levels-list">
-                {sponsorshipLevels.map((level, idx) => (
+                {cms.levels.map((level, idx) => (
                   <li key={idx} className="level-item">{level}</li>
                 ))}
               </ul>
             </div>
             
             <p className="card-description">
-              Each level offers unique exposure opportunities, and custom packages are available upon request.
+              {cms.levelsDescription}
             </p>
             <p className="card-description">
-              If you're interested in becoming a sponsor or would like to receive our sponsorship deck, please contact us. A member of our team will be in touch to discuss available opportunities and tailor a package that fits your goals.
+              {cms.contactText}
             </p>
             
             <div className="cta-section">
-              <h3 className="cta-title">Ready to become a sponsor?</h3>
-              <Link to="/contact" className="inquire-btn">Inquire Now</Link>
+              <h3 className="cta-title">{cms.ctaTitle}</h3>
+              <Link to="/contact" className="inquire-btn">{cms.ctaButton}</Link>
             </div>
           </div>
         </TornPaperWrapper>

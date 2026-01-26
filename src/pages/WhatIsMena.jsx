@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -7,6 +8,9 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './WhatIsMena.css';
 
 const WhatIsMena = () => {
+  const { content } = useCms();
+  const cms = content.whatIsMenaPage;
+  
   return (
     <div className="page-wrapper">
       <AnnouncementBar />
@@ -18,16 +22,16 @@ const WhatIsMena = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">What is MENA?</h1>
+          <h1 className="card-title">{cms.title}</h1>
           <div className="card-content">
             <p className="card-description">
-              MENA stands for the Middle East and North Africa, a diverse and vibrant region that stretches from Morocco in the west to Iran in the east and from Turkey down through the Arabian Peninsula and North Africa. The region is home to dozens of cultures, languages, traditions, and histories that have shaped the world for thousands of years.
+              {cms.paragraph1}
             </p>
             <p className="card-description">
-              Often described as a bridge between Africa, Asia, and Europe, the MENA region has long been a center of innovation, trade, art, and storytelling. From ancient civilizations and architectural wonders to modern cities and evolving creative scenes, MENA embodies both deep-rooted heritage and forward-looking expression.
+              {cms.paragraph2}
             </p>
             <p className="card-description">
-              At OC MENA Festival, we celebrate the beauty, resilience, and diversity of the MENA region through food, music, art, fashion, and community. This festival invites you to explore rich, dynamic, and living cultures, honoring tradition while amplifying contemporary voices.
+              {cms.paragraph3}
             </p>
             <div className="mena-map-container">
               <img src="/mena-map-c-768x512.png" alt="MENA Region Map" className="mena-map-image" />

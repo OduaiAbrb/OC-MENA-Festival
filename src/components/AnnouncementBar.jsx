@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useCms } from '../cms/CmsContext';
 import './AnnouncementBar.css';
 
 const AnnouncementBar = () => {
+  const { content } = useCms();
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -19,7 +21,7 @@ const AnnouncementBar = () => {
 
   return (
     <div className={`announcement-bar ${!isVisible ? 'hidden' : ''}`}>
-      June 19-21, 2026 — OC Fair Grounds — Middle East & North Africa (MENA) Festival!
+      {content.global.announcementBar}
     </div>
   );
 };

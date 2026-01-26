@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -7,6 +8,9 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './TermsOfUse.css';
 
 const TermsOfUse = () => {
+  const { content } = useCms();
+  const cms = content?.termsOfUsePage || {};
+
   return (
     <div className="page-wrapper">
       <AnnouncementBar />
@@ -18,9 +22,9 @@ const TermsOfUse = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">Terms of Use</h1>
+          <h1 className="card-title">{cms.title}</h1>
           <div className="legal-content">
-            <p className="effective-date">Last updated and effective: 1/5/2026</p>
+            <p className="effective-date">{cms.effectiveDate}</p>
 
             <h2>OVERVIEW</h2>
             <p>This website and any related online or technology services are owned and operated by MENA Events, LLC ("MENA Events," "we," "us," or "our") in connection with OC MENA Festival (the "Event"). These Terms of Use ("Terms") govern your access to and use of our "Digital Services," which may include, as applicable: our websites (including subdomains and subpages), mobile applications (if any), email communications, online advertising, and SMS/text message programs, our official social media pages, and any content, features, and tools made available on or through our Digital Services.</p>

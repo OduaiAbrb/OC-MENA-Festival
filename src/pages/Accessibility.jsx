@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCms } from '../cms/CmsContext';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
@@ -8,6 +9,9 @@ import TornPaperWrapper from '../components/TornPaperWrapper';
 import './Accessibility.css';
 
 const Accessibility = () => {
+  const { content } = useCms();
+  const cms = content?.accessibilityPage || {};
+
   return (
     <div className="page-wrapper">
       <AnnouncementBar />
@@ -19,10 +23,10 @@ const Accessibility = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title">Accessibility / ADA</h1>
+          <h1 className="card-title">{cms.title}</h1>
           <div className="card-content">
             <p className="card-description">
-              Accessibility and ADA information coming soon. Please contact info@ocmenafestival.com for any questions or <Link to="/contact" className="contact-link">click here</Link>.
+              {cms.content.split('click here')[0]}<Link to="/contact" className="contact-link">click here</Link>.
             </p>
           </div>
         </TornPaperWrapper>

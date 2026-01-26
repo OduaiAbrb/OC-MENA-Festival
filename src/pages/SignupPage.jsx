@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCms } from '../cms/CmsContext';
 import { Eye, EyeOff } from 'lucide-react';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
@@ -12,6 +13,8 @@ import './SignupPage.css';
 const SignupPage = () => {
   const navigate = useNavigate();
   const { register, isAuthenticated } = useAuth();
+  const { content } = useCms();
+  const cms = content?.signupPage || {};
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -71,37 +74,37 @@ const SignupPage = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title" style={{ paddingBottom: '30px' }}>My Account</h1>
+          <h1 className="card-title" style={{ paddingBottom: '30px' }}>{cms.title}</h1>
           <style>{".card-title { font-size: 36px !important; }"}</style>
           
           <div className="auth-options" style={{ paddingBottom: '30px' }}>
             <Link to="/login" className="auth-option">
-              Login
+              {cms.loginTab}
             </Link>
             <Link to="/signup" className="auth-option active">
-              Register
+              {cms.registerTab}
               <div className="active-indicator"></div>
             </Link>
           </div>
 
-          <h2 className="register-heading" style={{ textAlign: 'center', fontSize: '32px', fontWeight: '700', color: '#1a1a1a', marginBottom: '30px' }}>Register</h2>
+          <h2 className="register-heading" style={{ textAlign: 'center', fontSize: '32px', fontWeight: '700', color: '#1a1a1a', marginBottom: '30px' }}>{cms.registerHeading}</h2>
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label htmlFor="email">Email address *</label>
+              <label htmlFor="email">{cms.emailLabel}</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Enter your email address"
+                placeholder={cms.emailPlaceholder}
                 required
               />
             </div>
 
             <div className="form-group password-group">
-              <label htmlFor="password">Password *</label>
+              <label htmlFor="password">{cms.passwordLabel}</label>
               <div className="password-input-wrapper">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -109,7 +112,7 @@ const SignupPage = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Enter your password"
+                  placeholder={cms.passwordPlaceholder}
                   required
                 />
                 <button
@@ -126,12 +129,12 @@ const SignupPage = () => {
 
             <div className="privacy-notice">
               <p>
-                Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our <Link to="/privacy-policy" className="privacy-link">privacy policy</Link>.
+                {cms.privacyNotice.split('privacy policy')[0]}<Link to="/privacy-policy" className="privacy-link">privacy policy</Link>.
               </p>
             </div>
 
             <button type="submit" className="btn-primary submit-btn" disabled={loading}>
-              {loading ? 'Registering...' : 'Register'}
+              {loading ? cms.submittingButton : cms.submitButton}
             </button>
           </form>
         </TornPaperWrapper>

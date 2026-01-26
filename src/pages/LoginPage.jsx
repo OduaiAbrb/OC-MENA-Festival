@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCms } from '../cms/CmsContext';
 import { Eye, EyeOff } from 'lucide-react';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
@@ -12,6 +13,8 @@ import './LoginPage.css';
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
+  const { content } = useCms();
+  const cms = content?.loginPage || {};
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -65,31 +68,31 @@ const LoginPage = () => {
         </div>
 
         <TornPaperWrapper>
-          <h1 className="card-title" style={{ paddingBottom: '30px' }}>My Account</h1>
+          <h1 className="card-title" style={{ paddingBottom: '30px' }}>{cms.title}</h1>
           <style>{".card-title { font-size: 36px !important; }"}</style>
           
           <div className="auth-options" style={{ paddingBottom: '30px' }}>
             <Link to="/login" className="auth-option active">
-              Login
+              {cms.loginTab}
               <div className="active-indicator"></div>
             </Link>
             <Link to="/signup" className="auth-option">
-              Register
+              {cms.registerTab}
             </Link>
           </div>
 
-          <h2 className="login-heading" style={{ textAlign: 'center', fontSize: '32px', fontWeight: '700', color: '#1a1a1a', marginBottom: '30px' }}>Login</h2>
+          <h2 className="login-heading" style={{ textAlign: 'center', fontSize: '32px', fontWeight: '700', color: '#1a1a1a', marginBottom: '30px' }}>{cms.loginHeading}</h2>
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label htmlFor="email">Username or email address *</label>
+              <label htmlFor="email">{cms.emailLabel}</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Enter your username or email"
+                placeholder={cms.emailPlaceholder}
                 autoComplete="email"
                 autoCapitalize="none"
                 autoCorrect="off"
@@ -99,7 +102,7 @@ const LoginPage = () => {
             </div>
 
             <div className="form-group password-group">
-              <label htmlFor="password">Password *</label>
+              <label htmlFor="password">{cms.passwordLabel}</label>
               <div className="password-input-wrapper">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -107,7 +110,7 @@ const LoginPage = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Enter your password"
+                  placeholder={cms.passwordPlaceholder}
                   autoComplete="current-password"
                   required
                 />
@@ -124,15 +127,15 @@ const LoginPage = () => {
             <div className="form-options">
               <label className="remember-me">
                 <input type="checkbox" />
-                <span>Remember me</span>
+                <span>{cms.rememberMe}</span>
               </label>
-              <Link to="/forgot-password" className="forgot-link">Forgot password?</Link>
+              <Link to="/forgot-password" className="forgot-link">{cms.forgotPassword}</Link>
             </div>
 
             {error && <div className="error-message" style={{color: '#e74c3c', marginBottom: '1rem', textAlign: 'center'}}>{error}</div>}
 
             <button type="submit" className="btn-primary submit-btn" disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? cms.submittingButton : cms.submitButton}
             </button>
           </form>
         </TornPaperWrapper>
