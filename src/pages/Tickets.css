@@ -473,6 +473,109 @@
   }
 }
 
+/* ===== AMPHITHEATER PROMO SECTION ===== */
+.amphitheater-promo-section {
+  margin: 40px 0;
+}
+
+.amphitheater-promo-card {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  box-shadow: 0 8px 32px rgba(49, 46, 129, 0.3);
+}
+
+.promo-icon {
+  font-size: 48px;
+  flex-shrink: 0;
+}
+
+.promo-content {
+  flex: 1;
+}
+
+.promo-content h3 {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+}
+
+.promo-description {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+
+.promo-notice {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border-left: 4px solid #fbbf24;
+}
+
+.notice-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.notice-text {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.promo-btn {
+  display: inline-block;
+  background: #dc2626;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.promo-btn:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+@media (max-width: 768px) {
+  .amphitheater-promo-card {
+    flex-direction: column;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .promo-icon {
+    font-size: 40px;
+  }
+
+  .promo-content h3 {
+    font-size: 20px;
+  }
+
+  .promo-notice {
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .promo-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
 @media (max-width: 480px) {
   .hero-section {
     padding-top: 180px;

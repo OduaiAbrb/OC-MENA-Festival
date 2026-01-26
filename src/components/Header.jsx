@@ -123,6 +123,7 @@ const Header = ({ onGetTicketsClick }) => {
   const navItems = cms?.navItems || [
     { name: 'EXPERIENCE', path: '/' },
     { name: 'EVENT SCHEDULE', path: '/event-schedule' },
+    { name: 'MUSIC TICKETS', path: '/amphitheater-tickets' },
     { name: 'VENDORS', path: '/vendors' },
     { name: 'SPONSORS', path: '/sponsors' },
     { name: 'CONTACT', path: '/contact' },

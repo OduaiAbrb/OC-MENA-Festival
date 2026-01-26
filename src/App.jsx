@@ -37,6 +37,7 @@ import VendorDashboard from './pages/VendorDashboard';
 import CmsLogin from './pages/CmsLogin';
 import CmsDashboard from './pages/CmsDashboard';
 import GlobalTicketModal from './components/GlobalTicketModal';
+import AmphitheaterTickets from './pages/AmphitheaterTickets';
 import './App.css';
 
 const RouteChangeHandler = ({ setIsScanPage, setIsCmsPage }) => {
@@ -105,6 +106,7 @@ const AppWithModal = () => {
             <Route path="/sponsors" element={<Sponsors />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/tickets" element={<Tickets />} />
+            <Route path="/amphitheater-tickets" element={<AmphitheaterTickets />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/dashboard" element={<Dashboard />} />

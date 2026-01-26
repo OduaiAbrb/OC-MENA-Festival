@@ -102,7 +102,8 @@ const Dashboard = () => {
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard' },
-    { id: 'tickets', label: 'Tickets' },
+    { id: 'amphitheater-tickets', label: 'Amphitheater Tickets' },
+    { id: 'tickets', label: 'Festival Tickets' },
     { id: 'orders', label: 'Orders' },
     { id: 'downloads', label: 'Downloads' },
     { id: 'addresses', label: 'Addresses' },
@@ -126,7 +127,18 @@ const Dashboard = () => {
             <h2 className="section-title">Hello {userName}</h2>
             <p className="section-subtitle">(<span onClick={handleLogout} style={{cursor: 'pointer', textDecoration: 'underline'}}>not {userName}? Log out</span>)</p>
             <div className="dashboard-buttons">
-              <button className="action-button" onClick={() => setActiveSection('tickets')}>View tickets ({tickets.length})</button>
+              <button className="action-button" style={{backgroundColor: '#7c3aed', borderColor: '#7c3aed'}} onClick={() => setActiveSection('amphitheater-tickets')}>
+                🎵 Amphitheater Tickets ({tickets.filter(t => 
+                  t.ticket_type_name?.toLowerCase().includes('amphitheater') ||
+                  t.ticket_type_name?.toLowerCase().includes('pacific') ||
+                  t.ticket_type_name?.toLowerCase().includes('concert')
+                ).length})
+              </button>
+              <button className="action-button" onClick={() => setActiveSection('tickets')}>Festival Tickets ({tickets.filter(t => 
+                !t.ticket_type_name?.toLowerCase().includes('amphitheater') &&
+                !t.ticket_type_name?.toLowerCase().includes('pacific') &&
+                !t.ticket_type_name?.toLowerCase().includes('concert')
+              ).length})</button>
               <button className="action-button" onClick={() => setActiveSection('orders')}>View orders ({orders.length})</button>
               {userProfile?.is_superuser && (
                 <button className="action-button" style={{backgroundColor: '#dc2626', borderColor: '#dc2626'}} onClick={() => navigate('/admin-dashboard')}>
@@ -141,10 +153,120 @@ const Dashboard = () => {
             </div>
           </div>
         );
+      case 'amphitheater-tickets':
+        return (
+          <div className="content-section">
+            <h2 className="section-title">Amphitheater Tickets</h2>
+            <div className="static-content">
+              {tickets.filter(ticket => 
+                ticket.ticket_type_name?.toLowerCase().includes('amphitheater') ||
+                ticket.ticket_type_name?.toLowerCase().includes('pacific') ||
+                ticket.ticket_type_name?.toLowerCase().includes('concert')
+              ).length === 0 ? (
+                <div style={{textAlign: 'center', padding: '2rem'}}>
+                  <div style={{fontSize: '48px', marginBottom: '1rem'}}>🎵</div>
+                  <p style={{marginBottom: '1rem'}}>No amphitheater tickets yet.</p>
+                  <p style={{color: '#666', fontSize: '14px', marginBottom: '1.5rem'}}>
+                    Pacific Amphitheatre tickets include same-day access to the OC MENA Festival!
+                  </p>
+                  <a href="/amphitheater-tickets" style={{
+                    display: 'inline-block',
+                    backgroundColor: '#7c3aed',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '25px',
+                    textDecoration: 'none',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    Browse Amphitheater Tickets
+                  </a>
+                </div>
+              ) : (
+                tickets.filter(ticket => 
+                  ticket.ticket_type_name?.toLowerCase().includes('amphitheater') ||
+                  ticket.ticket_type_name?.toLowerCase().includes('pacific') ||
+                  ticket.ticket_type_name?.toLowerCase().includes('concert')
+                ).map(ticket => (
+                  <div key={ticket.id} style={{
+                    border: '2px solid #7c3aed',
+                    borderRadius: '12px',
+                    padding: '1.5rem',
+                    marginBottom: '1rem',
+                    backgroundColor: '#faf5ff'
+                  }}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem'}}>
+                      <div style={{flex: 1, minWidth: '200px'}}>
+                        <h3 style={{
+                          margin: '0 0 0.5rem 0',
+                          color: '#5b21b6',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem'
+                        }}>
+                          🎵 {ticket.ticket_type_name}
+                        </h3>
+                        <p style={{margin: '0.25rem 0', color: '#666'}}>
+                          <strong>Ticket Code:</strong> {ticket.ticket_code}
+                        </p>
+                        {ticket.metadata?.section && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Section:</strong> {ticket.metadata.section}</p>
+                        )}
+                        {ticket.metadata?.row && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Row:</strong> {ticket.metadata.row}</p>
+                        )}
+                        {ticket.metadata?.seat && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Seat:</strong> {ticket.metadata.seat}</p>
+                        )}
+                        <p style={{margin: '0.25rem 0'}}>
+                          <strong>Status:</strong>{' '}
+                          <span style={{
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.85rem',
+                            fontWeight: 'bold',
+                            backgroundColor: ticket.status === 'ISSUED' ? '#dcfce7' : ticket.status === 'USED' ? '#fee2e2' : '#fef3c7',
+                            color: ticket.status === 'ISSUED' ? '#166534' : ticket.status === 'USED' ? '#991b1b' : '#92400e'
+                          }}>
+                            {ticket.status}
+                          </span>
+                        </p>
+                        <p style={{margin: '0.75rem 0 0 0', padding: '8px 12px', backgroundColor: '#e0f2fe', borderRadius: '6px', fontSize: '13px', color: '#0369a1'}}>
+                          ✓ Includes same-day festival access
+                        </p>
+                      </div>
+                      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem'}}>
+                        {ticket.qr_code && (
+                          <>
+                            <img 
+                              src={ticket.qr_code} 
+                              alt={`QR Code for ${ticket.ticket_code}`} 
+                              style={{
+                                width: '150px',
+                                height: '150px',
+                                border: '2px solid #7c3aed',
+                                padding: '8px',
+                                backgroundColor: 'white',
+                                borderRadius: '8px'
+                              }} 
+                            />
+                            <p style={{fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', maxWidth: '150px', textAlign: 'center'}}>
+                              Scan for amphitheater entry
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        );
       case 'tickets':
         return (
           <div className="content-section">
-            <h2 className="section-title">My Tickets</h2>
+            <h2 className="section-title">Festival Tickets</h2>
             <div className="static-content">
               {tickets.length === 0 ? (
                 <p>No tickets yet. <a href="/tickets" style={{color: '#0284c7'}}>Purchase tickets</a> to get started!</p>

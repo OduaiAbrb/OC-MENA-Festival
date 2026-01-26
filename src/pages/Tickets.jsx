@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
@@ -199,6 +200,30 @@ const Tickets = () => {
 
           <div className="parking-notice">
             <p>*Parking is $12, paid directly to the OC Fairgrounds on site. Carpooling is encouraged.</p>
+          </div>
+
+          {/* Amphitheater Tickets Section */}
+          <div className="amphitheater-promo-section">
+            <div className="amphitheater-promo-card">
+              <div className="promo-icon">🎵</div>
+              <div className="promo-content">
+                <h3>Looking for Concert Tickets?</h3>
+                <p className="promo-description">
+                  The Pacific Amphitheatre hosts live music performances during the OC MENA Festival! 
+                  This is a <strong>separate ticketed experience</strong> from the festival grounds.
+                </p>
+                <div className="promo-notice">
+                  <span className="notice-icon">ℹ️</span>
+                  <span className="notice-text">
+                    <strong>Important:</strong> Festival tickets do NOT include amphitheater access. 
+                    Amphitheater tickets are sold separately and include same-day festival entry as a bonus.
+                  </span>
+                </div>
+                <Link to="/amphitheater-tickets" className="promo-btn">
+                  View Amphitheater Tickets →
+                </Link>
+              </div>
+            </div>
           </div>
 
           {getTotalTickets() > 0 && (
