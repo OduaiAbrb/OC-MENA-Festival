@@ -204,7 +204,9 @@ class OrderService:
         if order.status not in [Order.Status.CREATED, Order.Status.PAYMENT_PENDING]:
             raise ValueError(f"Order in invalid state for finalization: {order.status}")
         
-        order.status = Order.Status.PAID
+        # Set to PAYMENT_PENDING for manual validation in admin
+        # Admin can later change to PAID after validating payment
+        order.status = Order.Status.PAYMENT_PENDING
         order.stripe_payment_intent_id = payment_intent_id
         order.paid_at = timezone.now()
         order.save()

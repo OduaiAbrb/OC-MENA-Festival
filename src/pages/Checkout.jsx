@@ -271,6 +271,9 @@ const CheckoutForm = () => {
       localStorage.removeItem('pendingCart');
       localStorage.removeItem('cart');
       
+      // Dispatch cart update event to update cart count in header
+      window.dispatchEvent(new CustomEvent('cartUpdated', { detail: [] }));
+      
       // Show success message
       setSuccessMessage(`Payment successful! Order #${confirmResponse.data.order_number || orderId} confirmed.`);
       setCartItems([]);
