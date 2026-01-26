@@ -308,41 +308,43 @@ const AmphitheaterTickets = () => {
               </div>
             </div>
 
-            {/* Debug Mode Toggle (Mobile Only) */}
-            {isMobile && (
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '10px' }}>
+            {/* Debug Mode Toggle - Always Available */}
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '10px', padding: '10px', background: '#1a1a2e', borderRadius: '8px' }}>
+              <button
+                onClick={() => setDebugMode(!debugMode)}
+                style={{
+                  padding: '12px 24px',
+                  background: debugMode ? '#dc2626' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: '700',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
+                }}
+              >
+                {debugMode ? '🔴 EXIT DEBUG MODE' : '🟢 ENTER DEBUG MODE'}
+              </button>
+              {debugMode && (
                 <button
-                  onClick={() => setDebugMode(!debugMode)}
+                  onClick={handleDoneDebug}
                   style={{
-                    padding: '10px 20px',
-                    background: debugMode ? '#dc2626' : '#10b981',
+                    padding: '12px 24px',
+                    background: '#3b82f6',
                     color: 'white',
                     border: 'none',
                     borderRadius: '8px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
+                    fontWeight: '700',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
                   }}
                 >
-                  {debugMode ? 'Exit Debug Mode' : 'Enter Debug Mode'}
+                  ✅ DONE - LOG COORDINATES
                 </button>
-                {debugMode && (
-                  <button
-                    onClick={handleDoneDebug}
-                    style={{
-                      padding: '10px 20px',
-                      background: '#3b82f6',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Done - Log Coordinates
-                  </button>
-                )}
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Ticket Quantity Selector */}
             <div className="sg-quantity-bar">
