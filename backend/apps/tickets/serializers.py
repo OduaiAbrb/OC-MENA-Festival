@@ -72,19 +72,35 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class TicketSerializer(serializers.ModelSerializer):
     """Serializer for tickets."""
-    ticket_type_name = serializers.CharField(source='ticket_type.name', read_only=True)
+    ticket_type_name = serializers.SerializerMethodField()
     owner_email = serializers.CharField(source='owner.email', read_only=True)
     owner_name = serializers.CharField(source='owner.full_name', read_only=True)
-    valid_days = serializers.JSONField(source='ticket_type.valid_days', read_only=True)
+    valid_days = serializers.SerializerMethodField()
     qr_code = serializers.SerializerMethodField()
+    metadata = serializers.JSONField(read_only=True)
     
     class Meta:
         model = Ticket
         fields = [
             'id', 'ticket_code', 'owner_email', 'owner_name',
             'ticket_type', 'ticket_type_name', 'valid_days',
-            'status', 'is_comp', 'issued_at', 'used_at', 'qr_code'
+            'status', 'is_comp', 'issued_at', 'used_at', 'qr_code', 'metadata'
         ]
+    
+    def get_ticket_type_name(self, obj):
+        """Get ticket type name, handling amphitheater tickets without ticket_type."""
+        if obj.ticket_type:
+            return obj.ticket_type.name
+        # For amphitheater tickets, get name from metadata
+        if obj.metadata and obj.metadata.get('type') == 'amphitheater':
+            return obj.metadata.get('ticket_name', 'Amphitheater Ticket')
+        return 'Special Ticket'
+    
+    def get_valid_days(self, obj):
+        """Get valid days, handling tickets without ticket_type."""
+        if obj.ticket_type:
+            return obj.ticket_type.valid_days
+        return None
     
     def get_qr_code(self, obj):
         """Generate QR code data URL for the ticket with scannable validation URL."""
