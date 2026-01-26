@@ -14,7 +14,7 @@ const AmphitheaterTickets = () => {
   const mapRef = useRef(null);
 
   // NOTE for manual edits: tweak the polygon points below (viewBox 1024x662) for perfect alignment
-  const sectionsMeta = [
+  const sectionsMeta = useMemo(() => [
     { id: 1, name: 'Section 1', rows: 'A-Z', price: 149, available: 42 },
     { id: 2, name: 'Section 2', rows: 'A-Z', price: 179, available: 28 },
     { id: 3, name: 'Section 3', rows: 'A-Z', price: 149, available: 38 },
@@ -23,9 +23,9 @@ const AmphitheaterTickets = () => {
     { id: 6, name: 'Section 6', rows: 'A-Y', price: 89, available: 72 },
     { id: 7, name: 'Section 7', rows: 'A-Y', price: 99, available: 58 },
     { id: 8, name: 'Section 8', rows: 'A-Y', price: 119, available: 48 },
-  ];
+  ], []);
 
-  const rects = [
+  const rects = useMemo(() => [
     { id: 1, x: 291.62011173184356, y: 333.2668733603625, w: 129.89944134078212, h: 143.47579298831386, rotation: 0 },
     { id: 2, x: 428.65921787709493, y: 287.9961841163844, w: 175.55307262569832, h: 144.0144125924159, rotation: 0 },
     { id: 3, x: 609.9441340782123, y: 311.7948962556642, w: 135.62011173184356, h: 167.47388504650607, rotation: 0 },
@@ -34,7 +34,7 @@ const AmphitheaterTickets = () => {
     { id: 6, x: 405.7653631284916, y: 97.68280467445743, w: 221.6536312849162, h: 164.63439065108514, rotation: 0 },
     { id: 7, x: 248.71508379888266, y: 153.2660920581922, w: 147.28491620111734, h: 131.36829859289296, rotation: 0 },
     { id: 8, x: 110.06703910614526, y: 231.79489625566424, w: 171.43016759776535, h: 173.356575244455, rotation: 0 },
-  ];
+  ], []);
 
   const rotatePoint = (px, py, cx, cy, deg) => {
     const rad = (deg * Math.PI) / 180;

@@ -12,7 +12,7 @@ import django.core.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tickets', '0001_initial'),
+        ('tickets', '0004_create_vendor_booth_ticket_types'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
