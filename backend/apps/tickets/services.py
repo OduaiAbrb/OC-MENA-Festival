@@ -316,7 +316,6 @@ class TicketService:
                     'price_cents': 0,
                     'capacity': None,  # Unlimited
                     'is_active': True,
-                    'is_available': True,
                 }
             )
             

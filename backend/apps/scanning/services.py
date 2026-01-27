@@ -78,10 +78,18 @@ class ScanService:
         # Check if this is an amphitheater ticket
         is_amphitheater = hasattr(ticket, 'amphitheater_ticket')
         
+        # Get ticket type name, handling amphitheater tickets without ticket_type
+        if ticket.ticket_type:
+            ticket_type_name = ticket.ticket_type.name
+        elif ticket.metadata and ticket.metadata.get('type') == 'amphitheater':
+            ticket_type_name = ticket.metadata.get('ticket_name', 'Amphitheater Ticket')
+        else:
+            ticket_type_name = 'Special Ticket'
+        
         base_result = {
             'valid': True,
             'ticket_code': ticket.ticket_code,
-            'ticket_type': ticket.ticket_type.name,
+            'ticket_type': ticket_type_name,
             'owner_name': ticket.owner.full_name,
             'is_amphitheater': is_amphitheater,
         }
@@ -138,9 +146,9 @@ class ScanService:
                 'can_enter': False
             }
         
-        # Check valid days
+        # Check valid days (skip for tickets without ticket_type like amphitheater tickets)
         today = date.today().isoformat()
-        valid_days = ticket.ticket_type.valid_days
+        valid_days = ticket.ticket_type.valid_days if ticket.ticket_type else None
         
         if valid_days and today not in valid_days:
             return {
@@ -225,9 +233,9 @@ class ScanService:
                 'message': 'Ticket has a pending transfer'
             }
         
-        # Check valid day
+        # Check valid day (skip for tickets without ticket_type like amphitheater tickets)
         today = date.today().isoformat()
-        valid_days = ticket.ticket_type.valid_days
+        valid_days = ticket.ticket_type.valid_days if ticket.ticket_type else None
         
         if valid_days and today not in valid_days:
             cls._log_scan(ticket, scanner_user, TicketScanLog.Result.WRONG_DAY, gate, device_id)
@@ -246,11 +254,19 @@ class ScanService:
         
         logger.info(f"Ticket {ticket_code} scanned by {scanner_user.email}")
         
+        # Get ticket type name, handling amphitheater tickets without ticket_type
+        if ticket.ticket_type:
+            ticket_type_name = ticket.ticket_type.name
+        elif ticket.metadata and ticket.metadata.get('type') == 'amphitheater':
+            ticket_type_name = ticket.metadata.get('ticket_name', 'Amphitheater Ticket')
+        else:
+            ticket_type_name = 'Special Ticket'
+        
         return True, {
             'success': True,
             'status': 'SUCCESS',
             'message': 'Entry granted',
-            'ticket_type': ticket.ticket_type.name,
+            'ticket_type': ticket_type_name,
             'owner_name': ticket.owner.full_name
         }
     

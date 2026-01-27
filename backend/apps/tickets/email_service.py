@@ -73,9 +73,20 @@ Total: ${order.total_cents / 100:.2f}
 TICKETS:
 """
             for ticket in tickets:
-                text_content += f"\n- {ticket.ticket_type.name}"
+                # Handle tickets without ticket_type (amphitheater tickets)
+                if ticket.ticket_type:
+                    ticket_name = ticket.ticket_type.name
+                    valid_days = ', '.join(ticket.ticket_type.valid_days) if ticket.ticket_type.valid_days else 'All Days'
+                elif ticket.metadata and ticket.metadata.get('type') == 'amphitheater':
+                    ticket_name = ticket.metadata.get('ticket_name', 'Amphitheater Ticket')
+                    valid_days = 'Event Day'
+                else:
+                    ticket_name = 'Special Ticket'
+                    valid_days = 'See ticket details'
+                
+                text_content += f"\n- {ticket_name}"
                 text_content += f"\n  Ticket Code: {ticket.ticket_code}"
-                text_content += f"\n  Valid Days: {', '.join(ticket.ticket_type.valid_days)}\n"
+                text_content += f"\n  Valid Days: {valid_days}\n"
             
             text_content += f"""
 
@@ -285,9 +296,16 @@ OC MENA Festival Team
             for idx, item in enumerate(ticket_qr_codes):
                 ticket = item['ticket']
                 content_id = item['content_id']
+                # Get ticket name handling amphitheater tickets
+                if ticket.ticket_type:
+                    tkt_name = ticket.ticket_type.name
+                elif ticket.metadata and ticket.metadata.get('type') == 'amphitheater':
+                    tkt_name = ticket.metadata.get('ticket_name', 'Amphitheater Ticket')
+                else:
+                    tkt_name = 'Special Ticket'
                 html_content += f"""
         <div style="text-align: center; padding: 30px 20px; background: #fafafa; border-top: 1px solid #eee;">
-            <h3 style="margin: 0 0 10px; color: #333;">Ticket {idx + 1}: {ticket.ticket_type.name}</h3>
+            <h3 style="margin: 0 0 10px; color: #333;">Ticket {idx + 1}: {tkt_name}</h3>
             <p style="margin: 0 0 15px; color: #666; font-size: 12px;">Code: {ticket.ticket_code}</p>
             {f'<img src="cid:{content_id}" alt="QR Code for {ticket.ticket_code}" style="width: 200px; height: 200px; margin: 10px auto; display: block;">' if content_id else '<p style="color: #999;">QR Code unavailable</p>'}
             <div style="margin-top: 15px;">
@@ -303,13 +321,13 @@ OC MENA Festival Team
             
             <div class="detail-row">
                 <div class="detail-label">TICKET TYPE</div>
-                <div class="detail-value">{tickets[0].ticket_type.name if tickets else 'N/A'}</div>
+                <div class="detail-value">{tickets[0].ticket_type.name if tickets and tickets[0].ticket_type else (tickets[0].metadata.get('ticket_name', 'Amphitheater Ticket') if tickets and tickets[0].metadata and tickets[0].metadata.get('type') == 'amphitheater' else 'Special Ticket')}</div>
             </div>
             
             <div class="detail-row">
                 <div class="detail-label">DATE & TIME</div>
                 <div class="detail-value">
-                    {', '.join(tickets[0].ticket_type.valid_days) if tickets and tickets[0].ticket_type.valid_days else 'See event details'}
+                    {', '.join(tickets[0].ticket_type.valid_days) if tickets and tickets[0].ticket_type and tickets[0].ticket_type.valid_days else 'See event details'}
                 </div>
             </div>
             
@@ -328,10 +346,20 @@ OC MENA Festival Team
             <div class="summary-table">"""
             
             for ticket in tickets:
+                # Handle tickets without ticket_type
+                if ticket.ticket_type:
+                    t_name = ticket.ticket_type.name
+                    t_price = ticket.ticket_type.price_cents / 100
+                elif ticket.metadata and ticket.metadata.get('type') == 'amphitheater':
+                    t_name = ticket.metadata.get('ticket_name', 'Amphitheater Ticket')
+                    t_price = ticket.metadata.get('price_paid', 0) / 100
+                else:
+                    t_name = 'Special Ticket'
+                    t_price = 0
                 html_content += f"""
                 <div class="summary-row">
-                    <span>{ticket.ticket_type.name} x1</span>
-                    <span>${ticket.ticket_type.price_cents / 100:.2f}</span>
+                    <span>{t_name} x1</span>
+                    <span>${t_price:.2f}</span>
                 </div>"""
             
             html_content += f"""
