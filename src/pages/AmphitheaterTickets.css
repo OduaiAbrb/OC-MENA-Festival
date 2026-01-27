@@ -162,7 +162,6 @@
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(0,0,0,0.1);
-  touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -187,7 +186,6 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  touch-action: none;
 }
 
 /* Interactive section polygons */
@@ -521,8 +519,8 @@
   
   .sg-map-container {
     min-height: 550px;
-    margin: 0 -15px;
-    border-radius: 0;
+    margin: 0;
+    border-radius: 16px;
   }
   
   .sg-seating-image {
@@ -560,8 +558,8 @@
   
   .sg-map-container {
     min-height: 620px;
-    margin: 0 -20px;
-    border-radius: 0;
+    margin: 0;
+    border-radius: 16px;
   }
   
   .sg-seating-image {
