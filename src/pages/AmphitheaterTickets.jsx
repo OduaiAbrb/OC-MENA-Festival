@@ -11,9 +11,6 @@ const AmphitheaterTickets = () => {
   const [hoveredSection, setHoveredSection] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [ticketQuantity, setTicketQuantity] = useState(2);
-  const [debugMode, setDebugMode] = useState(false);
-  const [editingRects, setEditingRects] = useState([]);
-  const [dragState, setDragState] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const mapRef = useRef(null);
   const panelRef = useRef(null);
@@ -30,7 +27,8 @@ const AmphitheaterTickets = () => {
     { id: 8, name: 'Section 8', rows: 'A-Y', price: 119, available: 48 },
   ], []);
 
-  const initialRects = useMemo(() => [
+  // Desktop coordinates
+  const desktopRects = useMemo(() => [
     { id: 1, x: 291.62011173184356, y: 333.2668733603625, w: 129.89944134078212, h: 143.47579298831386, rotation: 0 },
     { id: 2, x: 428.65921787709493, y: 287.9961841163844, w: 175.55307262569832, h: 144.0144125924159, rotation: 0 },
     { id: 3, x: 609.9441340782123, y: 311.7948962556642, w: 135.62011173184356, h: 167.47388504650607, rotation: 0 },
@@ -40,6 +38,20 @@ const AmphitheaterTickets = () => {
     { id: 7, x: 248.71508379888266, y: 153.2660920581922, w: 147.28491620111734, h: 131.36829859289296, rotation: 0 },
     { id: 8, x: 110.06703910614526, y: 231.79489625566424, w: 171.43016759776535, h: 173.356575244455, rotation: 0 },
   ], []);
+
+  // Mobile coordinates
+  const mobileRects = useMemo(() => [
+    { id: 1, x: 281.5438509692359, y: 352.4862281990722, w: 122.3422457688264, h: 77.27579298831387, rotation: 0 },
+    { id: 2, x: 433.69734825839873, y: 323.2316679873522, w: 170.51494224439452, h: 92.7627996891901, rotation: 0 },
+    { id: 3, x: 607.4250688875604, y: 354.50457367501906, w: 145.6963724944512, h: 63.90291730457059, rotation: 0 },
+    { id: 4, x: 758.8440633009683, y: 303.9195525568729, w: 187.5032811780632, h: 93.69554018602435, rotation: 0 },
+    { id: 5, x: 651.7714376026443, y: 254.15783987136774, w: 134.15642458100558, h: 72.99091265780913, rotation: 0 },
+    { id: 6, x: 415.8416238910992, y: 222.60861112607031, w: 231.72989204752383, h: 93.0956809736658, rotation: 0 },
+    { id: 7, x: 256.27227937083836, y: 253.6338339936761, w: 129.651459866554, h: 76.91345988321555, rotation: 0 },
+    { id: 8, x: 110.06703910614527, y: 306.5368317395352, w: 153.79671126320198, h: 75.12431717993888, rotation: 0 },
+  ], []);
+
+  const rects = isMobile ? mobileRects : desktopRects;
 
   const rotatePoint = (px, py, cx, cy, deg) => {
     const rad = (deg * Math.PI) / 180;
@@ -77,24 +89,15 @@ const AmphitheaterTickets = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Initialize editing rects from initial rects
-  useEffect(() => {
-    if (editingRects.length === 0) {
-      setEditingRects(initialRects);
-    }
-  }, [initialRects, editingRects.length]);
-
-  const activeRects = debugMode ? editingRects : initialRects;
-
   const sections = useMemo(() => (
     sectionsMeta.map(meta => {
-      const r = activeRects.find(rr => rr.id === meta.id) || { x: 0, y: 0, w: 0, h: 0 };
+      const r = rects.find(rr => rr.id === meta.id) || { x: 0, y: 0, w: 0, h: 0 };
       return {
         ...meta,
         points: getPointsFromRect(r)
       };
     })
-  ), [activeRects, sectionsMeta, getPointsFromRect]);
+  ), [rects, sectionsMeta, getPointsFromRect]);
 
   const handleSectionClick = (section) => {
     setSelectedSection(section);
@@ -140,7 +143,7 @@ const AmphitheaterTickets = () => {
 
   // Handle mouse move for tooltip positioning
   const getSectionCentroid = (section) => {
-    const r = activeRects.find(rr => rr.id === section.id);
+    const r = rects.find(rr => rr.id === section.id);
     if (!r) return { x: 512, y: 331 };
     const cx = (r.x + r.w / 2) / 1024;
     const cy = (r.y + r.h / 2) / 662;
@@ -187,106 +190,6 @@ const AmphitheaterTickets = () => {
     setTooltipPos(pos);
   };
 
-  // Debug mode handlers
-  const handleMouseDownDebug = (e, rect, handle = null) => {
-    if (!debugMode) return;
-    e.stopPropagation();
-    e.preventDefault();
-    const mapEl = mapRef.current;
-    if (!mapEl) return;
-    const mapRect = mapEl.getBoundingClientRect();
-    const scaleX = 1024 / mapRect.width;
-    const scaleY = 662 / mapRect.height;
-    
-    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-    
-    setDragState({
-      rectId: rect.id,
-      handle,
-      startX: clientX,
-      startY: clientY,
-      startRect: { ...rect },
-      scaleX,
-      scaleY
-    });
-  };
-
-  const handleMouseMoveDebug = useCallback((e) => {
-    if (!dragState) return;
-    e.preventDefault();
-    
-    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-    
-    const dx = (clientX - dragState.startX) * dragState.scaleX;
-    const dy = (clientY - dragState.startY) * dragState.scaleY;
-    
-    setEditingRects(prev => prev.map(r => {
-      if (r.id !== dragState.rectId) return r;
-      
-      const updated = { ...dragState.startRect };
-      
-      if (!dragState.handle) {
-        // Moving
-        updated.x = dragState.startRect.x + dx;
-        updated.y = dragState.startRect.y + dy;
-      } else {
-        // Resizing
-        if (dragState.handle.includes('t')) {
-          updated.y = dragState.startRect.y + dy;
-          updated.h = dragState.startRect.h - dy;
-        }
-        if (dragState.handle.includes('b')) {
-          updated.h = dragState.startRect.h + dy;
-        }
-        if (dragState.handle.includes('l')) {
-          updated.x = dragState.startRect.x + dx;
-          updated.w = dragState.startRect.w - dx;
-        }
-        if (dragState.handle.includes('r')) {
-          updated.w = dragState.startRect.w + dx;
-        }
-      }
-      
-      return updated;
-    }));
-  }, [dragState]);
-
-  const handleMouseUpDebug = useCallback(() => {
-    setDragState(null);
-  }, []);
-
-  useEffect(() => {
-    if (dragState) {
-      window.addEventListener('mousemove', handleMouseMoveDebug);
-      window.addEventListener('mouseup', handleMouseUpDebug);
-      window.addEventListener('touchmove', handleMouseMoveDebug, { passive: false });
-      window.addEventListener('touchend', handleMouseUpDebug);
-      return () => {
-        window.removeEventListener('mousemove', handleMouseMoveDebug);
-        window.removeEventListener('mouseup', handleMouseUpDebug);
-        window.removeEventListener('touchmove', handleMouseMoveDebug);
-        window.removeEventListener('touchend', handleMouseUpDebug);
-      };
-    }
-  }, [dragState, handleMouseMoveDebug, handleMouseUpDebug]);
-
-  const handleDoneDebug = () => {
-    console.log('=== CORRECTED COORDINATES ===');
-    console.log('Copy and paste this into your code:');
-    console.log('');
-    console.log('const rects = useMemo(() => [');
-    editingRects.forEach((r, i) => {
-      const comma = i < editingRects.length - 1 ? ',' : '';
-      console.log(`  { id: ${r.id}, x: ${r.x}, y: ${r.y}, w: ${r.w}, h: ${r.h}, rotation: ${r.rotation || 0} }${comma}`);
-    });
-    console.log('], []);');
-    console.log('');
-    console.log('=== END COORDINATES ===');
-    alert('Coordinates logged to console! Check the browser console (F12).');
-  };
-
   return (
     <div className="page-wrapper amphitheater-page">
       <AnnouncementBar />
@@ -306,44 +209,6 @@ const AmphitheaterTickets = () => {
                 <p className="sg-venue">Pacific Amphitheatre · Costa Mesa, CA</p>
                 <p className="sg-date">Aug 15 - 17, 2026 · 6:00 PM</p>
               </div>
-            </div>
-
-            {/* Debug Mode Toggle - Always Available */}
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '10px', padding: '10px', background: '#1a1a2e', borderRadius: '8px' }}>
-              <button
-                onClick={() => setDebugMode(!debugMode)}
-                style={{
-                  padding: '12px 24px',
-                  background: debugMode ? '#dc2626' : '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontWeight: '700',
-                  fontSize: '16px',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
-                }}
-              >
-                {debugMode ? '🔴 EXIT DEBUG MODE' : '🟢 ENTER DEBUG MODE'}
-              </button>
-              {debugMode && (
-                <button
-                  onClick={handleDoneDebug}
-                  style={{
-                    padding: '12px 24px',
-                    background: '#3b82f6',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontWeight: '700',
-                    fontSize: '16px',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
-                  }}
-                >
-                  ✅ DONE - LOG COORDINATES
-                </button>
-              )}
             </div>
 
             {/* Ticket Quantity Selector */}
@@ -393,7 +258,7 @@ const AmphitheaterTickets = () => {
                 </svg>
 
                 {/* Hover Tooltip - follows cursor */}
-                {hoveredSection && !debugMode && (
+                {hoveredSection && (
                   <div 
                     className="sg-tooltip"
                     style={{
@@ -405,64 +270,6 @@ const AmphitheaterTickets = () => {
                     <div className="sg-tooltip-title">{hoveredSection.name}</div>
                     <div className="sg-tooltip-price">${hoveredSection.price}</div>
                     <div className="sg-tooltip-avail">{hoveredSection.available} tickets available</div>
-                  </div>
-                )}
-
-                {/* Debug Mode Overlay */}
-                {debugMode && (
-                  <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-                    <svg style={{ width: '100%', height: '100%', pointerEvents: 'none' }} viewBox="0 0 1024 662" preserveAspectRatio="none">
-                      {editingRects.map((rect) => {
-                        const section = sectionsMeta.find(s => s.id === rect.id);
-                        return (
-                          <g key={rect.id}>
-                            {/* Main draggable rectangle */}
-                            <rect
-                              x={rect.x}
-                              y={rect.y}
-                              width={rect.w}
-                              height={rect.h}
-                              fill="rgba(220, 38, 38, 0.3)"
-                              stroke="#dc2626"
-                              strokeWidth="3"
-                              style={{ pointerEvents: 'all', cursor: 'move', touchAction: 'none' }}
-                              onMouseDown={(e) => handleMouseDownDebug(e, rect)}
-                              onTouchStart={(e) => handleMouseDownDebug(e, rect)}
-                            />
-                            {/* Section label */}
-                            <text
-                              x={rect.x + rect.w / 2}
-                              y={rect.y + rect.h / 2}
-                              textAnchor="middle"
-                              dominantBaseline="middle"
-                              fill="white"
-                              fontSize="32"
-                              fontWeight="bold"
-                              style={{ pointerEvents: 'none', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
-                            >
-                              {section?.id || rect.id}
-                            </text>
-                            {/* Resize handles */}
-                            <circle cx={rect.x} cy={rect.y} r="12" fill="#dc2626" stroke="white" strokeWidth="2" 
-                              style={{ pointerEvents: 'all', cursor: 'nw-resize', touchAction: 'none' }}
-                              onMouseDown={(e) => handleMouseDownDebug(e, rect, 'tl')}
-                              onTouchStart={(e) => handleMouseDownDebug(e, rect, 'tl')} />
-                            <circle cx={rect.x + rect.w} cy={rect.y} r="12" fill="#dc2626" stroke="white" strokeWidth="2"
-                              style={{ pointerEvents: 'all', cursor: 'ne-resize', touchAction: 'none' }}
-                              onMouseDown={(e) => handleMouseDownDebug(e, rect, 'tr')}
-                              onTouchStart={(e) => handleMouseDownDebug(e, rect, 'tr')} />
-                            <circle cx={rect.x} cy={rect.y + rect.h} r="12" fill="#dc2626" stroke="white" strokeWidth="2"
-                              style={{ pointerEvents: 'all', cursor: 'sw-resize', touchAction: 'none' }}
-                              onMouseDown={(e) => handleMouseDownDebug(e, rect, 'bl')}
-                              onTouchStart={(e) => handleMouseDownDebug(e, rect, 'bl')} />
-                            <circle cx={rect.x + rect.w} cy={rect.y + rect.h} r="12" fill="#dc2626" stroke="white" strokeWidth="2"
-                              style={{ pointerEvents: 'all', cursor: 'se-resize', touchAction: 'none' }}
-                              onMouseDown={(e) => handleMouseDownDebug(e, rect, 'br')}
-                              onTouchStart={(e) => handleMouseDownDebug(e, rect, 'br')} />
-                          </g>
-                        );
-                      })}
-                    </svg>
                   </div>
                 )}
               </div>
