@@ -219,10 +219,10 @@ class ApiService {
     return this.request('/tickets/transfers/');
   }
 
-  async createTransfer(ticketId, toEmail) {
+  async createTransfer(ticketId, toEmail, toName) {
     return this.request('/tickets/transfers/create/', {
       method: 'POST',
-      body: JSON.stringify({ ticket_id: ticketId, to_email: toEmail }),
+      body: JSON.stringify({ ticket_id: ticketId, to_email: toEmail, to_name: toName }),
     });
   }
 

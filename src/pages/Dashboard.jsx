@@ -17,6 +17,7 @@ const Dashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [transferModal, setTransferModal] = useState({ open: false, ticket: null });
+  const [transferName, setTransferName] = useState('');
   const [transferEmail, setTransferEmail] = useState('');
   const [transferLoading, setTransferLoading] = useState(false);
   const [transferError, setTransferError] = useState('');
@@ -68,7 +69,12 @@ const Dashboard = () => {
   };
 
   const handleTransfer = async () => {
-    if (!transferEmail || !transferModal.ticket) return;
+    if (!transferName || !transferEmail || !transferModal.ticket) return;
+    
+    if (!transferName.trim()) {
+      setTransferError('Please enter the recipient\'s name');
+      return;
+    }
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(transferEmail)) {
@@ -81,9 +87,10 @@ const Dashboard = () => {
     setTransferSuccess('');
 
     try {
-      const response = await api.createTransfer(transferModal.ticket.id, transferEmail);
+      const response = await api.createTransfer(transferModal.ticket.id, transferEmail, transferName);
       if (response?.success) {
-        setTransferSuccess(`Transfer initiated! An email has been sent to ${transferEmail}`);
+        setTransferSuccess(`Transfer initiated! An email has been sent to ${transferName} (${transferEmail})`);
+        setTransferName('');
         setTransferEmail('');
         loadDashboardData(); // Reload tickets
         setTimeout(() => {
@@ -489,6 +496,7 @@ const Dashboard = () => {
                           <button 
                             onClick={() => {
                               setTransferModal({ open: true, ticket });
+                              setTransferName('');
                               setTransferEmail('');
                               setTransferError('');
                               setTransferSuccess('');
@@ -715,21 +723,41 @@ const Dashboard = () => {
               </div>
             ) : (
               <>
-                <input
-                  type="email"
-                  placeholder="Recipient's email address"
-                  value={transferEmail}
-                  onChange={(e) => setTransferEmail(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    marginBottom: '1rem',
-                    fontSize: '1rem',
-                    boxSizing: 'border-box'
-                  }}
-                />
+                <div style={{marginBottom: '1rem'}}>
+                  <label style={{display: 'block', marginBottom: '0.5rem', fontSize: '14px', fontWeight: '500', color: '#374151'}}>Person's Name*</label>
+                  <input
+                    type="text"
+                    placeholder="Enter recipient's full name"
+                    value={transferName}
+                    onChange={(e) => setTransferName(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '1px solid #ddd',
+                      borderRadius: '6px',
+                      fontSize: '1rem',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+                
+                <div style={{marginBottom: '1rem'}}>
+                  <label style={{display: 'block', marginBottom: '0.5rem', fontSize: '14px', fontWeight: '500', color: '#374151'}}>Person's Email*</label>
+                  <input
+                    type="email"
+                    placeholder="Enter recipient's email address"
+                    value={transferEmail}
+                    onChange={(e) => setTransferEmail(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '1px solid #ddd',
+                      borderRadius: '6px',
+                      fontSize: '1rem',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
                 
                 {transferError && (
                   <div style={{padding: '0.75rem', backgroundColor: '#fee2e2', borderRadius: '6px', color: '#991b1b', marginBottom: '1rem'}}>
@@ -765,15 +793,15 @@ const Dashboard = () => {
                       e.stopPropagation();
                       handleTransfer();
                     }}
-                    disabled={transferLoading || !transferEmail}
+                    disabled={transferLoading || !transferName || !transferEmail}
                     style={{
                       flex: 1,
                       padding: '0.75rem',
                       border: 'none',
                       borderRadius: '8px',
-                      backgroundColor: transferLoading || !transferEmail ? '#9ca3af' : '#3b82f6',
+                      backgroundColor: transferLoading || !transferName || !transferEmail ? '#9ca3af' : '#3b82f6',
                       color: 'white',
-                      cursor: transferLoading || !transferEmail ? 'not-allowed' : 'pointer',
+                      cursor: transferLoading || !transferName || !transferEmail ? 'not-allowed' : 'pointer',
                       fontWeight: '600',
                       fontSize: '14px',
                       transition: 'all 0.2s'
