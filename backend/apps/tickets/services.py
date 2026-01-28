@@ -298,11 +298,60 @@ class TicketService:
                         ticket_type=item.ticket_type,
                         order=order,
                         status=Ticket.Status.ISSUED,
-                        issued_at=timezone.now()
+                        issued_at=timezone.now(),
+                        metadata=item.metadata or {}
                     )
                     tickets.append(ticket)
+                    
+                    # Auto-gift 2 festival tickets to vendors
+                    if item.metadata and item.metadata.get('business_type') in ['food', 'bazaar']:
+                        vendor_festival_tickets = TicketService._create_vendor_festival_tickets(order, ticket)
+                        tickets.extend(vendor_festival_tickets)
         
         return tickets
+    
+    @staticmethod
+    def _create_vendor_festival_tickets(order: Order, vendor_ticket: Ticket) -> list[Ticket]:
+        """Create 2 complimentary festival access tickets for vendor booth purchase."""
+        tickets = []
+        try:
+            # Find or create a general festival access ticket type
+            festival_ticket_type, created = TicketType.objects.get_or_create(
+                slug='festival-access-comp-vendor',
+                defaults={
+                    'name': 'Festival Access (Complimentary with Vendor Booth)',
+                    'description': 'Complimentary festival access included with vendor booth purchase',
+                    'price_cents': 0,
+                    'capacity': None,
+                    'is_active': True,
+                }
+            )
+            
+            # Create 2 festival access tickets
+            for i in range(2):
+                festival_ticket = Ticket.objects.create(
+                    ticket_code=Ticket.generate_ticket_code(),
+                    owner=order.buyer,
+                    ticket_type=festival_ticket_type,
+                    order=order,
+                    status=Ticket.Status.ISSUED,
+                    is_comp=True,
+                    issued_at=timezone.now(),
+                    metadata={
+                        'granted_by_vendor_booth': str(vendor_ticket.id),
+                        'complimentary': True,
+                        'type': 'festival_access',
+                        'ticket_number': i + 1
+                    }
+                )
+                tickets.append(festival_ticket)
+                logger.info(f"Created festival access ticket {festival_ticket.ticket_code} for vendor booth {vendor_ticket.ticket_code}")
+            
+            return tickets
+            
+        except Exception as e:
+            logger.error(f"Failed to create vendor festival access tickets: {e}")
+            return []
     
     @staticmethod
     def _create_festival_access_ticket(order: Order, amphitheater_ticket: Ticket) -> Optional[Ticket]:

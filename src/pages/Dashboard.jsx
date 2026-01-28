@@ -379,8 +379,9 @@ const Dashboard = () => {
                               src={ticket.qr_code} 
                               alt="Vendor Booth QR Code" 
                               style={{
-                                width: '150px',
-                                height: '150px',
+                                width: '200px',
+                                height: '200px',
+                                maxWidth: '100%',
                                 border: '2px solid #9333ea',
                                 padding: '8px',
                                 backgroundColor: 'white',
@@ -420,7 +421,12 @@ const Dashboard = () => {
               {tickets.length === 0 ? (
                 <p>No tickets yet. <a href="/tickets" style={{color: '#0284c7'}}>Purchase tickets</a> to get started!</p>
               ) : (
-                tickets.map(ticket => (
+                tickets.filter(ticket => 
+                  !ticket.ticket_type_name?.toLowerCase().includes('vendor') &&
+                  !ticket.ticket_type_name?.toLowerCase().includes('booth') &&
+                  !ticket.ticket_type_name?.toLowerCase().includes('food truck') &&
+                  !ticket.ticket_type_name?.toLowerCase().includes('bazaar')
+                ).map(ticket => (
                   <div key={ticket.id} style={{
                     border: ticket.ticket_type_name?.toLowerCase().includes('vendor') || 
                            ticket.ticket_type_name?.toLowerCase().includes('booth') ? 
@@ -509,8 +515,9 @@ const Dashboard = () => {
                               src={ticket.qr_code} 
                               alt={`QR Code for ${ticket.ticket_code}`} 
                               style={{
-                                width: '150px',
-                                height: '150px',
+                                width: '200px',
+                                height: '200px',
+                                maxWidth: '100%',
                                 border: ticket.ticket_type_name?.toLowerCase().includes('vendor') || 
                                        ticket.ticket_type_name?.toLowerCase().includes('booth') ? 
                                        '2px solid #9333ea' : '1px solid #ddd',
@@ -560,6 +567,7 @@ const Dashboard = () => {
                     <p><strong>Order:</strong> {order.order_number}</p>
                     <p><strong>Status:</strong> {order.status}</p>
                     <p><strong>Total:</strong> ${order.total}</p>
+                    <p><strong>Payment Method:</strong> {order.payment_method === 'cash' ? 'COD' : order.payment_method === 'card' ? `Credit Card ****${order.last4 || ''}` : 'Credit Card'}</p>
                     <p><strong>Date:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
                   </div>
                 ))
