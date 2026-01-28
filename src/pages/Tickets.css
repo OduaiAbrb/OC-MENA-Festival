@@ -136,6 +136,8 @@
   background: white;
   border: 2px solid #e0e0e0;
   border-radius: 16px;
+  box-sizing: border-box;
+  max-width: 100%;
   padding: 24px;
   text-align: center;
   transition: all 0.3s ease;
@@ -515,13 +517,15 @@
     font-size: 13px;
   }
   
-  .tickets-container {
+  .tickets-grid {
     grid-template-columns: 1fr;
     gap: 20px;
   }
   
   .ticket-card {
     padding: 15px;
+    width: 100%;
+    max-width: 100%;
   }
   
   .ticket-name {
