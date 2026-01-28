@@ -9,10 +9,11 @@ import './AmphitheaterTickets.css';
 
 const AmphitheaterTickets = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [selectedDay, setSelectedDay] = useState('both'); // 'saturday', 'sunday', 'both'
   const [ticketQuantity, setTicketQuantity] = useState(2);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [activeSection, setActiveSection] = useState(null); // For mobile section-first mode
+  const [activeSection, setActiveSection] = useState(null);
   const [hoveredSeat, setHoveredSeat] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const transformRef = useRef(null);
@@ -25,63 +26,132 @@ const AmphitheaterTickets = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Section configuration - Sections 1,2,3 in front (premium), 4,5,6,7,8 in back
-  // WIDER sections with BIGGER GAPS between them
+  // Pacific Amphitheatre configuration - ~8000 seats
+  // Pit (standing), Circle (premium seating), Sections 1-8 (main seating)
   const sectionsConfig = useMemo(() => [
-    { id: 1, name: 'Section 1', price: 179, color: '#c2703a', tier: 'front', startAngle: -38, endAngle: -15, rows: 5, seatsPerRow: 6 },
-    { id: 2, name: 'Section 2', price: 199, color: '#1a6b8a', tier: 'front', startAngle: -10, endAngle: 10, rows: 5, seatsPerRow: 7 },
-    { id: 3, name: 'Section 3', price: 179, color: '#c2703a', tier: 'front', startAngle: 15, endAngle: 38, rows: 5, seatsPerRow: 6 },
-    { id: 4, name: 'Section 4', price: 129, color: '#d4913a', tier: 'back', startAngle: 50, endAngle: 70, rows: 6, seatsPerRow: 7 },
-    { id: 5, name: 'Section 5', price: 119, color: '#d4913a', tier: 'back', startAngle: 26, endAngle: 46, rows: 6, seatsPerRow: 8 },
-    { id: 6, name: 'Section 6', price: 99, color: '#d4913a', tier: 'back', startAngle: -22, endAngle: 22, rows: 7, seatsPerRow: 10 },
-    { id: 7, name: 'Section 7', price: 119, color: '#d4913a', tier: 'back', startAngle: -46, endAngle: -26, rows: 6, seatsPerRow: 8 },
-    { id: 8, name: 'Section 8', price: 129, color: '#d4913a', tier: 'back', startAngle: -70, endAngle: -50, rows: 6, seatsPerRow: 7 },
+    // PIT - Standing room only (most expensive)
+    { id: 'pit', name: 'Pit', price: 299, color: '#dc2626', tier: 'pit', rows: 1, seatsPerRow: 200, capacity: 200 },
+    
+    // CIRCLE - Premium seating around pit (second most expensive)
+    { id: 'circle', name: 'Circle', price: 249, color: '#7c3aed', tier: 'circle', startAngle: -60, endAngle: 60, rows: 8, seatsPerRow: 35 },
+    
+    // FRONT SECTIONS - Enlarged sections 1, 2, 3 (premium)
+    { id: 1, name: 'Section 1', price: 199, color: '#c2703a', tier: 'front', startAngle: -50, endAngle: -18, rows: 25, seatsPerRow: 28 },
+    { id: 2, name: 'Section 2', price: 229, color: '#1a6b8a', tier: 'front', startAngle: -15, endAngle: 15, rows: 25, seatsPerRow: 32 },
+    { id: 3, name: 'Section 3', price: 199, color: '#c2703a', tier: 'front', startAngle: 18, endAngle: 50, rows: 25, seatsPerRow: 28 },
+    
+    // MID SECTIONS - 4, 5, 7, 8
+    { id: 4, name: 'Section 4', price: 149, color: '#d4913a', tier: 'mid', startAngle: 53, endAngle: 75, rows: 30, seatsPerRow: 32 },
+    { id: 5, name: 'Section 5', price: 139, color: '#d4913a', tier: 'mid', startAngle: 25, endAngle: 50, rows: 30, seatsPerRow: 35 },
+    { id: 7, name: 'Section 7', price: 139, color: '#d4913a', tier: 'mid', startAngle: -50, endAngle: -25, rows: 30, seatsPerRow: 35 },
+    { id: 8, name: 'Section 8', price: 149, color: '#d4913a', tier: 'mid', startAngle: -75, endAngle: -53, rows: 30, seatsPerRow: 32 },
+    
+    // BACK SECTION - 6 (largest, most affordable)
+    { id: 6, name: 'Section 6', price: 99, color: '#16a34a', tier: 'back', startAngle: -22, endAngle: 22, rows: 35, seatsPerRow: 45 },
   ], []);
 
-  // Generate seats for all sections - MORE spacing between seats
+  // Generate seats for all sections - ~8000 total seats
   const allSeats = useMemo(() => {
     const seats = [];
     const centerX = 500;
     const centerY = 520;
     
     sectionsConfig.forEach(section => {
-      const isFront = section.tier === 'front';
-      const baseRadius = isFront ? 130 : 270;
-      const rowSpacing = isFront ? 28 : 26;
-      
-      for (let row = 0; row < section.rows; row++) {
-        const radius = baseRadius + (row * rowSpacing);
-        const rowLetter = String.fromCharCode(65 + row);
-        const angleRange = section.endAngle - section.startAngle;
-        const seatsInRow = section.seatsPerRow + Math.floor(row * 0.3);
+      // PIT - Standing room (grid layout)
+      if (section.tier === 'pit') {
+        const pitWidth = 80;
+        const pitHeight = 40;
+        const pitX = centerX - pitWidth / 2;
+        const pitY = centerY - 60;
         
-        for (let seatNum = 0; seatNum < seatsInRow; seatNum++) {
-          const angleOffset = seatsInRow > 1 ? (seatNum / (seatsInRow - 1)) * angleRange : angleRange / 2;
-          const angle = (section.startAngle + angleOffset - 90) * (Math.PI / 180);
-          
-          const x = centerX + radius * Math.cos(angle);
-          const y = centerY + radius * Math.sin(angle);
-          
-          // Random availability (80% available)
-          const isAvailable = Math.random() > 0.2;
-          
+        for (let i = 0; i < section.capacity; i++) {
+          const col = i % 20;
+          const row = Math.floor(i / 20);
           seats.push({
-            id: `${section.id}-${rowLetter}-${seatNum + 1}`,
+            id: `pit-${i + 1}`,
             sectionId: section.id,
             sectionName: section.name,
-            row: rowLetter,
-            number: seatNum + 1,
-            x,
-            y,
+            row: 'GA',
+            number: i + 1,
+            x: pitX + (col * 4),
+            y: pitY + (row * 4),
             price: section.price,
             color: section.color,
-            available: isAvailable,
-            tier: section.tier
+            available: Math.random() > 0.3,
+            tier: section.tier,
+            isPit: true
           });
+        }
+      }
+      // CIRCLE - Curved seating around pit
+      else if (section.tier === 'circle') {
+        const baseRadius = 100;
+        const rowSpacing = 6;
+        
+        for (let row = 0; row < section.rows; row++) {
+          const radius = baseRadius + (row * rowSpacing);
+          const rowLetter = String.fromCharCode(65 + row);
+          const angleRange = section.endAngle - section.startAngle;
+          const seatsInRow = section.seatsPerRow + Math.floor(row * 0.5);
+          
+          for (let seatNum = 0; seatNum < seatsInRow; seatNum++) {
+            const angleOffset = seatsInRow > 1 ? (seatNum / (seatsInRow - 1)) * angleRange : angleRange / 2;
+            const angle = (section.startAngle + angleOffset - 90) * (Math.PI / 180);
+            
+            seats.push({
+              id: `circle-${rowLetter}-${seatNum + 1}`,
+              sectionId: section.id,
+              sectionName: section.name,
+              row: rowLetter,
+              number: seatNum + 1,
+              x: centerX + radius * Math.cos(angle),
+              y: centerY + radius * Math.sin(angle),
+              price: section.price,
+              color: section.color,
+              available: Math.random() > 0.3,
+              tier: section.tier
+            });
+          }
+        }
+      }
+      // REGULAR SECTIONS
+      else {
+        let baseRadius;
+        if (section.tier === 'front') baseRadius = 160;
+        else if (section.tier === 'mid') baseRadius = 320;
+        else baseRadius = 480;
+        
+        const rowSpacing = section.tier === 'front' ? 8 : section.tier === 'mid' ? 7 : 6;
+        
+        for (let row = 0; row < section.rows; row++) {
+          const radius = baseRadius + (row * rowSpacing);
+          const rowLetter = String.fromCharCode(65 + row);
+          const angleRange = section.endAngle - section.startAngle;
+          const seatsInRow = section.seatsPerRow + Math.floor(row * 0.4);
+          
+          for (let seatNum = 0; seatNum < seatsInRow; seatNum++) {
+            const angleOffset = seatsInRow > 1 ? (seatNum / (seatsInRow - 1)) * angleRange : angleRange / 2;
+            const angle = (section.startAngle + angleOffset - 90) * (Math.PI / 180);
+            
+            seats.push({
+              id: `${section.id}-${rowLetter}-${seatNum + 1}`,
+              sectionId: section.id,
+              sectionName: section.name,
+              row: rowLetter,
+              number: seatNum + 1,
+              x: centerX + radius * Math.cos(angle),
+              y: centerY + radius * Math.sin(angle),
+              price: section.price,
+              color: section.color,
+              available: Math.random() > 0.3,
+              tier: section.tier
+            });
+          }
         }
       }
     });
     
+    console.log(`Total seats generated: ${seats.length}`);
     return seats;
   }, [sectionsConfig]);
 
@@ -175,15 +245,20 @@ const AmphitheaterTickets = () => {
     const seatsInfo = selectedSeats.map(s => `Row ${s.row}, Seat ${s.number}`).join('; ');
     const totalPrice = selectedSeats.reduce((sum, s) => sum + s.price, 0);
     
+    // Adjust price for both days (multiply by 2)
+    const finalPrice = selectedDay === 'both' ? totalPrice * 2 : totalPrice;
+    const dayLabel = selectedDay === 'saturday' ? 'Saturday' : selectedDay === 'sunday' ? 'Sunday' : 'Both Days';
+    
     const cartItem = {
       id: `amphitheater-${Date.now()}`,
       type: 'amphitheater',
-      name: `Pacific Amphitheatre`,
+      name: `Pacific Amphitheatre - ${dayLabel}`,
       section: [...new Set(selectedSeats.map(s => s.sectionName))].join(', '),
       seats: seatsInfo,
+      day: selectedDay,
       quantity: selectedSeats.length,
       price: selectedSeats[0]?.price || 0,
-      total: totalPrice,
+      total: finalPrice,
       includesFestival: true
     };
 
@@ -255,6 +330,31 @@ const AmphitheaterTickets = () => {
               <p className="sg-subtitle">OC MENA Festival · Costa Mesa, CA · Aug 15-17, 2026</p>
             </div>
 
+            {/* Day Selection Toggle */}
+            <div className="sg-day-selector">
+              <span className="sg-day-label">Select Event Day:</span>
+              <div className="sg-day-buttons">
+                <button 
+                  className={`sg-day-btn ${selectedDay === 'saturday' ? 'active' : ''}`}
+                  onClick={() => setSelectedDay('saturday')}
+                >
+                  Saturday
+                </button>
+                <button 
+                  className={`sg-day-btn ${selectedDay === 'sunday' ? 'active' : ''}`}
+                  onClick={() => setSelectedDay('sunday')}
+                >
+                  Sunday
+                </button>
+                <button 
+                  className={`sg-day-btn ${selectedDay === 'both' ? 'active' : ''}`}
+                  onClick={() => setSelectedDay('both')}
+                >
+                  Both Days
+                </button>
+              </div>
+            </div>
+
             {/* Ticket Quantity - Plus/Minus Style */}
             <div className="sg-quantity-bar">
               <span className="sg-quantity-label">How many tickets?</span>
@@ -324,23 +424,26 @@ const AmphitheaterTickets = () => {
                       );
                     })}
                     
-                    {/* Individual Seats - LARGER for easier clicking */}
-                    {allSeats.map(seat => {
+                    {/* Individual Seats - Progressive detail based on zoom */}
+                    {zoomLevel > 1.2 && allSeats.map(seat => {
                       const isSelected = selectedSeats.find(s => s.id === seat.id);
                       const isHovered = hoveredSeat?.id === seat.id;
-                      const baseSeatSize = 7;
-                      const seatSize = zoomLevel > 1.5 ? baseSeatSize + 2 : baseSeatSize;
                       
-                      // Dim seats from other sections when one is active
+                      // Seat size based on zoom level
+                      let seatSize = 3;
+                      if (zoomLevel > 2) seatSize = 5;
+                      else if (zoomLevel > 1.5) seatSize = 4;
+                      
+                      // Only show seats from active section or all if none selected
                       const showSeat = !activeSection || seat.sectionId === activeSection;
-                      const dimmed = activeSection && seat.sectionId !== activeSection;
+                      if (!showSeat) return null;
                       
                       return (
                         <circle
                           key={seat.id}
                           cx={seat.x}
                           cy={seat.y}
-                          r={isHovered && !isMobile ? seatSize + 2 : seatSize}
+                          r={isHovered && !isMobile ? seatSize + 1 : seatSize}
                           fill={
                             !seat.available ? '#4a4a5a' :
                             isSelected ? '#00d4aa' :
@@ -348,7 +451,7 @@ const AmphitheaterTickets = () => {
                             seat.color
                           }
                           stroke={isSelected ? '#fff' : isHovered ? '#fff' : 'rgba(0,0,0,0.3)'}
-                          strokeWidth={isSelected ? 3 : isHovered ? 2 : 1}
+                          strokeWidth={isSelected ? 2 : isHovered ? 1.5 : 0.5}
                           className="sg-seat"
                           style={{ 
                             cursor: seat.available && showSeat ? 'pointer' : 'not-allowed',
