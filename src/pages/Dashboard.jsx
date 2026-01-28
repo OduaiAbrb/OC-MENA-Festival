@@ -104,6 +104,7 @@ const Dashboard = () => {
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'amphitheater-tickets', label: 'Amphitheater Tickets' },
     { id: 'tickets', label: 'Festival Tickets' },
+    { id: 'vendor-booths', label: 'Vendor Booths' },
     { id: 'orders', label: 'Orders' },
     { id: 'downloads', label: 'Downloads' },
     { id: 'addresses', label: 'Addresses' },
@@ -264,6 +265,146 @@ const Dashboard = () => {
                             <p style={{fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', maxWidth: '150px', textAlign: 'center'}}>
                               Scan for amphitheater entry
                             </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        );
+      case 'vendor-booths':
+        return (
+          <div className="content-section">
+            <h2 className="section-title">Vendor Booths</h2>
+            <div className="static-content">
+              {tickets.filter(ticket => 
+                ticket.ticket_type_name?.toLowerCase().includes('vendor') ||
+                ticket.ticket_type_name?.toLowerCase().includes('booth') ||
+                ticket.ticket_type_name?.toLowerCase().includes('food truck') ||
+                ticket.ticket_type_name?.toLowerCase().includes('bazaar')
+              ).length === 0 ? (
+                <div style={{textAlign: 'center', padding: '2rem'}}>
+                  <div style={{fontSize: '48px', marginBottom: '1rem'}}>🏪</div>
+                  <p style={{marginBottom: '1rem'}}>No vendor booth tickets yet.</p>
+                  <p style={{color: '#666', fontSize: '14px', marginBottom: '1.5rem'}}>
+                    Reserve your booth space at the OC MENA Festival!
+                  </p>
+                  <a href="/vendor-booths" style={{
+                    display: 'inline-block',
+                    backgroundColor: '#9333ea',
+                    color: 'white',
+                    padding: '12px 24px',
+                    textDecoration: 'none',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    Browse Vendor Booths
+                  </a>
+                </div>
+              ) : (
+                tickets.filter(ticket => 
+                  ticket.ticket_type_name?.toLowerCase().includes('vendor') ||
+                  ticket.ticket_type_name?.toLowerCase().includes('booth') ||
+                  ticket.ticket_type_name?.toLowerCase().includes('food truck') ||
+                  ticket.ticket_type_name?.toLowerCase().includes('bazaar')
+                ).map(ticket => (
+                  <div key={ticket.id} style={{
+                    border: '2px solid #9333ea',
+                    borderRadius: '12px',
+                    padding: '1.5rem',
+                    marginBottom: '1rem',
+                    backgroundColor: '#faf5ff'
+                  }}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem'}}>
+                      <div style={{flex: 1, minWidth: '200px'}}>
+                        <h3 style={{
+                          margin: '0 0 0.5rem 0',
+                          color: '#6b21a8',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem'
+                        }}>
+                          🏪 {ticket.ticket_type_name}
+                        </h3>
+                        <p style={{margin: '0.25rem 0', color: '#666'}}>
+                          <strong>Booth Code:</strong> {ticket.ticket_code}
+                        </p>
+                        {ticket.metadata?.booth_name && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Booth Name:</strong> {ticket.metadata.booth_name}</p>
+                        )}
+                        {ticket.metadata?.legal_business_name && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Business:</strong> {ticket.metadata.legal_business_name}</p>
+                        )}
+                        {ticket.metadata?.business_type && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Type:</strong> {ticket.metadata.business_type === 'food' ? 'Food Vendor' : 'Bazaar Vendor'}</p>
+                        )}
+                        {ticket.metadata?.contact_email && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Contact:</strong> {ticket.metadata.contact_email}</p>
+                        )}
+                        {ticket.metadata?.phone_number && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Phone:</strong> {ticket.metadata.phone_number}</p>
+                        )}
+                        {ticket.metadata?.upgrade_selected && (
+                          <p style={{margin: '0.75rem 0 0 0', padding: '8px 12px', backgroundColor: '#fef3c7', borderRadius: '6px', fontSize: '13px', color: '#92400e'}}>
+                            ⭐ Premium Upgrade Selected
+                          </p>
+                        )}
+                        {ticket.metadata?.halal_certified && (
+                          <p style={{margin: '0.5rem 0 0 0', padding: '8px 12px', backgroundColor: '#dcfce7', borderRadius: '6px', fontSize: '13px', color: '#166534'}}>
+                            ✓ Halal Certified
+                          </p>
+                        )}
+                        <p style={{margin: '0.75rem 0 0.25rem 0'}}>
+                          <strong>Status:</strong>{' '}
+                          <span style={{
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.85rem',
+                            fontWeight: 'bold',
+                            backgroundColor: ticket.status === 'ISSUED' ? '#dcfce7' : ticket.status === 'USED' ? '#fee2e2' : '#fef3c7',
+                            color: ticket.status === 'ISSUED' ? '#166534' : ticket.status === 'USED' ? '#991b1b' : '#92400e'
+                          }}>
+                            {ticket.status}
+                          </span>
+                        </p>
+                      </div>
+                      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem'}}>
+                        {ticket.qr_code && (
+                          <>
+                            <img 
+                              src={ticket.qr_code} 
+                              alt="Vendor Booth QR Code" 
+                              style={{
+                                width: '150px',
+                                height: '150px',
+                                border: '2px solid #9333ea',
+                                padding: '8px',
+                                backgroundColor: 'white',
+                                borderRadius: '8px'
+                              }} 
+                            />
+                            <p style={{fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', maxWidth: '150px', textAlign: 'center'}}>
+                              Scan to validate booth
+                            </p>
+                            <a 
+                              href={ticket.qr_code} 
+                              download={`vendor-booth-${ticket.ticket_code}.png`}
+                              style={{
+                                padding: '0.5rem 1rem',
+                                backgroundColor: '#9333ea',
+                                color: 'white',
+                                textDecoration: 'none',
+                                borderRadius: '6px',
+                                fontSize: '0.85rem',
+                                fontWeight: '600'
+                              }}
+                            >
+                              Download QR
+                            </a>
                           </>
                         )}
                       </div>
