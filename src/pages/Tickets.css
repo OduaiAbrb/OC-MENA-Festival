@@ -129,6 +129,9 @@
   gap: 25px;
   margin-bottom: 30px;
   align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* ===== TICKET CARDS ===== */
@@ -517,15 +520,22 @@
     font-size: 13px;
   }
   
-  .tickets-grid {
+  .tickets-container {
     grid-template-columns: 1fr;
     gap: 20px;
+    overflow: visible;
   }
   
   .ticket-card {
     padding: 15px;
     width: 100%;
     max-width: 100%;
+    min-width: 0;
+    transform: none !important;
+  }
+  
+  .ticket-card:hover {
+    transform: none !important;
   }
   
   .ticket-name {
