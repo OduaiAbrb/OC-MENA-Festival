@@ -364,22 +364,6 @@ const FoodVendor = () => {
               </label>
             </div>
 
-            <div className="form-group">
-              <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  id="acceptTerms" 
-                  name="acceptTerms" 
-                  checked={formData.acceptTerms} 
-                  onChange={handleChange} 
-                  required 
-                  className="checkbox-input"
-                />
-                <span className="checkbox-custom"></span>
-                <span>I accept the terms above</span>
-              </label>
-            </div>
-
             <button type="submit" className="btn-primary submit-btn" disabled={loading}>
               {loading ? 'Submitting...' : 'Continue'}
             </button>

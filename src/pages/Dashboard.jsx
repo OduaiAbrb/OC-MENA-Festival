@@ -498,15 +498,17 @@ const Dashboard = () => {
                             style={{
                               marginTop: '1rem',
                               padding: '0.5rem 1rem',
-                              backgroundColor: '#3b82f6',
-                              color: 'white',
-                              border: 'none',
+                              backgroundColor: 'white',
+                              color: '#1a1a1a',
+                              border: '2px solid #1a1a1a',
                               borderRadius: '6px',
                               cursor: 'pointer',
-                              fontSize: '0.9rem'
+                              fontSize: '0.9rem',
+                              fontWeight: '600',
+                              transition: 'all 0.2s ease'
                             }}
                           >
-                            Transfer Ticket
+                            Transfer
                           </button>
                         )}
                       </div>
