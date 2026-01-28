@@ -1,12 +1,18 @@
 from django.urls import path, include
 from . import views
 from .test_views import TestEmailView
+from . import amphitheater_seat_views
 
 app_name = 'tickets'
 
 urlpatterns = [
     # Test endpoint (development only)
     path('test/send-email/', TestEmailView.as_view(), name='test-email'),
+    
+    # Amphitheater seat availability
+    path('amphitheater/seats/', amphitheater_seat_views.AmphitheaterSeatAvailabilityView.as_view(), name='amphitheater-seats'),
+    path('amphitheater/seats/initialize/', amphitheater_seat_views.InitializeSeatsView.as_view(), name='initialize-seats'),
+    path('amphitheater/seats/reserve/', amphitheater_seat_views.ReserveSeatView.as_view(), name='reserve-seats'),
     
     # Amphitheater ticketing
     path('amphitheater/', include('apps.tickets.amphitheater_urls')),

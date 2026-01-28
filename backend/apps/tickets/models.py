@@ -497,3 +497,35 @@ class Invoice(models.Model):
     def generate_invoice_number(cls, order):
         """Generate invoice number from order."""
         return f"INV-{order.order_number}"
+
+
+class AmphitheaterSeat(models.Model):
+    """Track individual amphitheater seat availability."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    section_id = models.IntegerField(db_index=True)
+    section_name = models.CharField(max_length=50)
+    row = models.CharField(max_length=10)
+    seat_number = models.IntegerField()
+    is_available = models.BooleanField(default=True, db_index=True)
+    price_cents = models.PositiveIntegerField()
+    reserved_until = models.DateTimeField(null=True, blank=True, db_index=True)
+    ticket = models.ForeignKey(
+        Ticket,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='amphitheater_seat'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'amphitheater_seats'
+        unique_together = [('section_id', 'row', 'seat_number')]
+        indexes = [
+            models.Index(fields=['section_id', 'is_available']),
+            models.Index(fields=['reserved_until']),
+        ]
+    
+    def __str__(self):
+        return f"Section {self.section_id} - Row {self.row} - Seat {self.seat_number}"
