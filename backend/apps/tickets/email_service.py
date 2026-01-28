@@ -58,7 +58,13 @@ class TicketEmailService:
             
             tickets = order.tickets.select_related('ticket_type').all()
             
-            subject = f"Your OC MENA Festival Tickets - Order #{order.order_number}"
+            # Check if this is a vendor order
+            is_vendor = any(t.metadata and t.metadata.get('business_type') in ['food', 'bazaar'] for t in tickets)
+            
+            if is_vendor:
+                subject = f"OC MENA Festival Booth Confirmation - Order #{order.order_number}"
+            else:
+                subject = f"Your OC MENA Festival Tickets 🎉 - Order #{order.order_number}"
             
             # Plain text version
             text_content = f"""
