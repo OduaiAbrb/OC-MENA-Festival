@@ -32,6 +32,7 @@ class EventConfig(models.Model):
     sponsors_published = models.BooleanField(default=False)
     apple_wallet_enabled = models.BooleanField(default=False)
     google_wallet_enabled = models.BooleanField(default=False)
+    amphitheater_visible = models.BooleanField(default=True, help_text='Show/hide amphitheater section on tickets page')
     
     # Coming soon page
     coming_soon_mode = models.BooleanField(default=True)

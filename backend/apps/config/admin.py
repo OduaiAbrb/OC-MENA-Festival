@@ -7,7 +7,7 @@ class EventConfigAdmin(admin.ModelAdmin):
     list_display = ('event_name', 'is_active', 'ticket_sales_enabled', 'coming_soon_mode', 'updated_at')
     fieldsets = (
         ('Event Info', {'fields': ('event_name', 'event_tagline', 'event_start_date', 'event_end_date', 'event_location', 'event_address')}),
-        ('Feature Flags', {'fields': ('ticket_sales_enabled', 'transfer_enabled', 'upgrade_enabled', 'refunds_enabled', 'scanning_enabled', 'schedule_published', 'vendors_published', 'sponsors_published', 'apple_wallet_enabled', 'google_wallet_enabled')}),
+        ('Feature Flags', {'fields': ('ticket_sales_enabled', 'transfer_enabled', 'upgrade_enabled', 'refunds_enabled', 'scanning_enabled', 'schedule_published', 'vendors_published', 'sponsors_published', 'apple_wallet_enabled', 'google_wallet_enabled', 'amphitheater_visible')}),
         ('Coming Soon', {'fields': ('coming_soon_mode', 'coming_soon_message')}),
         ('Status', {'fields': ('is_active',)}),
     )

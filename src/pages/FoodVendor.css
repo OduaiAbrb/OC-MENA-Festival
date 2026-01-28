@@ -168,15 +168,15 @@
   top: 0;
   width: 18px;
   height: 18px;
-  border: 2px solid #A91D3A;
-  border-radius: 3px;
+  border: 2px solid #999999;
+  border-radius: 4px;
   background-color: white;
   transition: all 0.2s ease;
 }
 
 .checkbox-group input[type="checkbox"]:checked + label:before {
-  background-color: #A91D3A;
-  border-color: #A91D3A;
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
 }
 
 .checkbox-group input[type="checkbox"]:checked + label:after {

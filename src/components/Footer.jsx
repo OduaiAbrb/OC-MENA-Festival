@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCms } from '../cms/CmsContext';
+import api from '../services/api';
 import footerImage from '../assets/footer-image-scaled.jpg';
 import './Footer.css';
 
@@ -10,6 +11,30 @@ const Footer = () => {
   const globalCms = content?.global || {};
   
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState(''); // 'success', 'error', ''
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail || !newsletterEmail.includes('@')) {
+      setNewsletterStatus('error');
+      return;
+    }
+    
+    setNewsletterLoading(true);
+    try {
+      await api.subscribeNewsletter(newsletterEmail);
+      setNewsletterStatus('success');
+      setNewsletterEmail('');
+      setTimeout(() => setNewsletterStatus(''), 3000);
+    } catch (err) {
+      setNewsletterStatus('error');
+      setTimeout(() => setNewsletterStatus(''), 3000);
+    } finally {
+      setNewsletterLoading(false);
+    }
+  };
 
   const toggleDropdown = (section) => {
     setOpenDropdown(openDropdown === section ? null : section);
@@ -49,7 +74,7 @@ const Footer = () => {
             </h4>
             <ul className={`dropdown-content ${openDropdown === 'event-info' ? 'open' : ''}`}>
               <li><Link to="/festival-info">Festival Info</Link></li>
-              <li><Link to="/sponsors-info">Sponsors</Link></li>
+              <li><Link to="/sponsors">Sponsors</Link></li>
               <li><Link to="/about-vendors">About Vendors</Link></li>
               <li><Link to="/maps-directions">Maps & Directions</Link></li>
               <li><Link to="/event-map">Event Map</Link></li>
@@ -98,10 +123,24 @@ const Footer = () => {
             <div className="footer-newsletter">
               <p className="footer-newsletter-label">{cms.newsletterLabel}</p>
               <p className="footer-newsletter-text">{cms.newsletterText}</p>
-              <form className="footer-newsletter-form" onSubmit={(e) => e.preventDefault()}>
-                <input type="email" placeholder="email@email.com" />
-                <button type="submit">→</button>
+              <form className="footer-newsletter-form" onSubmit={handleNewsletterSubmit}>
+                <input 
+                  type="email" 
+                  placeholder="email@email.com" 
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  disabled={newsletterLoading}
+                />
+                <button type="submit" disabled={newsletterLoading}>
+                  {newsletterLoading ? '...' : '→'}
+                </button>
               </form>
+              {newsletterStatus === 'success' && (
+                <p className="newsletter-success">Thank you for subscribing!</p>
+              )}
+              {newsletterStatus === 'error' && (
+                <p className="newsletter-error">Please enter a valid email.</p>
+              )}
             </div>
           </div>
         </div>

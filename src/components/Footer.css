@@ -291,3 +291,18 @@
     font-size: 18px;
   }
 }
+
+/* Newsletter Status Messages */
+.newsletter-success {
+  color: #10b981;
+  font-size: 12px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.newsletter-error {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 8px;
+  font-weight: 500;
+}

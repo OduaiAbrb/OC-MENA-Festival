@@ -12,6 +12,7 @@ const Tickets = () => {
   const [loading, setLoading] = useState(true); // eslint-disable-line no-unused-vars
   const [error, setError] = useState(''); // eslint-disable-line no-unused-vars
   const [salesMessage, setSalesMessage] = useState('');
+  const [amphitheaterVisible, setAmphitheaterVisible] = useState(true);
   
   // Simple cart state with initial values
   const [quantities, setQuantities] = useState({
@@ -52,6 +53,21 @@ const Tickets = () => {
 
   // Use real tickets if available, otherwise use fallback
   const displayTickets = realTickets.length > 0 ? realTickets : ticketOptions;
+
+  useEffect(() => {
+    // Fetch config to check amphitheater visibility
+    const fetchConfig = async () => {
+      try {
+        const response = await api.getPublicConfig();
+        if (response?.success && response.data) {
+          setAmphitheaterVisible(response.data.amphitheater_visible !== false);
+        }
+      } catch (err) {
+        console.error('Error fetching config:', err);
+      }
+    };
+    fetchConfig();
+  }, []);
 
   useEffect(() => {
     // Fetch real tickets from backend
@@ -261,34 +277,36 @@ const Tickets = () => {
             <p>*Rides at the festival range from $2-10/person. *No access to Amphitheater</p>
           </div>
 
-          {/* Amphitheater Tickets Section */}
-          <div className="amphitheater-ticket-section">
-            <div className="amphitheater-header-section">
-              <div className="option-2-badge">Option 2</div>
-              <h2 className="amphitheater-title">Amphitheater Ticket 🎤</h2>
-            </div>
-            
-            <div className="amphitheater-card">
-              <div className="amphitheater-image">
-                <img src="/stadium.png" alt="Amphitheater Venue" />
+          {/* Amphitheater Tickets Section - Controlled by CMS toggle */}
+          {amphitheaterVisible && (
+            <div className="amphitheater-ticket-section">
+              <div className="amphitheater-header-section">
+                <div className="option-2-badge">Option 2</div>
+                <h2 className="amphitheater-title">Amphitheater Ticket 🎤</h2>
               </div>
-              <div className="amphitheater-content">
-                <h3 className="amphitheater-card-title">Unique Music Venue Experience</h3>
-                <p className="amphitheater-description">
-                  Amphitheater tickets are a premium, separately ticketed concert experience at the Pacific Amphitheatre with reserved seating. To view seating options, click on Explore Amphitheater Tickets below.
-                </p>
-                <div className="amphitheater-notice">
-                  <span className="notice-icon">i</span>
-                  <span className="notice-text">
-                    Each Amphitheater ticket includes admission to the OC MENA Festival for the same day as the performance. Guests do not need to purchase a separate festival ticket for that day.
-                  </span>
+              
+              <div className="amphitheater-card">
+                <div className="amphitheater-image">
+                  <img src="/stadium.png" alt="Amphitheater Venue" />
                 </div>
-                <Link to="/amphitheater-tickets" className="amphitheater-btn">
-                  Explore Amphitheater Tickets
-                </Link>
+                <div className="amphitheater-content">
+                  <h3 className="amphitheater-card-title">Unique Music Venue Experience</h3>
+                  <p className="amphitheater-description">
+                    Amphitheater tickets are a premium, separately ticketed concert experience at the Pacific Amphitheatre with reserved seating. To view seating options, click on Explore Amphitheater Tickets below.
+                  </p>
+                  <div className="amphitheater-notice">
+                    <span className="notice-icon">i</span>
+                    <span className="notice-text">
+                      Each Amphitheater ticket includes admission to the OC MENA Festival for the same day as the performance. Guests do not need to purchase a separate festival ticket for that day.
+                    </span>
+                  </div>
+                  <Link to="/amphitheater-tickets" className="amphitheater-btn">
+                    Explore Amphitheater Tickets
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </TornPaperWrapper>
 
         <div className="lanterns-container">

@@ -300,7 +300,7 @@ OC MENA Festival Team
         <div class="header">
             <div class="order-number">Order #{order.order_number}</div>
             <h1 class="title">You've got tickets!</h1>
-            <p class="subtitle">Please add your ticket to your wallet, download it, or <a href="{settings.FRONTEND_URL}/login">login</a> to your account to retrieve tickets at a later time.</p>
+            <p class="subtitle">Please add your ticket to your wallet, download it, or <a href="{settings.FRONTEND_URL}/login" style="color: #dc3545; text-decoration: none; font-weight: 600;">login</a> to your account to retrieve tickets at a later time.</p>
         </div>
         
         <div class="qr-section">

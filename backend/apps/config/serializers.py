@@ -15,7 +15,8 @@ class PublicConfigSerializer(serializers.ModelSerializer):
             'event_location', 'event_address', 'ticket_sales_enabled',
             'transfer_enabled', 'upgrade_enabled', 'schedule_published',
             'vendors_published', 'sponsors_published', 'apple_wallet_enabled',
-            'google_wallet_enabled', 'coming_soon_mode', 'coming_soon_message'
+            'google_wallet_enabled', 'coming_soon_mode', 'coming_soon_message',
+            'amphitheater_visible'
         ]
 
 

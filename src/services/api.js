@@ -420,6 +420,16 @@ class ApiService {
   async getScanStats() {
     return this.request('/scanning/stats/');
   }
+
+  // ==================== NEWSLETTER ====================
+
+  async subscribeNewsletter(email) {
+    return this.request('/config/newsletter/', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+      skipAuth: true
+    });
+  }
 }
 
 // Export singleton instance
