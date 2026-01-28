@@ -89,14 +89,8 @@ const Dashboard = () => {
     try {
       const response = await api.createTransfer(transferModal.ticket.id, transferEmail, transferName);
       if (response?.success) {
-        setTransferSuccess(`Transfer initiated! An email has been sent to ${transferName} (${transferEmail})`);
-        setTransferName('');
-        setTransferEmail('');
+        setTransferSuccess(true);
         loadDashboardData(); // Reload tickets
-        setTimeout(() => {
-          setTransferModal({ open: false, ticket: null });
-          setTransferSuccess('');
-        }, 3000);
       } else {
         setTransferError(response?.error?.message || 'Failed to initiate transfer');
       }
@@ -499,7 +493,7 @@ const Dashboard = () => {
                               setTransferName('');
                               setTransferEmail('');
                               setTransferError('');
-                              setTransferSuccess('');
+                              setTransferSuccess(false);
                             }}
                             style={{
                               marginTop: '1rem',
@@ -718,9 +712,47 @@ const Dashboard = () => {
             </p>
             
             {transferSuccess ? (
-              <div style={{padding: '1rem', backgroundColor: '#dcfce7', borderRadius: '8px', color: '#166534', marginBottom: '1rem'}}>
-                {transferSuccess}
-              </div>
+              <>
+                <div style={{textAlign: 'center', marginBottom: '1.5rem'}}>
+                  <div style={{fontSize: '18px', fontWeight: '600', color: '#166534', marginBottom: '1rem'}}>Transfer successful!</div>
+                  <p style={{fontSize: '14px', color: '#666', marginBottom: '1.5rem'}}>Please review the details below. Once transferred, this ticket will no longer be accessible from your account.</p>
+                </div>
+                
+                <div style={{backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem'}}>
+                  <div style={{marginBottom: '0.75rem'}}>
+                    <div style={{fontSize: '12px', color: '#6b7280', marginBottom: '0.25rem'}}>Recipient Name:</div>
+                    <div style={{fontSize: '14px', fontWeight: '500', color: '#1f2937'}}>{transferName}</div>
+                  </div>
+                  <div>
+                    <div style={{fontSize: '12px', color: '#6b7280', marginBottom: '0.25rem'}}>Recipient Email:</div>
+                    <div style={{fontSize: '14px', fontWeight: '500', color: '#1f2937'}}>{transferEmail}</div>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={() => {
+                    setTransferModal({ open: false, ticket: null });
+                    setTransferSuccess(false);
+                    setTransferName('');
+                    setTransferEmail('');
+                    setTransferError('');
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: 'none',
+                    borderRadius: '8px',
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    fontSize: '14px',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  Close
+                </button>
+              </>
             ) : (
               <>
                 <div style={{marginBottom: '1rem'}}>
