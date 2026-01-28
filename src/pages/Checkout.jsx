@@ -156,6 +156,7 @@ const CheckoutForm = () => {
             price: item.price,
             metadata: {
               section_name: item.section,
+              seats: item.seats || '',
               includes_festival_access: item.includesFestival || true,
               ticket_name: item.name
             }

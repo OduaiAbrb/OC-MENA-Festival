@@ -277,6 +277,7 @@ class TicketService:
                                 metadata={
                                     'type': 'amphitheater',
                                     'section_name': amph_item.get('section', 'General'),
+                                    'seats': amph_item.get('metadata', {}).get('seats', ''),
                                     'price_paid': amph_item.get('price', 0) * 100,
                                     'includes_festival_access': amph_item.get('metadata', {}).get('includes_festival_access', True),
                                     'ticket_name': amph_item.get('metadata', {}).get('ticket_name', 'Amphitheater Ticket')

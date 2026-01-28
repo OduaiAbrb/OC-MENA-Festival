@@ -212,10 +212,13 @@ const Dashboard = () => {
                         {ticket.metadata?.section_name && (
                           <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Section:</strong> {ticket.metadata.section_name}</p>
                         )}
-                        {ticket.metadata?.row && (
+                        {ticket.metadata?.seats && (
+                          <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Seats:</strong> {ticket.metadata.seats}</p>
+                        )}
+                        {!ticket.metadata?.seats && ticket.metadata?.row && (
                           <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Row:</strong> {ticket.metadata.row}</p>
                         )}
-                        {ticket.metadata?.seat_number && (
+                        {!ticket.metadata?.seats && ticket.metadata?.seat_number && (
                           <p style={{margin: '0.25rem 0', color: '#666'}}><strong>Seat:</strong> {ticket.metadata.seat_number}</p>
                         )}
                         {ticket.metadata?.event_date && (

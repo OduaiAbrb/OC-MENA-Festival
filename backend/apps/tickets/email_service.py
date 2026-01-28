@@ -77,16 +77,27 @@ TICKETS:
                 if ticket.ticket_type:
                     ticket_name = ticket.ticket_type.name
                     valid_days = ', '.join(ticket.ticket_type.valid_days) if ticket.ticket_type.valid_days else 'All Days'
+                    extra_info = ''
                 elif ticket.metadata and ticket.metadata.get('type') == 'amphitheater':
                     ticket_name = ticket.metadata.get('ticket_name', 'Amphitheater Ticket')
                     valid_days = 'Event Day'
+                    # Add seat information if available
+                    extra_info = ''
+                    if ticket.metadata.get('section_name'):
+                        extra_info += f"\n  Section: {ticket.metadata.get('section_name')}"
+                    if ticket.metadata.get('seats'):
+                        extra_info += f"\n  {ticket.metadata.get('seats')}"
                 else:
                     ticket_name = 'Special Ticket'
                     valid_days = 'See ticket details'
+                    extra_info = ''
                 
                 text_content += f"\n- {ticket_name}"
                 text_content += f"\n  Ticket Code: {ticket.ticket_code}"
-                text_content += f"\n  Valid Days: {valid_days}\n"
+                text_content += f"\n  Valid Days: {valid_days}"
+                if extra_info:
+                    text_content += extra_info
+                text_content += "\n"
             
             text_content += f"""
 
