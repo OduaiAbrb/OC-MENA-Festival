@@ -300,6 +300,64 @@ class OrderDetailView(APIView):
         })
 
 
+class VerifyPaymentView(APIView):
+    """Verify cash payment for an order (staff only)."""
+    permission_classes = [IsAuthenticated]
+    
+    @extend_schema(summary="Verify cash payment")
+    def post(self, request, order_id):
+        # Check if user is staff
+        if not request.user.is_staff:
+            return Response({
+                'success': False,
+                'error': {'message': 'Staff access required'}
+            }, status=status.HTTP_403_FORBIDDEN)
+        
+        order = get_object_or_404(Order, id=order_id)
+        
+        # Check if order is pending payment
+        if order.status != Order.Status.PAYMENT_PENDING:
+            return Response({
+                'success': False,
+                'error': {'message': f'Order is not pending payment (current status: {order.status})'}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if payment method is cash
+        if order.payment_method != 'cash':
+            return Response({
+                'success': False,
+                'error': {'message': 'Only cash payments can be verified manually'}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            # Update order status to PAID
+            order.status = Order.Status.PAID
+            order.paid_at = timezone.now()
+            order.save()
+            
+            # Issue tickets if not already issued
+            from apps.tickets.services import TicketService
+            if not order.tickets.exists():
+                TicketService.issue_tickets_for_order(order)
+            
+            logger.info(f"Cash payment verified for order {order.order_number} by {request.user.email}")
+            
+            return Response({
+                'success': True,
+                'data': {
+                    'order_number': order.order_number,
+                    'status': order.status,
+                    'message': 'Cash payment verified successfully'
+                }
+            })
+        except Exception as e:
+            logger.error(f"Error verifying payment: {e}")
+            return Response({
+                'success': False,
+                'error': {'message': str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class OrderInvoiceView(APIView):
     """Get order invoice."""
     permission_classes = [IsAuthenticated]

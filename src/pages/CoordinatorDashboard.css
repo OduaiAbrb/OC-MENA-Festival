@@ -1,0 +1,550 @@
+.coordinator-dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.coord-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  flex: 1;
+}
+
+.coord-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.coord-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 0.5rem;
+}
+
+.coord-header p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.coord-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+  overflow-x: auto;
+}
+
+.coord-nav button {
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #666;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.coord-nav button:hover {
+  color: #111;
+  background: #f9fafb;
+}
+
+.coord-nav button.active {
+  color: #dc2626;
+  border-bottom-color: #dc2626;
+}
+
+.coord-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.coord-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #111;
+}
+
+.coord-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.coord-stat-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.coord-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.coord-stat-value {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 0.5rem;
+}
+
+.coord-stat-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.coord-stat-action {
+  padding: 0.5rem 1rem;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.coord-stat-action:hover {
+  background: #333;
+}
+
+.coord-quick-actions {
+  margin-top: 2rem;
+}
+
+.coord-quick-actions h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.coord-action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.coord-action-btn {
+  padding: 1.25rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.coord-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.coord-action-btn.scanner {
+  border-color: #0284c7;
+  color: #0284c7;
+}
+
+.coord-action-btn.scanner:hover {
+  background: #0284c7;
+  color: white;
+}
+
+.coord-action-btn.payments {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.coord-action-btn.payments:hover {
+  background: #dc2626;
+  color: white;
+}
+
+.coord-action-btn.search {
+  border-color: #16a34a;
+  color: #16a34a;
+}
+
+.coord-action-btn.search:hover {
+  background: #16a34a;
+  color: white;
+}
+
+.coord-empty {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.coord-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.coord-order-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: white;
+}
+
+.coord-order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.coord-order-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.coord-order-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.coord-order-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.coord-order-details p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.coord-verify-btn {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.coord-verify-btn:hover {
+  background: #15803d;
+}
+
+.coord-scanner-form,
+.coord-search-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.coord-scanner-input,
+.coord-search-input {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.coord-scanner-input:focus,
+.coord-search-input:focus {
+  outline: none;
+  border-color: #0284c7;
+}
+
+.coord-scan-btn,
+.coord-search-btn {
+  padding: 1rem 2rem;
+  background: #0284c7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.coord-scan-btn:hover,
+.coord-search-btn:hover {
+  background: #0369a1;
+}
+
+.coord-scan-btn:disabled,
+.coord-search-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.coord-scan-result {
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.coord-scan-result.valid {
+  background: #dcfce7;
+  border: 2px solid #16a34a;
+}
+
+.coord-scan-result.invalid {
+  background: #fee2e2;
+  border: 2px solid #dc2626;
+}
+
+.coord-scan-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.coord-scan-icon {
+  font-size: 3rem;
+}
+
+.coord-scan-header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.coord-scan-details p {
+  margin: 0.75rem 0;
+  font-size: 1rem;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-badge.issued {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.used {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-badge.valid {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.cancelled,
+.status-badge.refunded {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.coord-commit-btn {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.coord-commit-btn:hover {
+  background: #15803d;
+}
+
+.coord-search-results {
+  margin-top: 2rem;
+}
+
+.coord-search-results h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.coord-ticket-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.coord-ticket-card:hover {
+  border-color: #0284c7;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.coord-ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.coord-ticket-header h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.coord-ticket-card p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.coord-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.coord-modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.coord-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.coord-modal-close:hover {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.coord-ticket-details p {
+  margin: 0.75rem 0;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.coord-ticket-details h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.5rem 0 1rem 0;
+  color: #111;
+}
+
+.coord-qr-display {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e5e7eb;
+}
+
+.coord-qr-display img {
+  max-width: 300px;
+  width: 100%;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  background: white;
+}
+
+.coord-loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.25rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .coord-container {
+    padding: 1rem;
+  }
+  
+  .coord-header h1 {
+    font-size: 2rem;
+  }
+  
+  .coord-nav {
+    gap: 0.5rem;
+  }
+  
+  .coord-nav button {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .coord-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .coord-action-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .coord-scanner-form,
+  .coord-search-form {
+    flex-direction: column;
+  }
+  
+  .coord-scan-btn,
+  .coord-search-btn {
+    width: 100%;
+  }
+}

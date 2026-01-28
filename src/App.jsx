@@ -34,6 +34,7 @@ import Scanner from './pages/Scanner';
 import TicketSuccess from './pages/TicketSuccess';
 import AdminDashboard from './pages/AdminDashboard';
 import VendorDashboard from './pages/VendorDashboard';
+import CoordinatorDashboard from './pages/CoordinatorDashboard';
 import CmsLogin from './pages/CmsLogin';
 import CmsDashboard from './pages/CmsDashboard';
 import GlobalTicketModal from './components/GlobalTicketModal';
@@ -130,6 +131,7 @@ const AppWithModal = () => {
             <Route path="/success" element={<TicketSuccess />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+            <Route path="/coordinator" element={<CoordinatorDashboard />} />
             <Route path="/oc-admin-login-2026" element={<CmsLogin />} />
             <Route path="/oc-admin-cms-2026" element={<CmsDashboard />} />
             <Route path="*" element={<Navigate to="/" replace />} />
