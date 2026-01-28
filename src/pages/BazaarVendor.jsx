@@ -83,23 +83,33 @@ const BazaarVendor = () => {
 
       if (result?.success) {
         setSuccess(true);
-        setFormData({
-          businessType: 'Arab Boutique',
-          contactEmail: '',
-          legalBusinessName: '',
-          boothName: '',
-          sameAsLegalName: false,
-          phoneNumber: '',
-          instagramHandle: '',
-          facebookHandle: '',
-          tiktokHandle: '',
-          acceptTerms: false
-        });
+        setError('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Reset form after 5 seconds
+        setTimeout(() => {
+          setFormData({
+            businessType: 'Arab Boutique',
+            contactEmail: '',
+            legalBusinessName: '',
+            boothName: '',
+            sameAsLegalName: false,
+            phoneNumber: '',
+            instagramHandle: '',
+            facebookHandle: '',
+            tiktokHandle: '',
+            acceptTerms: false
+          });
+          setSuccess(false);
+        }, 5000);
       } else {
         setError(result?.error?.message || 'Failed to submit registration');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (err) {
+      console.error('Bazaar vendor registration error:', err);
       setError(err.message || 'Failed to submit registration. Please try again.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setLoading(false);
     }

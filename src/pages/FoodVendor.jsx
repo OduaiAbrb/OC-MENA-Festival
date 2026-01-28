@@ -92,28 +92,38 @@ const FoodVendor = () => {
 
       if (result?.success) {
         setSuccess(true);
-        setFormData({
-          businessType: 'Arab Food',
-          contactEmail: '',
-          legalBusinessName: '',
-          boothName: '',
-          sameAsLegalName: false,
-          phoneNumber: '',
-          instagramHandle: '',
-          facebookHandle: '',
-          tiktokHandle: '',
-          hasHealthPermit: false,
-          pepsiBeverageTerms: false,
-          handwashingStationTerms: false,
-          healthDepartmentTerms: false,
-          setupTerms: false,
-          acceptTerms: false
-        });
+        setError('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Reset form after 3 seconds
+        setTimeout(() => {
+          setFormData({
+            businessType: 'Arab Food',
+            contactEmail: '',
+            legalBusinessName: '',
+            boothName: '',
+            sameAsLegalName: false,
+            phoneNumber: '',
+            instagramHandle: '',
+            facebookHandle: '',
+            tiktokHandle: '',
+            hasHealthPermit: false,
+            pepsiBeverageTerms: false,
+            handwashingStationTerms: false,
+            healthDepartmentTerms: false,
+            setupTerms: false,
+            acceptTerms: false
+          });
+          setSuccess(false);
+        }, 5000);
       } else {
         setError(result?.error?.message || 'Failed to submit registration');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (err) {
+      console.error('Food vendor registration error:', err);
       setError(err.message || 'Failed to submit registration. Please try again.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setLoading(false);
     }
