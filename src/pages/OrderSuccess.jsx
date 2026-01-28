@@ -2,18 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
+import api from '../services/api';
 import './OrderSuccess.css';
 
 const OrderSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [orderDetails, setOrderDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get order details from navigation state
-    if (location.state?.order) {
-      setOrderDetails(location.state.order);
-    }
+    const fetchOrderDetails = async () => {
+      // Get order from navigation state or query params
+      const searchParams = new URLSearchParams(location.search);
+      const sessionId = searchParams.get('session_id');
+      
+      if (location.state?.orderNumber || location.state?.orderId) {
+        // Order details passed from checkout
+        setOrderDetails({
+          order_number: location.state.orderNumber,
+          order_id: location.state.orderId
+        });
+        setLoading(false);
+      } else if (sessionId) {
+        // Coming from Stripe - need to fetch order details
+        // For now, just show success
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
+    };
+    
+    fetchOrderDetails();
   }, [location]);
 
   return (
@@ -30,14 +50,15 @@ const OrderSuccess = () => {
             Thank you for your purchase! Your tickets have been confirmed.
           </p>
 
-          {orderDetails && (
+          {loading ? (
+            <p>Loading order details...</p>
+          ) : orderDetails ? (
             <div className="order-details">
               <h2>Order Details</h2>
               <p><strong>Order Number:</strong> {orderDetails.order_number}</p>
-              <p><strong>Total:</strong> ${orderDetails.total}</p>
-              <p><strong>Payment Method:</strong> {orderDetails.payment_method}</p>
+              {orderDetails.total && <p><strong>Total:</strong> ${orderDetails.total}</p>}
             </div>
-          )}
+          ) : null}
 
           <div className="success-info">
             <div className="info-item">
