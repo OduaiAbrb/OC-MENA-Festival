@@ -60,7 +60,6 @@ const AmphitheaterTickets = () => {
       // PIT - Standing room (grid layout)
       if (section.tier === 'pit') {
         const pitWidth = 80;
-        const pitHeight = 40;
         const pitX = centerX - pitWidth / 2;
         const pitY = centerY - 60;
         
