@@ -193,6 +193,66 @@
   box-shadow: 0 0 0 3px rgba(169, 29, 58, 0.2);
 }
 
+/* ===== CHECKBOX-LABEL STYLES (for sameAsLegalName checkbox) ===== */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1a1a1a;
+  cursor: pointer;
+  line-height: 1.4;
+  position: relative;
+  padding-left: 30px;
+  min-height: 20px;
+  margin-bottom: 0;
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+  margin: 0;
+  left: 0;
+  top: 0;
+}
+
+.checkbox-custom {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 16px;
+  width: 16px;
+  background-color: #ffffff;
+  border: 2px solid #999999;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.checkbox-input:checked + .checkbox-custom {
+  background-color: #999999;
+  border-color: #999999;
+}
+
+.checkbox-input:checked + .checkbox-custom::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-input:focus + .checkbox-custom {
+  box-shadow: 0 0 0 3px rgba(153, 153, 153, 0.2);
+}
+
 /* ===== FORM TEXT ===== */
 .form-text {
   font-size: 13px;

@@ -59,14 +59,17 @@ const Tickets = () => {
       try {
         const response = await api.getTicketTypes();
         if (response?.success && response.data?.length > 0) {
-          // Filter out vendor booth tickets - only show customer tickets
+          // Filter out vendor booth and amphitheater tickets - only show customer festival tickets
           const customerTickets = response.data.filter(ticket => {
             const name = ticket.name.toLowerCase();
             return !name.includes('vendor') && 
                    !name.includes('booth') && 
                    !name.includes('bazaar') && 
                    !name.includes('food truck') &&
-                   !name.includes('food booth');
+                   !name.includes('food booth') &&
+                   !name.includes('amphitheater') &&
+                   !name.includes('pacific') &&
+                   !name.includes('concert');
           });
           
           // Map backend tickets to our format
@@ -74,7 +77,7 @@ const Tickets = () => {
             id: ticket.id, // This is the UUID
             name: ticket.name,
             slug: ticket.slug,
-            description: ticket.description || `${ticket.name} access`,
+            description: ticket.name.includes('3') ? 'Come enjoy the festival for three days' : ticket.name.includes('2') ? 'Come enjoy the festival for two days' : 'Come enjoy the festival for a single day',
             savings: ticket.name.includes('3') ? 'Save $10 on entry' : ticket.name.includes('2') ? 'Save $5 on entry' : 'Save $0 on entry',
             price: ticket.price_cents / 100 // Convert cents to dollars
           }));
@@ -98,6 +101,18 @@ const Tickets = () => {
     };
     fetchTickets();
   }, []);
+
+  // Handle card click to select ticket
+  const handleCardClick = (ticketId) => {
+    // Reset all quantities to 0
+    const newQuantities = {};
+    displayTickets.forEach(ticket => {
+      newQuantities[ticket.id] = 0;
+    });
+    // Set clicked ticket to 1
+    newQuantities[ticketId] = 1;
+    setQuantities(newQuantities);
+  };
 
   // Simple increment/decrement handlers
   const increment = (id) => {
@@ -136,25 +151,29 @@ const Tickets = () => {
             <p>Choose from single-day or full-weekend passes to experience everything the festival has to offer.</p>
           </div>
 
-          <h2 className="card-title" style={{ textAlign: 'left' }}>Tickets</h2>
+          <div className="tickets-header-section">
+            <div className="option-1-badge">Option 1</div>
+            <h2 className="card-title" style={{ textAlign: 'left' }}>Festival tickets</h2>
+          </div>
           
           <div className="tickets-container">
             {displayTickets.map(ticket => (
-              <div key={ticket.id} className={`ticket-card ${quantities[ticket.id] > 0 ? 'selected' : ''}`}>
+              <div key={ticket.id} className={`ticket-card ${quantities[ticket.id] > 0 ? 'selected' : ''}`} onClick={() => handleCardClick(ticket.id)} style={{ cursor: 'pointer' }}>
                 {quantities[ticket.id] > 0 && (
                   <div className="ticket-checkmark">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cccccc" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                   </div>
                 )}
                 <div className="ticket-header">
+                  <div className="ticket-pass-label">{ticket.name}</div>
                   <span className="ticket-savings">{ticket.savings}</span>
                 </div>
                 
                 <p className="ticket-description">{ticket.description}</p>
 
-                <div className="ticket-quantity-section">
+                <div className="ticket-quantity-section" onClick={(e) => e.stopPropagation()}>
                   <div className="ticket-quantity">
                     <div className="quantity-label">How many tickets?</div>
                     <div className="quantity-controls">
@@ -179,51 +198,10 @@ const Tickets = () => {
                 </div>
 
                 <div className="ticket-pricing">
-                  <span className="ticket-note-text">*Rides at event range from $2-$10/person</span>
                   <span className="ticket-price">${getTotalTickets() > 0 && quantities[ticket.id] > 0 ? (ticket.price * quantities[ticket.id]) : ticket.price}</span>
                 </div>
               </div>
             ))}
-          </div>
-
-          {salesMessage && (
-            <div className="sales-message" style={{textAlign: 'center', padding: '1rem', backgroundColor: 'rgba(255,193,7,0.1)', borderRadius: '8px', marginBottom: '1rem'}}>
-              <p style={{color: '#856404', margin: 0}}>{salesMessage}</p>
-            </div>
-          )}
-
-          {error && (
-            <div className="error-message" style={{textAlign: 'center', padding: '1rem', backgroundColor: 'rgba(220,53,69,0.1)', borderRadius: '8px', marginBottom: '1rem'}}>
-              <p style={{color: '#721c24', margin: 0}}>{error}</p>
-            </div>
-          )}
-
-          <div className="parking-notice">
-            <p>*Parking is $12, paid directly to the OC Fairgrounds on site. Carpooling is encouraged.</p>
-          </div>
-
-          {/* Amphitheater Tickets Section */}
-          <div className="amphitheater-promo-section">
-            <div className="amphitheater-promo-card">
-              <div className="promo-icon">🎵</div>
-              <div className="promo-content">
-                <h3>Looking for Concert Tickets?</h3>
-                <p className="promo-description">
-                  The Pacific Amphitheatre hosts live music performances during the OC MENA Festival! 
-                  This is a <strong>separate ticketed experience</strong> from the festival grounds.
-                </p>
-                <div className="promo-notice">
-                  <span className="notice-icon">ℹ️</span>
-                  <span className="notice-text">
-                    <strong>Important:</strong> Festival tickets do NOT include amphitheater access. 
-                    Amphitheater tickets are sold separately and include same-day festival entry as a bonus.
-                  </span>
-                </div>
-                <Link to="/amphitheater-tickets" className="promo-btn">
-                  View Amphitheater Tickets →
-                </Link>
-              </div>
-            </div>
           </div>
 
           {getTotalTickets() > 0 && (
@@ -261,10 +239,56 @@ const Tickets = () => {
                   window.dispatchEvent(new CustomEvent('openCart'));
                 }}
               >
-                Add to cart
+                Add tickets to cart
               </button>
             </div>
           )}
+
+          {salesMessage && (
+            <div className="sales-message" style={{textAlign: 'center', padding: '1rem', backgroundColor: 'rgba(255,193,7,0.1)', borderRadius: '8px', marginBottom: '1rem'}}>
+              <p style={{color: '#856404', margin: 0}}>{salesMessage}</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="error-message" style={{textAlign: 'center', padding: '1rem', backgroundColor: 'rgba(220,53,69,0.1)', borderRadius: '8px', marginBottom: '1rem'}}>
+              <p style={{color: '#721c24', margin: 0}}>{error}</p>
+            </div>
+          )}
+
+          <div className="parking-notice">
+            <p>*Parking is $12, paid directly to the OC Fairgrounds on site. Carpooling is encouraged.</p>
+            <p>*Rides at the festival range from $2-10/person. *No access to Amphitheater</p>
+          </div>
+
+          {/* Amphitheater Tickets Section */}
+          <div className="amphitheater-ticket-section">
+            <div className="amphitheater-header-section">
+              <div className="option-2-badge">Option 2</div>
+              <h2 className="amphitheater-title">Amphitheater Ticket 🎤</h2>
+            </div>
+            
+            <div className="amphitheater-card">
+              <div className="amphitheater-image">
+                <img src="/stadium.png" alt="Amphitheater Venue" />
+              </div>
+              <div className="amphitheater-content">
+                <h3 className="amphitheater-card-title">Unique Music Venue Experience</h3>
+                <p className="amphitheater-description">
+                  Amphitheater tickets are a premium, separately ticketed concert experience at the Pacific Amphitheatre with reserved seating. To view seating options, click on Explore Amphitheater Tickets below.
+                </p>
+                <div className="amphitheater-notice">
+                  <span className="notice-icon">i</span>
+                  <span className="notice-text">
+                    Each Amphitheater ticket includes admission to the OC MENA Festival for the same day as the performance. Guests do not need to purchase a separate festival ticket for that day.
+                  </span>
+                </div>
+                <Link to="/amphitheater-tickets" className="amphitheater-btn">
+                  Explore Amphitheater Tickets
+                </Link>
+              </div>
+            </div>
+          </div>
         </TornPaperWrapper>
 
         <div className="lanterns-container">

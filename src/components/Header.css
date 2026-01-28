@@ -124,6 +124,11 @@
   transition: all 0.3s ease;
 }
 
+/* Larger logo_2 when not scrolled */
+.header-logo-img:not(.header-scrolled .header-logo-img) {
+  height: 150px; /* Make logo_2 bigger */
+}
+
 /* Smaller logo when scrolled */
 .header-scrolled .header-logo-img {
   height: 85px; /* Adjusted to maintain proportion with smaller logo */
@@ -220,7 +225,7 @@
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 600; /* Changed from 500 to 600 for semibold */
   font-family: 'Inter', sans-serif;
   padding: 8px 0;
   position: relative;
@@ -279,10 +284,6 @@
   justify-content: center;
 }
 
-.icon-btn svg {
-  /* width: 20px; */
-  /* height: 20px; */
-}
 
 .icon-btn:hover {
   background: #dc2626;

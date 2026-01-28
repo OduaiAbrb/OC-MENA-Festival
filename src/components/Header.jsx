@@ -140,7 +140,11 @@ const Header = ({ onGetTicketsClick }) => {
         <div className="header-center">
           <div className="header-left">
             <Link to="/" className="logo" onClick={(e) => handleNavClick('/', e)}>
-              <img src="/logo.png" alt="OC Fair" className="header-logo-img" />
+              <img 
+                src={isScrolled ? "/logo.png" : "/logo_2.png"} 
+                alt="OC Fair" 
+                className="header-logo-img" 
+              />
             </Link>
           </div>
           

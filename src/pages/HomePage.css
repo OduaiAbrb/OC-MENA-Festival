@@ -95,6 +95,11 @@
   text-decoration: none;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-outline-white:hover {
@@ -107,7 +112,7 @@
 .btn-primary-red {
   background-color: #dc2626;
   color: #ffffff;
-  padding: 12px 39px;
+  padding: 14px 28px;
   border: 1px solid #dc2626;
   border-radius: 25px;
   font-size: 15px;
@@ -116,6 +121,11 @@
   text-decoration: none;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-primary-red:hover {
