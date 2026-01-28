@@ -59,21 +59,23 @@ const AmphitheaterTickets = () => {
     sectionsConfig.forEach(section => {
       // PIT - Standing room (grid layout)
       if (section.tier === 'pit') {
-        const pitWidth = 80;
+        const pitWidth = 100;
         const pitX = centerX - pitWidth / 2;
         const pitY = centerY - 60;
+        const colSpacing = 5.5;
+        const rowSpacing = 5.5;
         
         for (let i = 0; i < section.capacity; i++) {
-          const col = i % 20;
-          const row = Math.floor(i / 20);
+          const col = i % 18;
+          const row = Math.floor(i / 18);
           seats.push({
             id: `pit-${i + 1}`,
             sectionId: section.id,
             sectionName: section.name,
             row: 'GA',
             number: i + 1,
-            x: pitX + (col * 4),
-            y: pitY + (row * 4),
+            x: pitX + (col * colSpacing),
+            y: pitY + (row * rowSpacing),
             price: section.price,
             color: section.color,
             available: Math.random() > 0.3,
@@ -84,14 +86,14 @@ const AmphitheaterTickets = () => {
       }
       // CIRCLE - Curved seating around pit
       else if (section.tier === 'circle') {
-        const baseRadius = 100;
-        const rowSpacing = 6;
+        const baseRadius = 105;
+        const rowSpacing = 7;
         
         for (let row = 0; row < section.rows; row++) {
           const radius = baseRadius + (row * rowSpacing);
           const rowLetter = String.fromCharCode(65 + row);
           const angleRange = section.endAngle - section.startAngle;
-          const seatsInRow = section.seatsPerRow + Math.floor(row * 0.5);
+          const seatsInRow = section.seatsPerRow + Math.floor(row * 0.4);
           
           for (let seatNum = 0; seatNum < seatsInRow; seatNum++) {
             const angleOffset = seatsInRow > 1 ? (seatNum / (seatsInRow - 1)) * angleRange : angleRange / 2;
@@ -116,17 +118,17 @@ const AmphitheaterTickets = () => {
       // REGULAR SECTIONS
       else {
         let baseRadius;
-        if (section.tier === 'front') baseRadius = 160;
-        else if (section.tier === 'mid') baseRadius = 320;
-        else baseRadius = 480;
+        if (section.tier === 'front') baseRadius = 165;
+        else if (section.tier === 'mid') baseRadius = 330;
+        else baseRadius = 490;
         
-        const rowSpacing = section.tier === 'front' ? 8 : section.tier === 'mid' ? 7 : 6;
+        const rowSpacing = section.tier === 'front' ? 9 : section.tier === 'mid' ? 8 : 7;
         
         for (let row = 0; row < section.rows; row++) {
           const radius = baseRadius + (row * rowSpacing);
           const rowLetter = String.fromCharCode(65 + row);
           const angleRange = section.endAngle - section.startAngle;
-          const seatsInRow = section.seatsPerRow + Math.floor(row * 0.4);
+          const seatsInRow = section.seatsPerRow + Math.floor(row * 0.3);
           
           for (let seatNum = 0; seatNum < seatsInRow; seatNum++) {
             const angleOffset = seatsInRow > 1 ? (seatNum / (seatsInRow - 1)) * angleRange : angleRange / 2;
@@ -424,14 +426,14 @@ const AmphitheaterTickets = () => {
                     })}
                     
                     {/* Individual Seats - Progressive detail based on zoom */}
-                    {zoomLevel > 1.2 && allSeats.map(seat => {
+                    {zoomLevel > 1.1 && allSeats.map(seat => {
                       const isSelected = selectedSeats.find(s => s.id === seat.id);
                       const isHovered = hoveredSeat?.id === seat.id;
                       
                       // Seat size based on zoom level
-                      let seatSize = 3;
-                      if (zoomLevel > 2) seatSize = 5;
-                      else if (zoomLevel > 1.5) seatSize = 4;
+                      let seatSize = 3.5;
+                      if (zoomLevel > 2) seatSize = 5.5;
+                      else if (zoomLevel > 1.5) seatSize = 4.5;
                       
                       // Only show seats from active section or all if none selected
                       const showSeat = !activeSection || seat.sectionId === activeSection;
