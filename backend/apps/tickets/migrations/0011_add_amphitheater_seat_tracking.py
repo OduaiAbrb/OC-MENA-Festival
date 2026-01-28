@@ -30,8 +30,8 @@ class Migration(migrations.Migration):
                 'db_table': 'amphitheater_seats',
                 'unique_together': {('section_id', 'row', 'seat_number')},
                 'indexes': [
-                    models.Index(fields=['section_id', 'is_available']),
-                    models.Index(fields=['reserved_until']),
+                    models.Index(fields=['section_id', 'is_available'], name='amph_seat_section_avail_idx'),
+                    models.Index(fields=['reserved_until'], name='amph_seat_reserved_idx'),
                 ],
             },
         ),

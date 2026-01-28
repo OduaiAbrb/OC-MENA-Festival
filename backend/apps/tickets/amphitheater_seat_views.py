@@ -55,31 +55,41 @@ class InitializeSeatsView(APIView):
     
     @extend_schema(summary="Initialize amphitheater seats")
     def post(self, request):
-        """Create all amphitheater seats if they don't exist."""
+        """Create all amphitheater seats if they don't exist - ~8000 seats total."""
         try:
-            # Section configuration matching frontend
+            # Pacific Amphitheatre configuration matching frontend
             sections_config = [
-                {'id': 1, 'name': 'Section 1', 'price': 179, 'rows': 5, 'seatsPerRow': 6},
-                {'id': 2, 'name': 'Section 2', 'price': 199, 'rows': 5, 'seatsPerRow': 7},
-                {'id': 3, 'name': 'Section 3', 'price': 179, 'rows': 5, 'seatsPerRow': 6},
-                {'id': 4, 'name': 'Section 4', 'price': 129, 'rows': 6, 'seatsPerRow': 7},
-                {'id': 5, 'name': 'Section 5', 'price': 119, 'rows': 6, 'seatsPerRow': 8},
-                {'id': 6, 'name': 'Section 6', 'price': 99, 'rows': 7, 'seatsPerRow': 10},
-                {'id': 7, 'name': 'Section 7', 'price': 119, 'rows': 6, 'seatsPerRow': 8},
-                {'id': 8, 'name': 'Section 8', 'price': 129, 'rows': 6, 'seatsPerRow': 7},
+                # Pit - Standing room
+                {'id': 'pit', 'name': 'Pit', 'price': 299, 'tier': 'pit', 'capacity': 200},
+                
+                # Circle - Premium seating
+                {'id': 'circle', 'name': 'Circle', 'price': 249, 'tier': 'circle', 'rows': 8, 'seatsPerRow': 35},
+                
+                # Front sections - Enlarged
+                {'id': 1, 'name': 'Section 1', 'price': 199, 'tier': 'front', 'rows': 25, 'seatsPerRow': 28},
+                {'id': 2, 'name': 'Section 2', 'price': 229, 'tier': 'front', 'rows': 25, 'seatsPerRow': 32},
+                {'id': 3, 'name': 'Section 3', 'price': 199, 'tier': 'front', 'rows': 25, 'seatsPerRow': 28},
+                
+                # Mid sections
+                {'id': 4, 'name': 'Section 4', 'price': 149, 'tier': 'mid', 'rows': 30, 'seatsPerRow': 32},
+                {'id': 5, 'name': 'Section 5', 'price': 139, 'tier': 'mid', 'rows': 30, 'seatsPerRow': 35},
+                {'id': 7, 'name': 'Section 7', 'price': 139, 'tier': 'mid', 'rows': 30, 'seatsPerRow': 35},
+                {'id': 8, 'name': 'Section 8', 'price': 149, 'tier': 'mid', 'rows': 30, 'seatsPerRow': 32},
+                
+                # Back section
+                {'id': 6, 'name': 'Section 6', 'price': 99, 'tier': 'back', 'rows': 35, 'seatsPerRow': 45},
             ]
             
             created_count = 0
+            
             for section in sections_config:
-                for row in range(section['rows']):
-                    row_letter = chr(65 + row)  # A, B, C, etc.
-                    seats_in_row = section['seatsPerRow'] + int(row * 0.3)
-                    
-                    for seat_num in range(1, seats_in_row + 1):
+                # Handle Pit (standing room)
+                if section['tier'] == 'pit':
+                    for i in range(section['capacity']):
                         seat, created = AmphitheaterSeat.objects.get_or_create(
-                            section_id=section['id'],
-                            row=row_letter,
-                            seat_number=seat_num,
+                            section_id=str(section['id']),
+                            row='GA',
+                            seat_number=i + 1,
                             defaults={
                                 'section_name': section['name'],
                                 'price_cents': section['price'] * 100,
@@ -88,12 +98,40 @@ class InitializeSeatsView(APIView):
                         )
                         if created:
                             created_count += 1
+                
+                # Handle Circle and regular sections
+                else:
+                    for row in range(section['rows']):
+                        row_letter = chr(65 + row)  # A, B, C, etc.
+                        
+                        # Calculate seats per row with gradual increase
+                        if section['tier'] == 'circle':
+                            seats_in_row = section['seatsPerRow'] + int(row * 0.5)
+                        else:
+                            seats_in_row = section['seatsPerRow'] + int(row * 0.4)
+                        
+                        for seat_num in range(1, seats_in_row + 1):
+                            seat, created = AmphitheaterSeat.objects.get_or_create(
+                                section_id=str(section['id']),
+                                row=row_letter,
+                                seat_number=seat_num,
+                                defaults={
+                                    'section_name': section['name'],
+                                    'price_cents': section['price'] * 100,
+                                    'is_available': True
+                                }
+                            )
+                            if created:
+                                created_count += 1
+            
+            total_seats = AmphitheaterSeat.objects.count()
+            logger.info(f"Initialized {created_count} new seats. Total seats: {total_seats}")
             
             return Response({
                 'success': True,
                 'data': {
                     'message': f'Initialized {created_count} new seats',
-                    'total_seats': AmphitheaterSeat.objects.count()
+                    'total_seats': total_seats
                 }
             })
         except Exception as e:

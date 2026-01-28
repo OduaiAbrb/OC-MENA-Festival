@@ -456,8 +456,8 @@ const AmphitheaterTickets = () => {
                           style={{ 
                             cursor: seat.available && showSeat ? 'pointer' : 'not-allowed',
                             filter: isSelected ? 'drop-shadow(0 0 8px #00d4aa)' : isHovered ? 'drop-shadow(0 0 4px #fff)' : 'none',
-                            opacity: dimmed ? 0.2 : 1,
-                            pointerEvents: dimmed ? 'none' : 'auto'
+                            opacity: showSeat ? 1 : 0.2,
+                            pointerEvents: showSeat ? 'auto' : 'none'
                           }}
                           onClick={(e) => {
                             e.stopPropagation();

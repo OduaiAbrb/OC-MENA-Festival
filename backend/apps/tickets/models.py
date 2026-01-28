@@ -502,7 +502,7 @@ class Invoice(models.Model):
 class AmphitheaterSeat(models.Model):
     """Track individual amphitheater seat availability."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    section_id = models.IntegerField(db_index=True)
+    section_id = models.CharField(max_length=20, db_index=True)  # Changed to CharField to support 'pit', 'circle', etc.
     section_name = models.CharField(max_length=50)
     row = models.CharField(max_length=10)
     seat_number = models.IntegerField()
@@ -523,8 +523,8 @@ class AmphitheaterSeat(models.Model):
         db_table = 'amphitheater_seats'
         unique_together = [('section_id', 'row', 'seat_number')]
         indexes = [
-            models.Index(fields=['section_id', 'is_available']),
-            models.Index(fields=['reserved_until']),
+            models.Index(fields=['section_id', 'is_available'], name='amph_seat_section_avail_idx'),
+            models.Index(fields=['reserved_until'], name='amph_seat_reserved_idx'),
         ]
     
     def __str__(self):
