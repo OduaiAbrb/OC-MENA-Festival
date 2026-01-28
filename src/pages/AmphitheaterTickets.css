@@ -180,6 +180,11 @@
   shape-rendering: geometricPrecision;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  text-rendering: optimizeLegibility;
+}
+
+.sg-stadium-svg circle {
+  vector-effect: non-scaling-stroke;
 }
 
 /* ===== SVG Seats ===== */

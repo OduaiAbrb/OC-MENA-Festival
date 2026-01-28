@@ -11,7 +11,7 @@ const AmphitheaterTickets = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedDay, setSelectedDay] = useState('both'); // 'saturday', 'sunday', 'both'
   const [ticketQuantity, setTicketQuantity] = useState(2);
-  const [zoomLevel, setZoomLevel] = useState(1.5);
+  const [zoomLevel, setZoomLevel] = useState(2.5);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [activeSection, setActiveSection] = useState(null);
   const [hoveredSeat, setHoveredSeat] = useState(null);
@@ -382,18 +382,19 @@ const AmphitheaterTickets = () => {
             <div className="sg-seating-wrapper" ref={containerRef}>
               <TransformWrapper
                 ref={transformRef}
-                initialScale={1.5}
-                minScale={0.8}
-                maxScale={4}
+                initialScale={2.5}
+                minScale={1.5}
+                maxScale={5}
                 centerOnInit={true}
-                wheel={{ step: 0.2 }}
+                wheel={{ step: 0.3 }}
                 onTransformed={(ref) => setZoomLevel(ref.state.scale)}
                 limitToBounds={false}
                 centerZoomedOut={true}
+                panning={{ velocityDisabled: false }}
               >
                 <TransformComponent wrapperClass="sg-transform-wrapper" contentClass="sg-transform-content">
                   <svg 
-                    viewBox="0 0 1000 1000" 
+                    viewBox="200 300 600 400" 
                     className="sg-stadium-svg"
                     preserveAspectRatio="xMidYMid meet"
                   >
@@ -428,14 +429,14 @@ const AmphitheaterTickets = () => {
                     })}
                     
                     {/* Individual Seats - Progressive detail based on zoom */}
-                    {zoomLevel > 0.8 && allSeats.map(seat => {
+                    {zoomLevel > 1.2 && allSeats.map(seat => {
                       const isSelected = selectedSeats.find(s => s.id === seat.id);
                       const isHovered = hoveredSeat?.id === seat.id;
                       
                       // Seat size based on zoom level
-                      let seatSize = 4;
-                      if (zoomLevel > 2.5) seatSize = 6;
-                      else if (zoomLevel > 1.8) seatSize = 5;
+                      let seatSize = 8;
+                      if (zoomLevel > 3) seatSize = 12;
+                      else if (zoomLevel > 2) seatSize = 10;
                       
                       // Only show seats from active section or all if none selected
                       const showSeat = !activeSection || seat.sectionId === activeSection;
