@@ -42,7 +42,7 @@
 
 /* Update icon buttons for white background */
 .header-scrolled .icon-btn {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 1);
   border: 1px solid #000000;
   color: #333333;
 }
@@ -269,7 +269,7 @@
 }
 
 .icon-btn {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #333333;
   cursor: pointer;
