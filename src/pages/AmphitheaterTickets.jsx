@@ -54,14 +54,14 @@ const AmphitheaterTickets = () => {
   const allSeats = useMemo(() => {
     const seats = [];
     const centerX = 500;
-    const centerY = 520;
+    const centerY = 400;
     
     sectionsConfig.forEach(section => {
       // PIT - Standing room (grid layout)
       if (section.tier === 'pit') {
         const pitWidth = 100;
         const pitX = centerX - pitWidth / 2;
-        const pitY = centerY - 60;
+        const pitY = centerY + 80;
         const colSpacing = 5.5;
         const rowSpacing = 5.5;
         
@@ -382,19 +382,20 @@ const AmphitheaterTickets = () => {
             <div className="sg-seating-wrapper" ref={containerRef}>
               <TransformWrapper
                 ref={transformRef}
-                initialScale={2.5}
-                minScale={1.5}
-                maxScale={5}
+                initialScale={1.8}
+                minScale={1.2}
+                maxScale={4}
                 centerOnInit={true}
-                wheel={{ step: 0.3 }}
+                wheel={{ step: 0.2 }}
                 onTransformed={(ref) => setZoomLevel(ref.state.scale)}
-                limitToBounds={false}
+                limitToBounds={true}
                 centerZoomedOut={true}
-                panning={{ velocityDisabled: false }}
+                panning={{ disabled: false }}
+                alignmentAnimation={{ disabled: false }}
               >
                 <TransformComponent wrapperClass="sg-transform-wrapper" contentClass="sg-transform-content">
                   <svg 
-                    viewBox="200 300 600 400" 
+                    viewBox="0 0 1000 900" 
                     className="sg-stadium-svg"
                     preserveAspectRatio="xMidYMid meet"
                   >
@@ -405,11 +406,11 @@ const AmphitheaterTickets = () => {
                         <stop offset="100%" stopColor="#1a1a2e" />
                       </radialGradient>
                     </defs>
-                    <rect x="0" y="0" width="1000" height="1000" fill="url(#stadiumBg)" />
+                    <rect x="0" y="0" width="1000" height="900" fill="url(#stadiumBg)" />
                     
                     {/* Stage */}
-                    <ellipse cx="500" cy="520" rx="120" ry="30" fill="#3a3a5a" stroke="#555" strokeWidth="2" />
-                    <text x="500" y="525" textAnchor="middle" fill="#aaa" fontSize="16" fontWeight="bold">STAGE</text>
+                    <ellipse cx="500" cy="400" rx="120" ry="30" fill="#3a3a5a" stroke="#555" strokeWidth="2" />
+                    <text x="500" y="405" textAnchor="middle" fill="#aaa" fontSize="16" fontWeight="bold">STAGE</text>
                     
                     {/* Section Backgrounds - Clickable on both desktop and mobile */}
                     {sectionsConfig.map(section => {
@@ -429,14 +430,14 @@ const AmphitheaterTickets = () => {
                     })}
                     
                     {/* Individual Seats - Progressive detail based on zoom */}
-                    {zoomLevel > 1.2 && allSeats.map(seat => {
+                    {zoomLevel > 1.0 && allSeats.map(seat => {
                       const isSelected = selectedSeats.find(s => s.id === seat.id);
                       const isHovered = hoveredSeat?.id === seat.id;
                       
                       // Seat size based on zoom level
-                      let seatSize = 8;
-                      if (zoomLevel > 3) seatSize = 12;
-                      else if (zoomLevel > 2) seatSize = 10;
+                      let seatSize = 6;
+                      if (zoomLevel > 2.5) seatSize = 10;
+                      else if (zoomLevel > 1.8) seatSize = 8;
                       
                       // Only show seats from active section or all if none selected
                       const showSeat = !activeSection || seat.sectionId === activeSection;
