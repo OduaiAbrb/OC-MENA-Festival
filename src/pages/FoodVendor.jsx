@@ -52,16 +52,19 @@ const FoodVendor = () => {
     
     if (!formData.contactEmail || !formData.legalBusinessName || !formData.boothName || !formData.phoneNumber) {
       setError('Please fill out all required fields');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     if (!formData.hasHealthPermit) {
       setError('You must confirm you have an OC Health Permit');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     if (!formData.pepsiBeverageTerms || !formData.handwashingStationTerms || !formData.healthDepartmentTerms || !formData.setupTerms) {
       setError('You must accept all terms to proceed');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -131,6 +134,9 @@ const FoodVendor = () => {
           <p className="card-subtitle">
             Please fill out the form below to reserve your booth
           </p>
+
+          {error && <div className="error-message" role="alert">{error}</div>}
+          {success && <div className="success-message" role="status">Thank you! Your registration has been submitted successfully.</div>}
 
           <form onSubmit={handleSubmit} className="vendor-form">
             <div className="form-group">
@@ -363,9 +369,6 @@ const FoodVendor = () => {
                 <span>I accept the terms above</span>
               </label>
             </div>
-
-            {error && <div className="error-message">{error}</div>}
-            {success && <div className="success-message">Thank you! Your registration has been submitted successfully.</div>}
 
             <button type="submit" className="btn-primary submit-btn" disabled={loading}>
               {loading ? 'Submitting...' : 'Continue'}

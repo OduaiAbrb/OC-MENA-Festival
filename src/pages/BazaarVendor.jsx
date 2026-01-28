@@ -54,11 +54,13 @@ const BazaarVendor = () => {
     
     if (!formData.contactEmail || !formData.legalBusinessName || !formData.boothName || !formData.phoneNumber) {
       setError('Please fill out all required fields');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     if (!formData.acceptTerms) {
       setError('You must accept the terms to proceed');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -118,6 +120,9 @@ const BazaarVendor = () => {
           <p className="card-subtitle">
             Please fill out the form below to reserve your booth
           </p>
+
+          {error && <div className="error-message" role="alert">{error}</div>}
+          {success && <div className="success-message" role="status">Thank you! Your registration has been submitted successfully.</div>}
 
           <form onSubmit={handleSubmit} className="vendor-form">
             <div className="form-group">
@@ -252,9 +257,6 @@ const BazaarVendor = () => {
                 <span>I accept the terms above</span>
               </label>
             </div>
-
-            {error && <div className="error-message">{error}</div>}
-            {success && <div className="success-message">Thank you! Your registration has been submitted successfully.</div>}
 
             <button type="submit" className="btn-primary submit-btn" disabled={loading}>
               {loading ? 'Submitting...' : 'Submit Registration'}
