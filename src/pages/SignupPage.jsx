@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCms } from '../cms/CmsContext';
 import { Eye, EyeOff } from 'lucide-react';
@@ -12,6 +12,7 @@ import './SignupPage.css';
 
 const SignupPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { register, isAuthenticated } = useAuth();
   const { content } = useCms();
   const cms = content?.signupPage || {};
@@ -25,9 +26,12 @@ const SignupPage = () => {
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      // Check if user came from checkout
+      const searchParams = new URLSearchParams(location.search);
+      const redirect = searchParams.get('redirect');
+      navigate(redirect || '/dashboard');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location]);
 
   const handleChange = (e) => {
     setFormData({
@@ -52,7 +56,10 @@ const SignupPage = () => {
       );
       
       if (result?.success) {
-        navigate('/dashboard');
+        // Check if user came from checkout
+        const searchParams = new URLSearchParams(location.search);
+        const redirect = searchParams.get('redirect');
+        navigate(redirect || '/dashboard');
       } else {
         setError(result?.error?.message || 'Registration failed');
       }

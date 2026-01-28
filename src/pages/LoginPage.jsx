@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCms } from '../cms/CmsContext';
 import { Eye, EyeOff } from 'lucide-react';
@@ -12,6 +12,7 @@ import './LoginPage.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, isAuthenticated } = useAuth();
   const { content } = useCms();
   const cms = content?.loginPage || {};
@@ -26,9 +27,11 @@ const LoginPage = () => {
   // Redirect if already logged in
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      const searchParams = new URLSearchParams(location.search);
+      const redirect = searchParams.get('redirect');
+      navigate(redirect || '/dashboard');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location]);
 
   const handleChange = (e) => {
     setFormData({
@@ -46,7 +49,9 @@ const LoginPage = () => {
     try {
       const result = await login(formData.email, formData.password);
       if (result?.success) {
-        navigate('/dashboard');
+        const searchParams = new URLSearchParams(location.search);
+        const redirect = searchParams.get('redirect');
+        navigate(redirect || '/dashboard');
       } else {
         setError(result?.error?.message || 'Login failed');
       }
