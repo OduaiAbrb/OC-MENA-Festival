@@ -387,9 +387,6 @@ const Dashboard = () => {
                                 borderRadius: '8px'
                               }} 
                             />
-                            <p style={{fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', maxWidth: '150px', textAlign: 'center'}}>
-                              Scan to validate booth
-                            </p>
                             <a 
                               href={ticket.qr_code} 
                               download={`vendor-booth-${ticket.ticket_code}.png`}
@@ -522,9 +519,6 @@ const Dashboard = () => {
                                 borderRadius: '8px'
                               }} 
                             />
-                            <p style={{fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', maxWidth: '150px', textAlign: 'center'}}>
-                              Scan to validate
-                            </p>
                             {(ticket.ticket_type_name?.toLowerCase().includes('vendor') || 
                               ticket.ticket_type_name?.toLowerCase().includes('booth')) && (
                               <a 
