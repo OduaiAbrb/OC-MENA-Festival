@@ -17,7 +17,7 @@ const CheckoutForm = () => {
   const location = useLocation();
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [couponCode, setCouponCode] = useState('');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('stripe-hosted'); // 'stripe-hosted', 'card', 'cash'
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -38,12 +38,7 @@ const CheckoutForm = () => {
   useEffect(() => {
     console.log('Checkout loaded, location state:', location.state);
     
-    if (!api.isAuthenticated()) {
-      localStorage.setItem('pendingCart', JSON.stringify(location.state || {}));
-      navigate('/login?redirect=/checkout');
-      return;
-    }
-
+    // GUEST CHECKOUT ALLOWED - No forced login
     // Try to get cart from location state first
     if (location.state?.items && location.state.items.length > 0) {
       console.log('Setting cart from location state:', location.state.items);
@@ -75,15 +70,18 @@ const CheckoutForm = () => {
       }
     }
 
-    const user = api.getUser();
-    if (user) {
-      setFormData(prev => ({
-        ...prev,
-        email: user.email || '',
-        firstName: user.full_name?.split(' ')[0] || '',
-        lastName: user.full_name?.split(' ').slice(1).join(' ') || '',
-        phone: user.phone || ''
-      }));
+    // Autofill for logged-in users
+    if (api.isAuthenticated()) {
+      const user = api.getUser();
+      if (user) {
+        setFormData(prev => ({
+          ...prev,
+          email: user.email || '',
+          firstName: user.full_name?.split(' ')[0] || '',
+          lastName: user.full_name?.split(' ').slice(1).join(' ') || '',
+          phone: user.phone || ''
+        }));
+      }
     }
   }, [location, navigate]);
 
@@ -103,10 +101,9 @@ const CheckoutForm = () => {
   const handlePlaceOrder = async () => {
     if (loading) return;
 
-    // Validate required fields
-    if (!formData.email || !formData.firstName || !formData.lastName || 
-        !formData.streetAddress || !formData.city || !formData.state || !formData.zipCode) {
-      setError('Please fill in all required fields (marked with *)');
+    // Validate required fields (minimal for guest checkout)
+    if (!formData.email || !formData.firstName || !formData.lastName) {
+      setError('Please fill in email, first name, and last name');
       return;
     }
 
@@ -115,20 +112,6 @@ const CheckoutForm = () => {
     if (!emailRegex.test(formData.email)) {
       setError('Please enter a valid email address');
       return;
-    }
-
-    // Validate Stripe card element if paying by card
-    if (selectedPaymentMethod === 'card') {
-      if (!stripe || !elements) {
-        setError('Stripe is not loaded yet. Please wait.');
-        return;
-      }
-      
-      const cardElement = elements.getElement(CardElement);
-      if (!cardElement) {
-        setError('Card information is required');
-        return;
-      }
     }
 
     // Validate cart has items
@@ -142,6 +125,29 @@ const CheckoutForm = () => {
     setError('');
 
     try {
+      // STRIPE HOSTED CHECKOUT - Redirect to Stripe
+      if (selectedPaymentMethod === 'stripe-hosted') {
+        const idempotencyKey = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        
+        // Map cart items for backend
+        const ticketItems = cartItems.map(item => ({
+          ...item,
+          ticket_type_id: item.ticket_type_id || item.id,
+          quantity: item.quantity || 1
+        }));
+        
+        const sessionResponse = await api.createCheckoutSession(formData, ticketItems, idempotencyKey);
+        
+        if (!sessionResponse?.success) {
+          throw new Error(sessionResponse?.error?.message || 'Failed to create checkout session');
+        }
+        
+        // Redirect to Stripe Hosted Checkout
+        window.location.href = sessionResponse.data.session_url;
+        return;
+      }
+      
+      // REGULAR CHECKOUT (COD or Card with current page)
       // Process all items (tickets and vendor booths) through the same flow
       // Map cart items to ticket purchase format
       const ticketItems = [];
@@ -275,14 +281,13 @@ const CheckoutForm = () => {
       // Dispatch cart update event to update cart count in header
       window.dispatchEvent(new CustomEvent('cartUpdated', { detail: [] }));
       
-      // Show success message
-      setSuccessMessage(`Payment successful! Order #${confirmResponse.data.order_number || orderId} confirmed.`);
-      setCartItems([]);
-      
-      // Redirect to dashboard after 3 seconds
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 3000);
+      // Redirect to Thank You page
+      navigate('/order-success', { 
+        state: { 
+          orderNumber: confirmResponse.data.order_number || orderId,
+          orderId: orderId
+        } 
+      });
     } catch (err) {
       console.error('Order error:', err);
       setError(err.message || 'Failed to process order. Please try again.');
@@ -500,6 +505,25 @@ const CheckoutForm = () => {
                   <div className="payment-option">
                     <input
                       type="radio"
+                      id="stripe-hosted"
+                      name="payment-method"
+                      value="stripe-hosted"
+                      checked={selectedPaymentMethod === 'stripe-hosted'}
+                      onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                    />
+                    <label htmlFor="stripe-hosted">Pay with Stripe (Recommended)</label>
+                  </div>
+
+                  {selectedPaymentMethod === 'stripe-hosted' && (
+                    <div className="payment-info-box">
+                      <div className="info-arrow"></div>
+                      <p>You will be redirected to Stripe's secure checkout page.</p>
+                    </div>
+                  )}
+
+                  <div className="payment-option">
+                    <input
+                      type="radio"
                       id="cash-delivery"
                       name="payment-method"
                       value="cash"
@@ -519,13 +543,13 @@ const CheckoutForm = () => {
                   <div className="payment-option">
                     <input
                       type="radio"
-                      id="stripe"
+                      id="stripe-card"
                       name="payment-method"
                       value="card"
                       checked={selectedPaymentMethod === 'card'}
                       onChange={(e) => setSelectedPaymentMethod(e.target.value)}
                     />
-                    <label htmlFor="stripe">Stripe</label>
+                    <label htmlFor="stripe-card">Credit Card (Current Page)</label>
                   </div>
 
                   {selectedPaymentMethod === 'card' && (

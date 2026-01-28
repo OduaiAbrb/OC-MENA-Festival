@@ -252,6 +252,21 @@ class ApiService {
     });
   }
 
+  async createCheckoutSession(formData, items, idempotencyKey) {
+    return this.request('/payments/checkout/create-session/', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        items: items,
+        idempotency_key: idempotencyKey
+      }),
+      skipAuth: true
+    });
+  }
+
   async confirmPayment(orderId, paymentIntentId) {
     return this.request('/payments/checkout/confirm/', {
       method: 'POST',
