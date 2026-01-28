@@ -587,27 +587,12 @@ const CheckoutForm = () => {
                   </div>
                 )}
 
-                {successMessage && (
-                  <div style={{ 
-                    color: '#155724', 
-                    marginBottom: '1rem', 
-                    padding: '1rem', 
-                    background: '#d4edda', 
-                    borderRadius: '4px',
-                    border: '1px solid #c3e6cb',
-                    fontWeight: 'bold',
-                    textAlign: 'center'
-                  }}>
-                    ✓ {successMessage}
-                  </div>
-                )}
-
                 <button 
                   className="place-order-btn"
                   onClick={handlePlaceOrder}
-                  disabled={loading || successMessage}
+                  disabled={loading}
                 >
-                  {loading ? 'Processing...' : successMessage ? 'Redirecting...' : 'Place order'}
+                  {loading ? 'Processing...' : 'Place order'}
                 </button>
               </div>
             </div>
