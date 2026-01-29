@@ -390,8 +390,29 @@ class ApiService {
 
   // ==================== AMPHITHEATER ====================
 
-  async getAmphitheaterSeats() {
-    return this.request('/amphitheater/seats/availability/', { skipAuth: true });
+  async getAmphitheaterSeats(eventDate) {
+    const params = eventDate ? `?event_date=${eventDate}` : '';
+    return this.request(`/amphitheater/seats/availability/${params}`, { skipAuth: true });
+  }
+
+  async createSeatHold(sectionId, eventDate, quantity, sessionKey) {
+    return this.request('/amphitheater/seats/hold/', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        section_id: sectionId, 
+        event_date: eventDate,
+        quantity,
+        session_key: sessionKey
+      }),
+      skipAuth: true
+    });
+  }
+
+  async releaseSeatHold(holdId) {
+    return this.request(`/amphitheater/seats/hold/${holdId}/release/`, {
+      method: 'POST',
+      skipAuth: true
+    });
   }
 
   async holdAmphitheaterSeats(seatIds, eventDate) {
