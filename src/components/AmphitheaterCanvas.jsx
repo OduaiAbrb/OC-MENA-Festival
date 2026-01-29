@@ -63,6 +63,46 @@ const AmphitheaterCanvas = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const panAmount = 50;
+      switch(e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          setPosition(prev => ({ ...prev, y: prev.y + panAmount }));
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setPosition(prev => ({ ...prev, y: prev.y - panAmount }));
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          setPosition(prev => ({ ...prev, x: prev.x + panAmount }));
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          setPosition(prev => ({ ...prev, x: prev.x - panAmount }));
+          break;
+        case '+':
+        case '=':
+          e.preventDefault();
+          setScale(prev => Math.min(prev * 1.2, 4));
+          break;
+        case '-':
+        case '_':
+          e.preventDefault();
+          setScale(prev => Math.max(prev / 1.2, 0.5));
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleWheel = (e) => {
     e.evt.preventDefault();
     
@@ -238,59 +278,174 @@ const AmphitheaterCanvas = ({
         </Layer>
       </Stage>
 
-      {/* Controls overlay */}
+      {/* Navigation Controls */}
       <div style={{
         position: 'absolute',
         bottom: '20px',
-        right: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
         display: 'flex',
+        flexDirection: 'column',
         gap: '8px',
-        background: 'rgba(0,0,0,0.7)',
-        padding: '8px',
-        borderRadius: '8px'
+        alignItems: 'center'
       }}>
-        <button
-          onClick={() => setScale(Math.min(scale * 1.2, 4))}
-          style={{
+        {/* Pan Controls */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 40px)',
+          gap: '4px',
+          background: 'rgba(0,0,0,0.7)',
+          padding: '8px',
+          borderRadius: '8px'
+        }}>
+          <div></div>
+          <button
+            onClick={() => setPosition(prev => ({ ...prev, y: prev.y + 50 }))}
+            style={{
+              background: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '8px',
+              cursor: 'pointer',
+              fontSize: '16px'
+            }}
+            title="Pan Up (↑)"
+          >
+            ↑
+          </button>
+          <div></div>
+          <button
+            onClick={() => setPosition(prev => ({ ...prev, x: prev.x + 50 }))}
+            style={{
+              background: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '8px',
+              cursor: 'pointer',
+              fontSize: '16px'
+            }}
+            title="Pan Left (←)"
+          >
+            ←
+          </button>
+          <button
+            onClick={() => {
+              setScale(1);
+              setPosition({ x: 100, y: 50 });
+            }}
+            style={{
+              background: '#dc2626',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '8px',
+              cursor: 'pointer',
+              fontSize: '10px',
+              fontWeight: 'bold'
+            }}
+            title="Reset View"
+          >
+            ⌂
+          </button>
+          <button
+            onClick={() => setPosition(prev => ({ ...prev, x: prev.x - 50 }))}
+            style={{
+              background: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '8px',
+              cursor: 'pointer',
+              fontSize: '16px'
+            }}
+            title="Pan Right (→)"
+          >
+            →
+          </button>
+          <div></div>
+          <button
+            onClick={() => setPosition(prev => ({ ...prev, y: prev.y - 50 }))}
+            style={{
+              background: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '8px',
+              cursor: 'pointer',
+              fontSize: '16px'
+            }}
+            title="Pan Down (↓)"
+          >
+            ↓
+          </button>
+          <div></div>
+        </div>
+        
+        {/* Zoom Controls */}
+        <div style={{
+          display: 'flex',
+          gap: '4px',
+          background: 'rgba(0,0,0,0.7)',
+          padding: '8px',
+          borderRadius: '8px'
+        }}>
+          <button
+            onClick={() => setScale(Math.max(scale / 1.2, 0.5))}
+            style={{
+              background: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '8px 16px',
+              cursor: 'pointer',
+              fontSize: '18px',
+              fontWeight: 'bold'
+            }}
+            title="Zoom Out (-)"
+          >
+            −
+          </button>
+          <div style={{
             background: '#fff',
-            border: 'none',
             borderRadius: '4px',
             padding: '8px 12px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
-        >
-          +
-        </button>
-        <button
-          onClick={() => setScale(Math.max(scale / 1.2, 0.5))}
-          style={{
-            background: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            padding: '8px 12px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
-        >
-          −
-        </button>
-        <button
-          onClick={() => {
-            setScale(1);
-            setPosition({ x: 100, y: 50 });
-          }}
-          style={{
-            background: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            padding: '8px 12px',
-            cursor: 'pointer',
-            fontSize: '12px'
-          }}
-        >
-          Reset
-        </button>
+            fontSize: '12px',
+            fontWeight: 'bold',
+            minWidth: '60px',
+            textAlign: 'center'
+          }}>
+            {Math.round(scale * 100)}%
+          </div>
+          <button
+            onClick={() => setScale(Math.min(scale * 1.2, 4))}
+            style={{
+              background: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '8px 16px',
+              cursor: 'pointer',
+              fontSize: '18px',
+              fontWeight: 'bold'
+            }}
+            title="Zoom In (+)"
+          >
+            +
+          </button>
+        </div>
+      </div>
+      
+      {/* Keyboard hint */}
+      <div style={{
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        background: 'rgba(0,0,0,0.7)',
+        color: '#fff',
+        padding: '8px 12px',
+        borderRadius: '4px',
+        fontSize: '11px',
+        maxWidth: '200px'
+      }}>
+        <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Keyboard:</div>
+        <div>Arrow keys: Pan</div>
+        <div>+/- keys: Zoom</div>
       </div>
 
       {/* Performance indicator */}
