@@ -259,9 +259,31 @@ const AmphitheaterCanvas = ({
           });
         }}
       >
-        {/* Layer 1: Background */}
+        {/* Layer 1: Background and Section Boundaries */}
         <Layer>
           <Rect x={0} y={0} width={1000} height={1100} fill="#0f172a" listening={false} />
+          
+          {/* Gray section boundary arcs - matching reference image */}
+          {/* Outer terrace boundary */}
+          <Circle x={bounds.centerX} y={bounds.centerY} radius={520} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          {/* Orchestra boundary */}
+          <Circle x={bounds.centerX} y={bounds.centerY} radius={340} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          {/* Circle boundary */}
+          <Circle x={bounds.centerX} y={bounds.centerY} radius={160} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          {/* Pit boundary */}
+          <Circle x={bounds.centerX} y={bounds.centerY} radius={120} stroke="#9ca3af" strokeWidth={2} listening={false} />
+          
+          {/* Radial aisle lines between sections */}
+          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(-2.09), bounds.centerY + 520 * Math.sin(-2.09)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(-1.66), bounds.centerY + 520 * Math.sin(-1.66)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(-1.14), bounds.centerY + 520 * Math.sin(-1.14)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(-0.61), bounds.centerY + 520 * Math.sin(-0.61)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(-0.52), bounds.centerY + 520 * Math.sin(-0.52)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(0.52), bounds.centerY + 520 * Math.sin(0.52)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(0.61), bounds.centerY + 520 * Math.sin(0.61)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(1.14), bounds.centerY + 520 * Math.sin(1.14)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(1.66), bounds.centerY + 520 * Math.sin(1.66)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
+          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(2.09), bounds.centerY + 520 * Math.sin(2.09)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
         </Layer>
 
         {/* Layer 2: Terrace Seats (yellow - bottom layer) */}
@@ -336,58 +358,78 @@ const AmphitheaterCanvas = ({
           ))}
         </Layer>
 
-        {/* Layer 6: Overlays (Stage, Labels, ADA Banner, Tooltip) */}
+        {/* Layer 6: Overlays (Stage, Section Labels, Blue Accessible Strips, Tooltip) */}
         <Layer>
-          {/* Stage */}
+          {/* Stage - Black box at bottom */}
           <Rect
-            x={bounds.centerX - 120}
-            y={bounds.minY + 50}
-            width={240}
-            height={50}
-            fill="#1e1e2e"
-            stroke="#444"
-            strokeWidth={3}
-            cornerRadius={5}
+            x={bounds.centerX - 150}
+            y={bounds.maxY + 20}
+            width={300}
+            height={60}
+            fill="#1a1a1a"
+            cornerRadius={0}
             listening={false}
           />
           <Text
             x={bounds.centerX}
-            y={bounds.minY + 68}
+            y={bounds.maxY + 43}
             text="STAGE"
-            fontSize={18}
-            fill="#888"
-            fontStyle="bold"
-            align="center"
-            offsetX={27}
-            listening={false}
-          />
-          
-          {/* ADA Banner - High Contrast */}
-          <Rect
-            x={bounds.centerX - 180}
-            y={bounds.minY + 200}
-            width={360}
-            height={35}
-            fill="#1e40af"
-            opacity={0.9}
-            cornerRadius={6}
-            listening={false}
-          />
-          <Text
-            x={bounds.centerX}
-            y={bounds.minY + 209}
-            text="♿ ACCESSIBLE SEATING AVAILABLE"
-            fontSize={13}
+            fontSize={24}
             fill="#fff"
             fontStyle="bold"
             align="center"
-            offsetX={110}
+            offsetX={35}
             listening={false}
           />
+          
+          {/* Blue Accessible Seating Strips - matching reference image positions */}
+          {/* Left accessible strip */}
+          <Rect x={bounds.centerX - 200} y={bounds.centerY - 140} width={60} height={15} fill="#3b82f6" cornerRadius={3} listening={false} />
+          <Text x={bounds.centerX - 170} y={bounds.centerY - 136} text="♿" fontSize={10} fill="#fff" align="center" offsetX={8} listening={false} />
+          
+          {/* Center accessible strip */}
+          <Rect x={bounds.centerX - 80} y={bounds.centerY - 150} width={160} height={15} fill="#3b82f6" cornerRadius={3} listening={false} />
+          <Text x={bounds.centerX} y={bounds.centerY - 146} text="♿ ACCESSIBLE" fontSize={10} fill="#fff" fontStyle="bold" align="center" offsetX={45} listening={false} />
+          
+          {/* Right accessible strip */}
+          <Rect x={bounds.centerX + 140} y={bounds.centerY - 140} width={60} height={15} fill="#3b82f6" cornerRadius={3} listening={false} />
+          <Text x={bounds.centerX + 170} y={bounds.centerY - 136} text="♿" fontSize={10} fill="#fff" align="center" offsetX={8} listening={false} />
 
-          {/* Section Labels with Pills */}
-          <Rect x={bounds.centerX - 25} y={bounds.minY + 170} width={50} height={20} fill="#10b981" opacity={0.8} cornerRadius={10} listening={false} />
-          <Text x={bounds.centerX} y={bounds.minY + 174} text="PIT" fontSize={12} fill="#fff" fontStyle="bold" align="center" offsetX={12} listening={false} />
+          {/* Section Number Labels - White numbers on gray backgrounds */}
+          {/* Section 8 */}
+          <Text x={bounds.centerX - 420} y={bounds.centerY - 280} text="SECTION 8" fontSize={11} fill="#6b7280" fontStyle="bold" listening={false} />
+          <Circle x={bounds.centerX - 400} y={bounds.centerY - 200} radius={20} fill="#9ca3af" listening={false} />
+          <Text x={bounds.centerX - 400} y={bounds.centerY - 206} text="8" fontSize={18} fill="#fff" fontStyle="bold" align="center" offsetX={6} listening={false} />
+          
+          {/* Section 1 */}
+          <Text x={bounds.centerX - 320} y={bounds.centerY - 350} text="SECTION 1" fontSize={11} fill="#6b7280" fontStyle="bold" listening={false} />
+          <Circle x={bounds.centerX - 280} y={bounds.centerY - 250} radius={20} fill="#9ca3af" listening={false} />
+          <Text x={bounds.centerX - 280} y={bounds.centerY - 256} text="1" fontSize={18} fill="#fff" fontStyle="bold" align="center" offsetX={6} listening={false} />
+          
+          {/* Section 7 */}
+          <Text x={bounds.centerX - 200} y={bounds.centerY - 380} text="SECTION 7" fontSize={11} fill="#6b7280" fontStyle="bold" listening={false} />
+          <Circle x={bounds.centerX - 160} y={bounds.centerY - 280} radius={20} fill="#9ca3af" listening={false} />
+          <Text x={bounds.centerX - 160} y={bounds.centerY - 286} text="7" fontSize={18} fill="#fff" fontStyle="bold" align="center" offsetX={6} listening={false} />
+          
+          {/* Section 6 - Center top */}
+          <Text x={bounds.centerX - 40} y={bounds.centerY - 420} text="SECTION 6" fontSize={11} fill="#6b7280" fontStyle="bold" listening={false} />
+          <Circle x={bounds.centerX} y={bounds.centerY - 340} radius={20} fill="#9ca3af" listening={false} />
+          <Text x={bounds.centerX} y={bounds.centerY - 346} text="6" fontSize={18} fill="#fff" fontStyle="bold" align="center" offsetX={6} listening={false} />
+          
+          {/* Section 5 */}
+          <Text x={bounds.centerX + 140} y={bounds.centerY - 380} text="SECTION 5" fontSize={11} fill="#6b7280" fontStyle="bold" listening={false} />
+          <Circle x={bounds.centerX + 160} y={bounds.centerY - 280} radius={20} fill="#9ca3af" listening={false} />
+          <Text x={bounds.centerX + 160} y={bounds.centerY - 286} text="5" fontSize={18} fill="#fff" fontStyle="bold" align="center" offsetX={6} listening={false} />
+          
+          {/* Section 4 */}
+          <Text x={bounds.centerX + 260} y={bounds.centerY - 350} text="SECTION 4" fontSize={11} fill="#6b7280" fontStyle="bold" listening={false} />
+          <Circle x={bounds.centerX + 280} y={bounds.centerY - 250} radius={20} fill="#9ca3af" listening={false} />
+          <Text x={bounds.centerX + 280} y={bounds.centerY - 256} text="4" fontSize={18} fill="#fff" fontStyle="bold" align="center" offsetX={6} listening={false} />
+          
+          {/* Orchestra/Circle section labels */}
+          <Text x={bounds.centerX - 180} y={bounds.centerY - 100} text="1" fontSize={16} fill="#fff" fontStyle="bold" listening={false} />
+          <Text x={bounds.centerX} y={bounds.centerY - 80} text="2" fontSize={16} fill="#fff" fontStyle="bold" listening={false} />
+          <Text x={bounds.centerX + 180} y={bounds.centerY - 100} text="3" fontSize={16} fill="#fff" fontStyle="bold" listening={false} />
 
           {/* Hover tooltip */}
           {hoveredSeat && (
