@@ -184,15 +184,13 @@ const CheckoutForm = () => {
             }
           });
         } else if (item.type === 'vendor-booth') {
-          // Convert vendor booth to ticket type ID based on booth type and days
+          // Vendor booth tickets - need to resolve slug to UUID
           const boothDetails = item.boothDetails || {};
           const days = boothDetails.days || '3days';
           const boothType = item.ticket_type_id || '';
           
-          // Determine if this is a food vendor
           const isFood = boothType.includes('food-truck') || boothType.includes('food-booth') || boothType.includes('food');
           
-          // Map to vendor booth ticket type slug
           let slug;
           if (boothType.includes('food-truck')) {
             slug = days === '3days' ? 'food-truck-3day' : 'food-truck-2day';
@@ -202,7 +200,6 @@ const CheckoutForm = () => {
             slug = days === '3days' ? 'bazaar-3day' : 'bazaar-2day';
           }
           
-          // Fetch the actual ticket type UUID from backend
           try {
             const ticketTypesResponse = await api.getTicketTypes();
             if (ticketTypesResponse.success) {
@@ -226,12 +223,40 @@ const CheckoutForm = () => {
           } catch (err) {
             console.error('Error fetching vendor ticket types:', err);
           }
-        } else if (item.ticket_type_id && item.ticket_type_id.length > 10) {
-          // Regular ticket with valid UUID
-          ticketItems.push({
-            ticket_type_id: item.ticket_type_id || item.id,
-            quantity: item.quantity
-          });
+        } else if (item.type === 'vendor-attendee') {
+          // Vendor attendee tickets - need to resolve slug to UUID
+          try {
+            const ticketTypesResponse = await api.getTicketTypes();
+            if (ticketTypesResponse.success) {
+              // Map days string to proper slug
+              let slug;
+              if (item.days === '3days' || item.days === '3day') {
+                slug = 'vendor-attendee-3day';
+              } else if (item.days === '2days' || item.days === '2day') {
+                slug = 'vendor-attendee-2day';
+              } else {
+                slug = 'vendor-attendee-3day'; // default
+              }
+              
+              const attendeeTicketType = ticketTypesResponse.data.find(t => t.slug === slug);
+              if (attendeeTicketType) {
+                ticketItems.push({
+                  ticket_type_id: attendeeTicketType.id,
+                  quantity: item.quantity || 1
+                });
+              }
+            }
+          } catch (err) {
+            console.error('Error fetching vendor attendee ticket types:', err);
+          }
+        } else {
+          // Regular tickets - already have valid UUID
+          if (item.ticket_type_id) {
+            ticketItems.push({
+              ticket_type_id: item.ticket_type_id,
+              quantity: item.quantity || 1
+            });
+          }
         }
       }
 
