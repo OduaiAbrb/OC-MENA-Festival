@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
-import api from '../services/api';
 import './OrderSuccess.css';
 
 const OrderSuccess = () => {

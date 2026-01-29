@@ -18,9 +18,6 @@ const AmphitheaterTickets = () => {
   const [hoveredSeat, setHoveredSeat] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [backendSeats, setBackendSeats] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [holdId, setHoldId] = useState(null);
-  const [holdExpiry, setHoldExpiry] = useState(null);
   const transformRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -34,15 +31,12 @@ const AmphitheaterTickets = () => {
   useEffect(() => {
     const fetchSeats = async () => {
       try {
-        setLoading(true);
         const response = await api.getAmphitheaterSeats();
         if (response?.success) {
           setBackendSeats(response.data || []);
         }
       } catch (err) {
         console.error('Failed to fetch amphitheater seats:', err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchSeats();
@@ -279,10 +273,6 @@ const AmphitheaterTickets = () => {
         setSelectedSeats([]);
         return;
       }
-      
-      // Store hold ID and expiry
-      setHoldId(holdResponse.data.hold_id);
-      setHoldExpiry(new Date(holdResponse.data.expires_at));
       
       const seatsInfo = selectedSeats.map(s => `Row ${s.row}, Seat ${s.number}`).join('; ');
       const totalPrice = selectedSeats.reduce((sum, s) => sum + s.price, 0);
