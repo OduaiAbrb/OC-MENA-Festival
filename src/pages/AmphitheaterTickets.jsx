@@ -84,8 +84,11 @@ const AmphitheaterTickets = () => {
     
     // Build cart item - works even without backend
     const seatsInfo = selectedSeats.map(s => `Row ${s.row}, Seat ${s.number}`).join('; ');
-    const totalPrice = selectedSeats.reduce((sum, s) => sum + s.price, 0);
-    const dayLabel = selectedDay === 'saturday' ? 'Saturday Aug 15' : 'Sunday Aug 16';
+    const baseTotalPrice = selectedSeats.reduce((sum, s) => sum + s.price, 0);
+    const totalPrice = selectedDay === 'both' ? baseTotalPrice * 2 : baseTotalPrice;
+    const dayLabel = selectedDay === 'saturday' ? 'Saturday Aug 15' : 
+                     selectedDay === 'sunday' ? 'Sunday Aug 16' : 
+                     'Both Days (Sat & Sun)';
     
     const cartItem = {
       id: `amphitheater-${Date.now()}`,
@@ -164,7 +167,7 @@ const AmphitheaterTickets = () => {
               <p className="sg-subtitle">OC MENA Festival · Costa Mesa, CA · Aug 15-17, 2026</p>
             </div>
 
-            {/* Day Selection Toggle - Individual days only */}
+            {/* Day Selection Toggle - Including Both Days */}
             <div className="sg-day-selector">
               <span className="sg-day-label">Select Event Day:</span>
               <div className="sg-day-buttons">
@@ -200,9 +203,27 @@ const AmphitheaterTickets = () => {
                 >
                   Sunday Aug 16
                 </button>
+                <button 
+                  className={`sg-day-btn ${selectedDay === 'both' ? 'active' : ''}`}
+                  onClick={() => setSelectedDay('both')}
+                  style={{
+                    background: selectedDay === 'both' ? '#059669' : 'white',
+                    color: selectedDay === 'both' ? 'white' : '#374151',
+                    border: selectedDay === 'both' ? '2px solid #059669' : '2px solid #d1d5db',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  Both Days
+                </button>
               </div>
               <p style={{ fontSize: '13px', color: '#6b7280', marginTop: '8px' }}>
-                Seat availability is different for each day. Select a day to see available seats.
+                {selectedDay === 'both' 
+                  ? 'Both Days: Seat must be available on BOTH Saturday & Sunday (2x price)'
+                  : 'Seat availability is different for each day. Select a day to see available seats.'}
               </p>
             </div>
 
@@ -257,7 +278,7 @@ const AmphitheaterTickets = () => {
                     </div>
                   </div>
                   <div className="sg-cart-total-row">
-                    <div className="sg-total-label">Total</div>
+                    <div className="sg-total-label">Total{selectedDay === 'both' ? ' (Both Days - 2x)' : ''}</div>
                     <div className="sg-total-amount">${totalPrice}</div>
                   </div>
                   <button 

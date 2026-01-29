@@ -397,7 +397,7 @@ const AmphitheaterSeatingMap = ({
 
   // Get seat fill color based on state
   const getSeatFill = useCallback((seat) => {
-    if (!isSeatAvailable(seat)) return '#6b7280';
+    if (!isSeatAvailable(seat)) return '#1a1a1a'; // Black for reserved/sold
     if (isSeatSelected(seat)) return '#10b981';
     if (hoveredSeat?.id === seat.id) return '#fbbf24';
     return seat.color;
@@ -565,23 +565,38 @@ const AmphitheaterSeatingMap = ({
 
           {/* Render all seats */}
           {allSeats.map(seat => (
-            <circle
-              key={seat.id}
-              cx={seat.x}
-              cy={seat.y}
-              r={seat.tier === 'PIT' ? 3.5 : seat.tier === 'CIRCLE' ? 4 : 3}
-              fill={getSeatFill(seat)}
-              stroke={isSeatSelected(seat) ? '#065f46' : hoveredSeat?.id === seat.id ? '#92400e' : 'transparent'}
-              strokeWidth={isSeatSelected(seat) || hoveredSeat?.id === seat.id ? 1.5 : 0}
-              opacity={isSeatAvailable(seat) ? 1 : 0.4}
-              style={{ cursor: isSeatAvailable(seat) ? 'pointer' : 'not-allowed' }}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSeatClick(seat);
-              }}
-              onMouseEnter={() => setHoveredSeat(seat)}
-              onMouseLeave={() => setHoveredSeat(null)}
-            />
+            <g key={seat.id}>
+              <circle
+                cx={seat.x}
+                cy={seat.y}
+                r={seat.tier === 'PIT' ? 3.5 : seat.tier === 'CIRCLE' ? 4 : 3}
+                fill={getSeatFill(seat)}
+                stroke={isSeatSelected(seat) ? '#065f46' : hoveredSeat?.id === seat.id ? '#92400e' : 'transparent'}
+                strokeWidth={isSeatSelected(seat) || hoveredSeat?.id === seat.id ? 1.5 : 0}
+                opacity={isSeatAvailable(seat) ? 1 : 0.9}
+                style={{ cursor: isSeatAvailable(seat) ? 'pointer' : 'not-allowed' }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSeatClick(seat);
+                }}
+                onMouseEnter={() => setHoveredSeat(seat)}
+                onMouseLeave={() => setHoveredSeat(null)}
+              />
+              {/* Show 'R' for reserved seats */}
+              {!isSeatAvailable(seat) && (
+                <text
+                  x={seat.x}
+                  y={seat.y + 1}
+                  textAnchor="middle"
+                  fill="white"
+                  fontSize="2.5"
+                  fontWeight="bold"
+                  pointerEvents="none"
+                >
+                  R
+                </text>
+              )}
+            </g>
           ))}
 
           {/* Section labels - SECTION X text */}
@@ -692,7 +707,7 @@ const AmphitheaterSeatingMap = ({
           </div>
           {!isSeatAvailable(hoveredSeat) && (
             <div style={{ fontSize: '12px', color: '#f87171', marginTop: '4px' }}>
-              SOLD OUT
+              RESERVED
             </div>
           )}
           {hoveredSeat.isAccessible && (
@@ -752,8 +767,8 @@ const AmphitheaterSeatingMap = ({
             <span style={{ fontSize: '12px', fontWeight: '600', color: '#374151' }}>SELECTED</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ width: '14px', height: '14px', background: '#6b7280', borderRadius: '3px', opacity: 0.5 }} />
-            <span style={{ fontSize: '12px', fontWeight: '600', color: '#374151' }}>SOLD</span>
+            <div style={{ width: '14px', height: '14px', background: '#1a1a1a', borderRadius: '3px' }} />
+            <span style={{ fontSize: '12px', fontWeight: '600', color: '#374151' }}>RESERVED</span>
           </div>
         </div>
       </div>
