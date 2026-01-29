@@ -1,10 +1,11 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
 import ScrollToTop from '../components/ScrollToTop';
 import TornPaperWrapper from '../components/TornPaperWrapper';
+import api from '../services/api';
 import './AmphitheaterTickets.css';
 
 const AmphitheaterTickets = () => {
@@ -16,13 +17,39 @@ const AmphitheaterTickets = () => {
   const [activeSection, setActiveSection] = useState(null);
   const [hoveredSeat, setHoveredSeat] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+  const [backendSeats, setBackendSeats] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [holdId, setHoldId] = useState(null);
+  const [holdExpiry, setHoldExpiry] = useState(null);
   const transformRef = useRef(null);
   const containerRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Fetch real-time seat availability from backend
+  useEffect(() => {
+    const fetchSeats = async () => {
+      try {
+        setLoading(true);
+        const response = await api.getAmphitheaterSeats();
+        if (response?.success) {
+          setBackendSeats(response.data || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch amphitheater seats:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSeats();
+    
+    // Refresh availability every 30 seconds
+    const interval = setInterval(fetchSeats, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   // Pacific Amphitheatre - Based on actual venue layout with ~8000 seats
@@ -50,11 +77,18 @@ const AmphitheaterTickets = () => {
     { id: 'terr-8', name: 'Terrace - 8', price: 149, color: '#d97706', tier: 'terrace', startAngle: -100, endAngle: -85, rows: 35, seatsPerRow: 28 },
   ], []);
 
-  // Generate ~8000 seats matching amphitheater layout
+  // Generate ~8000 seats with real-time availability from backend
   const allSeats = useMemo(() => {
     const seats = [];
     const centerX = 500;
     const centerY = 500;
+    
+    // Create availability map from backend data
+    const availabilityMap = new Map();
+    backendSeats.forEach(seat => {
+      const key = `${seat.section_id}-${seat.row}-${seat.seat_number}`;
+      availabilityMap.set(key, seat.is_available);
+    });
     
     sectionsConfig.forEach(section => {
       // PIT - Standing room (grid layout in front of stage)
@@ -70,17 +104,19 @@ const AmphitheaterTickets = () => {
         
         for (let r = 0; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
+            const seatNum = r * cols + c + 1;
+            const key = `${section.id}-GA-${seatNum}`;
             seats.push({
               id: `${section.id}-${r}-${c}`,
               sectionId: section.id,
               sectionName: section.name,
               row: 'GA',
-              number: r * cols + c + 1,
+              number: seatNum,
               x: pitX + (c * colSpacing),
               y: pitY + (r * rowSpacing),
               price: section.price,
               color: section.color,
-              available: Math.random() > 0.1,
+              available: availabilityMap.get(key) ?? true,
               tier: section.tier,
               isPit: true
             });
@@ -113,6 +149,7 @@ const AmphitheaterTickets = () => {
           for (let seatNum = 0; seatNum < seatsInRow; seatNum++) {
             const angleOffset = seatsInRow > 1 ? (seatNum / (seatsInRow - 1)) * angleRange : angleRange / 2;
             const angle = (section.startAngle + angleOffset - 90) * (Math.PI / 180);
+            const key = `${section.id}-${rowLetter}-${seatNum + 1}`;
             
             seats.push({
               id: `${section.id}-${rowLetter}-${seatNum + 1}`,
@@ -124,7 +161,7 @@ const AmphitheaterTickets = () => {
               y: centerY + radius * Math.sin(angle),
               price: section.price,
               color: section.color,
-              available: Math.random() > 0.15,
+              available: availabilityMap.get(key) ?? true,
               tier: section.tier,
               accessible: section.accessible || false
             });
@@ -133,9 +170,9 @@ const AmphitheaterTickets = () => {
       }
     });
     
-    console.log(`Total seats generated: ${seats.length}`);
+    console.log(`Total seats generated: ${seats.length}, Backend seats: ${backendSeats.length}`);
     return seats;
-  }, [sectionsConfig]);
+  }, [sectionsConfig, backendSeats]);
 
   // Handle seat click
   const handleSeatClick = useCallback((seat) => {
@@ -220,52 +257,85 @@ const AmphitheaterTickets = () => {
     }
   };
 
-  // Add to cart
-  const handleAddToCart = () => {
+  // Add to cart with seat hold
+  const handleAddToCart = async () => {
     if (selectedSeats.length === 0) return;
     
-    const seatsInfo = selectedSeats.map(s => `Row ${s.row}, Seat ${s.number}`).join('; ');
-    const totalPrice = selectedSeats.reduce((sum, s) => sum + s.price, 0);
-    
-    // Adjust price for both days (multiply by 2)
-    const finalPrice = selectedDay === 'both' ? totalPrice * 2 : totalPrice;
-    const dayLabel = selectedDay === 'saturday' ? 'Saturday' : selectedDay === 'sunday' ? 'Sunday' : 'Both Days';
-    
-    const cartItem = {
-      id: `amphitheater-${Date.now()}`,
-      type: 'amphitheater',
-      name: `Pacific Amphitheatre - ${dayLabel}`,
-      section: [...new Set(selectedSeats.map(s => s.sectionName))].join(', '),
-      seats: seatsInfo,
-      day: selectedDay,
-      quantity: selectedSeats.length,
-      price: selectedSeats[0]?.price || 0,
-      total: finalPrice,
-      includesFestival: true
-    };
-
-    const existingCart = localStorage.getItem('cart');
-    let cart = { items: [], total: 0 };
-    
-    if (existingCart) {
-      try {
-        cart = JSON.parse(existingCart);
-      } catch (e) {
-        console.error('Error parsing cart:', e);
+    try {
+      // Create seat hold on backend (10-minute reservation)
+      const seatIds = selectedSeats.map(s => s.id);
+      const eventDate = selectedDay === 'saturday' ? '2026-08-15' : 
+                       selectedDay === 'sunday' ? '2026-08-16' : '2026-08-15'; // Default to Saturday for "both"
+      
+      const holdResponse = await api.holdAmphitheaterSeats(seatIds, eventDate);
+      
+      if (!holdResponse?.success) {
+        alert('Failed to reserve seats. They may have been taken by another user.');
+        // Refresh seat availability
+        const seatsResponse = await api.getAmphitheaterSeats();
+        if (seatsResponse?.success) {
+          setBackendSeats(seatsResponse.data || []);
+        }
+        setSelectedSeats([]);
+        return;
       }
+      
+      // Store hold ID and expiry
+      setHoldId(holdResponse.data.hold_id);
+      setHoldExpiry(new Date(holdResponse.data.expires_at));
+      
+      const seatsInfo = selectedSeats.map(s => `Row ${s.row}, Seat ${s.number}`).join('; ');
+      const totalPrice = selectedSeats.reduce((sum, s) => sum + s.price, 0);
+      
+      // Adjust price for both days (multiply by 2)
+      const finalPrice = selectedDay === 'both' ? totalPrice * 2 : totalPrice;
+      const dayLabel = selectedDay === 'saturday' ? 'Saturday' : selectedDay === 'sunday' ? 'Sunday' : 'Both Days';
+      
+      const cartItem = {
+        id: `amphitheater-${Date.now()}`,
+        type: 'amphitheater',
+        name: `Pacific Amphitheatre - ${dayLabel}`,
+        section: [...new Set(selectedSeats.map(s => s.sectionName))].join(', '),
+        seats: seatsInfo,
+        day: selectedDay,
+        quantity: selectedSeats.length,
+        price: selectedSeats[0]?.price || 0,
+        total: finalPrice,
+        includesFestival: true,
+        holdId: holdResponse.data.hold_id,
+        expiresAt: holdResponse.data.expires_at
+      };
+
+      const existingCart = localStorage.getItem('cart');
+      let cart = { items: [], total: 0 };
+      
+      if (existingCart) {
+        try {
+          cart = JSON.parse(existingCart);
+        } catch (e) {
+          console.error('Error parsing cart:', e);
+        }
+      }
+
+      cart.items.push(cartItem);
+      cart.total += cartItem.total;
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      
+      window.dispatchEvent(new CustomEvent('cartUpdated', { 
+        detail: { items: cart.items, total: cart.total } 
+      }));
+      window.dispatchEvent(new CustomEvent('openCart'));
+      
+      setSelectedSeats([]);
+      
+      // Show hold timer
+      alert(`Seats reserved for 10 minutes! Complete checkout before ${new Date(holdResponse.data.expires_at).toLocaleTimeString()}`);
+      
+    } catch (err) {
+      console.error('Failed to hold seats:', err);
+      alert('Failed to reserve seats. Please try again.');
     }
-
-    cart.items.push(cartItem);
-    cart.total += cartItem.total;
-
-    localStorage.setItem('cart', JSON.stringify(cart));
-    
-    window.dispatchEvent(new CustomEvent('cartUpdated', { 
-      detail: { items: cart.items, total: cart.total } 
-    }));
-    window.dispatchEvent(new CustomEvent('openCart'));
-    
-    setSelectedSeats([]);
   };
 
   // Generate section paths for background

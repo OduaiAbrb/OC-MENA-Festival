@@ -388,6 +388,30 @@ class ApiService {
     });
   }
 
+  // ==================== AMPHITHEATER ====================
+
+  async getAmphitheaterSeats() {
+    return this.request('/amphitheater/seats/availability/', { skipAuth: true });
+  }
+
+  async holdAmphitheaterSeats(seatIds, eventDate) {
+    return this.request('/amphitheater/hold/', {
+      method: 'POST',
+      body: JSON.stringify({ seat_ids: seatIds, event_date: eventDate })
+    });
+  }
+
+  async checkoutAmphitheater(holdId, billingDetails) {
+    return this.request('/amphitheater/checkout/', {
+      method: 'POST',
+      body: JSON.stringify({ hold_id: holdId, billing_details: billingDetails })
+    });
+  }
+
+  async getMyAmphitheaterTickets() {
+    return this.request('/amphitheater/tickets/');
+  }
+
   // ==================== SCANNING ====================
 
   async quickScan(qrData) {
