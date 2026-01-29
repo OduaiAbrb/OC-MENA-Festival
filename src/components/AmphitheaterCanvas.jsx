@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { Stage, Layer, Circle, Rect, Text, Line } from 'react-konva';
+import { Stage, Layer, Circle, Rect, Text } from 'react-konva';
 import amphitheaterSeats from '../utils/generateSeats';
 import Quadtree from '../utils/quadtree';
 
