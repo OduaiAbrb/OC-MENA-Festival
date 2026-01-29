@@ -255,17 +255,14 @@ const Dashboard = () => {
                               src={ticket.qr_code} 
                               alt={`QR Code for ${ticket.ticket_code}`} 
                               style={{
-                                width: '150px',
-                                height: '150px',
+                                width: '200px',
+                                height: '200px',
                                 border: '2px solid #7c3aed',
                                 padding: '8px',
                                 backgroundColor: 'white',
                                 borderRadius: '8px'
                               }} 
                             />
-                            <p style={{fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', maxWidth: '150px', textAlign: 'center'}}>
-                              Scan for amphitheater entry
-                            </p>
                           </>
                         )}
                       </div>
@@ -495,6 +492,7 @@ const Dashboard = () => {
                               setTransferError('');
                               setTransferSuccess(false);
                             }}
+                            className="secondary-btn"
                             style={{
                               marginTop: '1rem',
                               padding: '0.5rem 1rem',
