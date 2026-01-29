@@ -90,6 +90,9 @@ const AmphitheaterTickets = () => {
                      selectedDay === 'sunday' ? 'Sunday Aug 16' : 
                      'Both Days (Sat & Sun)';
     
+    // For checkout: price = total / quantity (unit price per seat)
+    const unitPrice = totalPrice / selectedSeats.length;
+    
     const cartItem = {
       id: `amphitheater-${Date.now()}`,
       ticket_type_id: `amphitheater-${selectedDay}`,
@@ -108,8 +111,8 @@ const AmphitheaterTickets = () => {
       day: selectedDay,
       eventDate: eventDate,
       quantity: selectedSeats.length,
-      price: totalPrice, // Total price for all seats
-      total: totalPrice,
+      price: unitPrice, // Unit price per seat (backend expects this)
+      total: totalPrice, // Total for display
       includesFestival: true,
       holdIds: holdIds.length > 0 ? holdIds : null,
       sessionKey: sessionKey,
