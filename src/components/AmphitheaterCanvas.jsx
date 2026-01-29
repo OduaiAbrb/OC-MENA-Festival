@@ -264,9 +264,22 @@ const AmphitheaterCanvas = ({
           });
         }}
       >
-        {/* Layer 1: Background */}
+        {/* Layer 1: Background with colored section shapes */}
         <Layer>
           <Rect x={0} y={0} width={1000} height={1100} fill="#0f172a" listening={false} />
+          
+          {/* Colored section backgrounds matching reference image */}
+          {/* PIT - Green */}
+          <Circle x={bounds.centerX} y={bounds.centerY} radius={120} fill="#10b981" opacity={0.3} listening={false} />
+          
+          {/* CIRCLE sections - Blue wedges */}
+          <Circle x={bounds.centerX} y={bounds.centerY} radius={160} fill="#3b82f6" opacity={0.25} listening={false} />
+          
+          {/* ORCHESTRA sections - Dark red */}
+          <Circle x={bounds.centerX} y={bounds.centerY} radius={340} fill="#991b1b" opacity={0.25} listening={false} />
+          
+          {/* TERRACE sections - Orange */}
+          <Circle x={bounds.centerX} y={bounds.centerY} radius={520} fill="#d97706" opacity={0.2} listening={false} />
         </Layer>
 
         {/* Layer 2: Terrace Seats (yellow - bottom layer) */}
