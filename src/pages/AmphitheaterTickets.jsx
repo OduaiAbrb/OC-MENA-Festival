@@ -427,7 +427,7 @@ const AmphitheaterTickets = () => {
                     })}
                     
                     {/* Individual Seats - Progressive detail based on zoom */}
-                    {zoomLevel >= 1.5 && allSeats.map(seat => {
+                    {zoomLevel >= 1.0 && allSeats.map(seat => {
                       const isSelected = selectedSeats.find(s => s.id === seat.id);
                       const isHovered = hoveredSeat?.id === seat.id;
                       
