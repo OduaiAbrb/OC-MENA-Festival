@@ -264,31 +264,9 @@ const AmphitheaterCanvas = ({
           });
         }}
       >
-        {/* Layer 1: Background and Section Boundaries */}
+        {/* Layer 1: Background */}
         <Layer>
           <Rect x={0} y={0} width={1000} height={1100} fill="#0f172a" listening={false} />
-          
-          {/* Gray section boundary arcs - matching reference image */}
-          {/* Outer terrace boundary */}
-          <Circle x={bounds.centerX} y={bounds.centerY} radius={520} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          {/* Orchestra boundary */}
-          <Circle x={bounds.centerX} y={bounds.centerY} radius={340} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          {/* Circle boundary */}
-          <Circle x={bounds.centerX} y={bounds.centerY} radius={160} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          {/* Pit boundary */}
-          <Circle x={bounds.centerX} y={bounds.centerY} radius={120} stroke="#9ca3af" strokeWidth={2} listening={false} />
-          
-          {/* Radial aisle lines between sections */}
-          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(-2.09), bounds.centerY + 520 * Math.sin(-2.09)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(-1.66), bounds.centerY + 520 * Math.sin(-1.66)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(-1.14), bounds.centerY + 520 * Math.sin(-1.14)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(-0.61), bounds.centerY + 520 * Math.sin(-0.61)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(-0.52), bounds.centerY + 520 * Math.sin(-0.52)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(0.52), bounds.centerY + 520 * Math.sin(0.52)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(0.61), bounds.centerY + 520 * Math.sin(0.61)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(1.14), bounds.centerY + 520 * Math.sin(1.14)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(1.66), bounds.centerY + 520 * Math.sin(1.66)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
-          <Line points={[bounds.centerX, bounds.centerY, bounds.centerX + 520 * Math.cos(2.09), bounds.centerY + 520 * Math.sin(2.09)]} stroke="#9ca3af" strokeWidth={3} listening={false} />
         </Layer>
 
         {/* Layer 2: Terrace Seats (yellow - bottom layer) */}
