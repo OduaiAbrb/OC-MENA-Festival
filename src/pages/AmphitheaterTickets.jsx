@@ -11,7 +11,7 @@ const AmphitheaterTickets = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedDay, setSelectedDay] = useState('both'); // 'saturday', 'sunday', 'both'
   const [ticketQuantity, setTicketQuantity] = useState(2);
-  const [zoomLevel, setZoomLevel] = useState(1.0);
+  const [zoomLevel, setZoomLevel] = useState(1.5);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [activeSection, setActiveSection] = useState(null);
   const [hoveredSeat, setHoveredSeat] = useState(null);
@@ -54,14 +54,14 @@ const AmphitheaterTickets = () => {
   const allSeats = useMemo(() => {
     const seats = [];
     const centerX = 500;
-    const centerY = 400;
+    const centerY = 520;
     
     sectionsConfig.forEach(section => {
       // PIT - Standing room (grid layout)
       if (section.tier === 'pit') {
         const pitWidth = 100;
         const pitX = centerX - pitWidth / 2;
-        const pitY = centerY + 80;
+        const pitY = centerY - 60;
         const colSpacing = 5.5;
         const rowSpacing = 5.5;
         
@@ -220,19 +220,23 @@ const AmphitheaterTickets = () => {
     }
   }, [isMobile]);
 
-  // Zoom controls - manual zoom level for showing seats
+  // Zoom controls
   const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(4.0, prev + 0.5));
+    if (transformRef.current) {
+      transformRef.current.zoomIn(0.5);
+    }
   };
 
   const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(1.0, prev - 0.5));
+    if (transformRef.current) {
+      transformRef.current.zoomOut(0.5);
+    }
   };
 
   const handleResetView = () => {
-    setZoomLevel(1.0);
-    setActiveSection(null);
-    setSelectedSeats([]);
+    if (transformRef.current) {
+      transformRef.current.resetTransform();
+    }
   };
 
   // Add to cart
@@ -378,21 +382,18 @@ const AmphitheaterTickets = () => {
             <div className="sg-seating-wrapper" ref={containerRef}>
               <TransformWrapper
                 ref={transformRef}
-                initialScale={1.0}
-                minScale={1.0}
-                maxScale={1.0}
+                initialScale={1.5}
+                minScale={0.8}
+                maxScale={4}
                 centerOnInit={true}
-                wheel={{ disabled: true }}
+                wheel={{ step: 0.2 }}
                 onTransformed={(ref) => setZoomLevel(ref.state.scale)}
-                limitToBounds={true}
+                limitToBounds={false}
                 centerZoomedOut={true}
-                panning={{ disabled: true }}
-                alignmentAnimation={{ disabled: true }}
-                doubleClick={{ disabled: true }}
               >
                 <TransformComponent wrapperClass="sg-transform-wrapper" contentClass="sg-transform-content">
                   <svg 
-                    viewBox="0 0 1000 900" 
+                    viewBox="0 0 1000 1000" 
                     className="sg-stadium-svg"
                     preserveAspectRatio="xMidYMid meet"
                   >
@@ -403,11 +404,11 @@ const AmphitheaterTickets = () => {
                         <stop offset="100%" stopColor="#1a1a2e" />
                       </radialGradient>
                     </defs>
-                    <rect x="0" y="0" width="1000" height="900" fill="url(#stadiumBg)" />
+                    <rect x="0" y="0" width="1000" height="1000" fill="url(#stadiumBg)" />
                     
                     {/* Stage */}
-                    <ellipse cx="500" cy="400" rx="120" ry="30" fill="#3a3a5a" stroke="#555" strokeWidth="2" />
-                    <text x="500" y="405" textAnchor="middle" fill="#aaa" fontSize="16" fontWeight="bold">STAGE</text>
+                    <ellipse cx="500" cy="520" rx="120" ry="30" fill="#3a3a5a" stroke="#555" strokeWidth="2" />
+                    <text x="500" y="525" textAnchor="middle" fill="#aaa" fontSize="16" fontWeight="bold">STAGE</text>
                     
                     {/* Section Backgrounds - Clickable on both desktop and mobile */}
                     {sectionsConfig.map(section => {
@@ -427,14 +428,14 @@ const AmphitheaterTickets = () => {
                     })}
                     
                     {/* Individual Seats - Progressive detail based on zoom */}
-                    {zoomLevel >= 1.0 && allSeats.map(seat => {
+                    {zoomLevel > 0.8 && allSeats.map(seat => {
                       const isSelected = selectedSeats.find(s => s.id === seat.id);
                       const isHovered = hoveredSeat?.id === seat.id;
                       
                       // Seat size based on zoom level
-                      let seatSize = 5;
-                      if (zoomLevel >= 3.0) seatSize = 9;
-                      else if (zoomLevel >= 2.0) seatSize = 7;
+                      let seatSize = 4;
+                      if (zoomLevel > 2.5) seatSize = 6;
+                      else if (zoomLevel > 1.8) seatSize = 5;
                       
                       // Only show seats from active section or all if none selected
                       const showSeat = !activeSection || seat.sectionId === activeSection;
