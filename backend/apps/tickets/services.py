@@ -257,16 +257,50 @@ class TicketService:
     @staticmethod
     def issue_tickets_for_order(order: Order) -> list[Ticket]:
         """Issue tickets for a paid order."""
+        from .amphitheater_services import AmphitheaterService
+        
         tickets = []
         
         for item in order.items.select_related('ticket_type'):
             # Handle amphitheater tickets
             if item.ticket_type is None:
-                # This is an amphitheater ticket - get metadata from order
+                # This is an amphitheater ticket - use proper amphitheater service
                 if hasattr(order, '_amphitheater_items'):
                     for amph_item in order._amphitheater_items:
-                        for _ in range(amph_item['quantity']):
-                            # Create main ticket for amphitheater
+                        # Check if this item has hold IDs (seat holds from frontend)
+                        hold_ids = amph_item.get('holdIds') or []
+                        
+                        if hold_ids:
+                            # Convert seat holds to amphitheater tickets with QR codes
+                            for hold_id in hold_ids:
+                                try:
+                                    # Get or create amphitheater ticket type
+                                    ticket_type, _ = TicketType.objects.get_or_create(
+                                        slug='amphitheater-reserved',
+                                        defaults={
+                                            'name': 'Amphitheater Reserved Seating',
+                                            'description': 'Reserved seating at Pacific Amphitheatre',
+                                            'price_cents': int(amph_item.get('price', 0) * 100),
+                                            'is_active': True,
+                                        }
+                                    )
+                                    
+                                    # Convert hold to tickets (creates Ticket + AmphitheaterTicket)
+                                    amph_tickets = AmphitheaterService.convert_hold_to_tickets(
+                                        hold_id=hold_id,
+                                        order=order,
+                                        ticket_type=ticket_type
+                                    )
+                                    
+                                    # Add festival tickets to list
+                                    for amph_ticket in amph_tickets:
+                                        tickets.append(amph_ticket.festival_ticket)
+                                        
+                                except Exception as e:
+                                    logger.error(f"Failed to convert hold {hold_id}: {e}")
+                        else:
+                            # Fallback: create basic amphitheater ticket without seat assignment
+                            logger.warning(f"No hold IDs for amphitheater item, creating basic ticket")
                             ticket = Ticket.objects.create(
                                 ticket_code=Ticket.generate_ticket_code(),
                                 owner=order.buyer,
@@ -277,10 +311,10 @@ class TicketService:
                                 metadata={
                                     'type': 'amphitheater',
                                     'section_name': amph_item.get('section', 'General'),
-                                    'seats': amph_item.get('metadata', {}).get('seats', ''),
+                                    'seats': amph_item.get('seats', ''),
                                     'price_paid': amph_item.get('price', 0) * 100,
-                                    'includes_festival_access': amph_item.get('metadata', {}).get('includes_festival_access', True),
-                                    'ticket_name': amph_item.get('metadata', {}).get('ticket_name', 'Amphitheater Ticket')
+                                    'includes_festival_access': amph_item.get('includesFestival', True),
+                                    'ticket_name': amph_item.get('name', 'Amphitheater Ticket')
                                 }
                             )
                             tickets.append(ticket)
