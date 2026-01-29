@@ -1,10 +1,10 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
 import ScrollToTop from '../components/ScrollToTop';
 import TornPaperWrapper from '../components/TornPaperWrapper';
+import AmphitheaterCanvas from '../components/AmphitheaterCanvas';
 import api from '../services/api';
 import './AmphitheaterTickets.css';
 
@@ -12,14 +12,8 @@ const AmphitheaterTickets = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedDay, setSelectedDay] = useState('both');
   const [ticketQuantity, setTicketQuantity] = useState(2);
-  const [zoomLevel, setZoomLevel] = useState(1.5);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [activeSection, setActiveSection] = useState(null);
-  const [hoveredSeat, setHoveredSeat] = useState(null);
-  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [backendSeats, setBackendSeats] = useState([]);
-  const transformRef = useRef(null);
-  const containerRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -184,72 +178,6 @@ const AmphitheaterTickets = () => {
     });
   }, [ticketQuantity]);
 
-  const clearSectionSelection = useCallback(() => {
-    setActiveSection(null);
-    if (transformRef.current) {
-      transformRef.current.resetTransform();
-    }
-  }, []);
-
-  // Handle section click - zoom to section
-  const handleSectionClick = useCallback((sectionId) => {
-    const section = sectionsConfig.find(s => s.id === sectionId);
-    if (!section) return;
-    
-    if (activeSection === sectionId) {
-      clearSectionSelection();
-    } else {
-      setActiveSection(sectionId);
-      if (transformRef.current && section.startAngle !== undefined) {
-        const midAngle = ((section.startAngle + section.endAngle) / 2 - 90) * (Math.PI / 180);
-        let radius;
-        if (section.tier === 'circle') radius = 160;
-        else if (section.tier === 'orchestra') radius = 280;
-        else radius = 450;
-        
-        const centerX = 500 + radius * Math.cos(midAngle);
-        const centerY = 500 + radius * Math.sin(midAngle);
-        
-        transformRef.current.setTransform(
-          -centerX * 2.5 + (isMobile ? 200 : 400),
-          -centerY * 2.5 + 300,
-          2.8
-        );
-      }
-    }
-  }, [activeSection, sectionsConfig, clearSectionSelection, isMobile]);
-
-  // Handle seat hover (desktop only)
-  const handleSeatHover = useCallback((seat, e) => {
-    if (isMobile) return;
-    setHoveredSeat(seat);
-    if (containerRef.current && e) {
-      const rect = containerRef.current.getBoundingClientRect();
-      setTooltipPos({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      });
-    }
-  }, [isMobile]);
-
-  // Zoom controls
-  const handleZoomIn = () => {
-    if (transformRef.current) {
-      transformRef.current.zoomIn(0.5);
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (transformRef.current) {
-      transformRef.current.zoomOut(0.5);
-    }
-  };
-
-  const handleResetView = () => {
-    if (transformRef.current) {
-      transformRef.current.resetTransform();
-    }
-  };
 
   // Add to cart with seat hold
   const handleAddToCart = async () => {
@@ -328,47 +256,6 @@ const AmphitheaterTickets = () => {
     }
   };
 
-  // Generate section paths for background
-  const generateSectionPath = useCallback((section) => {
-    const centerX = 500;
-    const centerY = 500;
-    
-    if (section.tier === 'pit') {
-      const pitWidth = 120;
-      const pitHeight = 40;
-      const pitX = centerX - pitWidth / 2;
-      const pitY = centerY - 80;
-      return `M ${pitX} ${pitY} L ${pitX + pitWidth} ${pitY} L ${pitX + pitWidth} ${pitY + pitHeight} L ${pitX} ${pitY + pitHeight} Z`;
-    }
-    
-    let innerRadius, outerRadius;
-    if (section.tier === 'circle') {
-      innerRadius = 140;
-      outerRadius = 140 + (section.rows * 10);
-    } else if (section.tier === 'orchestra') {
-      innerRadius = 200;
-      outerRadius = 200 + (section.rows * 8);
-    } else {
-      innerRadius = 380;
-      outerRadius = 380 + (section.rows * 7);
-    }
-    
-    const startAngleRad = (section.startAngle - 90) * (Math.PI / 180);
-    const endAngleRad = (section.endAngle - 90) * (Math.PI / 180);
-    
-    const x1 = centerX + innerRadius * Math.cos(startAngleRad);
-    const y1 = centerY + innerRadius * Math.sin(startAngleRad);
-    const x2 = centerX + outerRadius * Math.cos(startAngleRad);
-    const y2 = centerY + outerRadius * Math.sin(startAngleRad);
-    const x3 = centerX + outerRadius * Math.cos(endAngleRad);
-    const y3 = centerY + outerRadius * Math.sin(endAngleRad);
-    const x4 = centerX + innerRadius * Math.cos(endAngleRad);
-    const y4 = centerY + innerRadius * Math.sin(endAngleRad);
-    
-    const largeArc = Math.abs(section.endAngle - section.startAngle) > 180 ? 1 : 0;
-    
-    return `M ${x1} ${y1} L ${x2} ${y2} A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${x3} ${y3} L ${x4} ${y4} A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${x1} ${y1} Z`;
-  }, []);
 
   // Calculate total
   const totalPrice = selectedSeats.reduce((sum, s) => sum + s.price, 0);
@@ -438,159 +325,13 @@ const AmphitheaterTickets = () => {
               </div>
             </div>
 
-            {/* Stadium Seating Map */}
-            <div className="sg-seating-wrapper" ref={containerRef}>
-              <TransformWrapper
-                ref={transformRef}
-                initialScale={isMobile ? 1.2 : 1.5}
-                minScale={0.8}
-                maxScale={4}
-                centerOnInit={true}
-                wheel={{ step: 0.3, smoothStep: 0.01 }}
-                velocityAnimation={{ sensitivity: 0.8, animationTime: 200 }}
-                onTransformed={(ref) => setZoomLevel(ref.state.scale)}
-                limitToBounds={false}
-                centerZoomedOut={true}
-              >
-                <TransformComponent wrapperClass="sg-transform-wrapper" contentClass="sg-transform-content">
-                  <svg 
-                    viewBox="0 0 1000 1100" 
-                    className="sg-stadium-svg"
-                    preserveAspectRatio="xMidYMid meet"
-                  >
-                    {/* Background */}
-                    <defs>
-                      <radialGradient id="stadiumBg" cx="50%" cy="45%" r="70%">
-                        <stop offset="0%" stopColor="#1e293b" />
-                        <stop offset="100%" stopColor="#0f172a" />
-                      </radialGradient>
-                    </defs>
-                    <rect x="0" y="0" width="1000" height="1100" fill="url(#stadiumBg)" />
-                    
-                    {/* Stage */}
-                    <rect x="380" y="350" width="240" height="60" fill="#1e1e2e" stroke="#444" strokeWidth="3" rx="5" />
-                    <text x="500" y="385" textAnchor="middle" fill="#888" fontSize="20" fontWeight="bold">STAGE</text>
-                    
-                    {/* Section Backgrounds - Clickable on both desktop and mobile */}
-                    {sectionsConfig.map(section => {
-                      const isActive = activeSection === section.id;
-                      return (
-                        <path
-                          key={`bg-${section.id}`}
-                          d={generateSectionPath(section)}
-                          fill={isActive ? `${section.color}66` : `${section.color}33`}
-                          stroke={isActive ? '#fff' : section.color}
-                          strokeWidth={isActive ? 4 : 2}
-                          opacity={activeSection && !isActive ? 0.25 : 0.8}
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => handleSectionClick(section.id)}
-                        />
-                      );
-                    })}
-                    
-                    {/* Individual Seats - Only show for active section or at high zoom */}
-                    {(activeSection || zoomLevel > 2.0) && allSeats.map(seat => {
-                      const isSelected = selectedSeats.find(s => s.id === seat.id);
-                      const isHovered = hoveredSeat?.id === seat.id;
-                      
-                      // Seat size based on zoom level
-                      let seatSize = 4;
-                      if (zoomLevel > 2.5) seatSize = 6;
-                      else if (zoomLevel > 1.8) seatSize = 5;
-                      
-                      // Only show seats from active section
-                      const showSeat = !activeSection || seat.sectionId === activeSection;
-                      if (!showSeat) return null;
-                      
-                      // Skip rendering if too far from center at low zoom
-                      if (!activeSection && zoomLevel < 2.5) {
-                        const dx = seat.x - 500;
-                        const dy = seat.y - 450;
-                        const dist = Math.sqrt(dx*dx + dy*dy);
-                        if (dist > 300) return null;
-                      }
-                      
-                      return (
-                        <circle
-                          key={seat.id}
-                          cx={seat.x}
-                          cy={seat.y}
-                          r={isHovered && !isMobile ? seatSize + 1 : seatSize}
-                          fill={
-                            !seat.available ? '#4a4a5a' :
-                            isSelected ? '#00d4aa' :
-                            isHovered ? '#fff' :
-                            seat.color
-                          }
-                          stroke={isSelected ? '#fff' : isHovered ? '#fff' : 'rgba(0,0,0,0.3)'}
-                          strokeWidth={isSelected ? 2 : isHovered ? 1.5 : 0.5}
-                          className="sg-seat"
-                          style={{ 
-                            cursor: seat.available && showSeat ? 'pointer' : 'not-allowed',
-                            filter: isSelected ? 'drop-shadow(0 0 8px #00d4aa)' : isHovered ? 'drop-shadow(0 0 4px #fff)' : 'none',
-                            opacity: showSeat ? 1 : 0.2,
-                            pointerEvents: showSeat ? 'auto' : 'none'
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (showSeat) handleSeatClick(seat);
-                          }}
-                          onMouseEnter={(e) => handleSeatHover(seat, e)}
-                          onMouseLeave={() => setHoveredSeat(null)}
-                        />
-                      );
-                    })}
-                  </svg>
-                </TransformComponent>
-              </TransformWrapper>
-
-              {/* Close zoomed section */}
-              {activeSection && (
-                <button
-                  className="sg-close-section"
-                  onClick={clearSectionSelection}
-                  aria-label="Exit section view"
-                >
-                  ×
-                </button>
-              )}
-
-              {/* Zoom Controls */}
-              <div className="sg-zoom-controls">
-                <button onClick={handleZoomIn} title="Zoom In">+</button>
-                <span className="sg-zoom-level">{Math.round(zoomLevel * 100)}%</span>
-                <button onClick={handleZoomOut} title="Zoom Out">−</button>
-                <button onClick={handleResetView} title="Reset" className="sg-reset-btn">↺</button>
-              </div>
-
-              {/* Section Indicator - shows when a section is selected */}
-              {activeSection && (
-                <div className="sg-section-bar">
-                  <span>{sectionsConfig.find(s => s.id === activeSection)?.name} - ${sectionsConfig.find(s => s.id === activeSection)?.price}</span>
-                  <button onClick={clearSectionSelection}>Show All Sections</button>
-                </div>
-              )}
-
-              {/* Hint - shows when no section selected */}
-              {!activeSection && (
-                <div className="sg-section-hint">
-                  Click a section to zoom in
-                </div>
-              )}
-
-              {/* Desktop Tooltip - Small & Clean */}
-              {!isMobile && hoveredSeat && (
-                <div 
-                  className="sg-mini-tooltip"
-                  style={{
-                    left: tooltipPos.x,
-                    top: tooltipPos.y - 45
-                  }}
-                >
-                  <span className="sg-mini-price">${hoveredSeat.price}</span>
-                </div>
-              )}
-            </div>
+            {/* Canvas-based Seating Map with GPU rendering */}
+            <AmphitheaterCanvas
+              onSeatSelect={handleSeatClick}
+              selectedSeats={selectedSeats}
+              unavailableSeats={allSeats.filter(s => !s.available).map(s => s.id)}
+              ticketQuantity={ticketQuantity}
+            />
 
             {/* Legend */}
             <div className="sg-legend">
