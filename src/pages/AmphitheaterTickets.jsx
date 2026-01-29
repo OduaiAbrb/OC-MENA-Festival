@@ -11,7 +11,7 @@ const AmphitheaterTickets = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedDay, setSelectedDay] = useState('both'); // 'saturday', 'sunday', 'both'
   const [ticketQuantity, setTicketQuantity] = useState(2);
-  const [zoomLevel, setZoomLevel] = useState(1.5);
+  const [zoomLevel, setZoomLevel] = useState(2.0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [activeSection, setActiveSection] = useState(null);
   const [hoveredSeat, setHoveredSeat] = useState(null);
@@ -65,9 +65,11 @@ const AmphitheaterTickets = () => {
         const colSpacing = 7;
         const rowSpacing = 7;
         
-        for (let i = 0; i < section.capacity; i++) {
-          const col = i % 18;
-          const row = Math.floor(i / 18);
+        // Reduce pit seats for performance
+        const pitSeats = Math.min(100, section.capacity);
+        for (let i = 0; i < pitSeats; i++) {
+          const col = i % 10;
+          const row = Math.floor(i / 10);
           seats.push({
             id: `pit-${i + 1}`,
             sectionId: section.id,
@@ -89,11 +91,13 @@ const AmphitheaterTickets = () => {
         const baseRadius = 120;
         const rowSpacing = 8;
         
-        for (let row = 0; row < section.rows; row++) {
+        // Reduce circle rows for performance
+        const maxRows = Math.min(6, section.rows);
+        for (let row = 0; row < maxRows; row++) {
           const radius = baseRadius + (row * rowSpacing);
           const rowLetter = String.fromCharCode(65 + row);
           const angleRange = section.endAngle - section.startAngle;
-          const seatsInRow = section.seatsPerRow + Math.floor(row * 0.4);
+          const seatsInRow = Math.floor((section.seatsPerRow + Math.floor(row * 0.4)) * 0.6);
           
           for (let seatNum = 0; seatNum < seatsInRow; seatNum++) {
             const angleOffset = seatsInRow > 1 ? (seatNum / (seatsInRow - 1)) * angleRange : angleRange / 2;
@@ -124,11 +128,13 @@ const AmphitheaterTickets = () => {
         
         const rowSpacing = section.tier === 'front' ? 10 : section.tier === 'mid' ? 9 : 8;
         
-        for (let row = 0; row < section.rows; row++) {
+        // Reduce section rows for performance
+        const maxRows = Math.min(15, section.rows);
+        for (let row = 0; row < maxRows; row++) {
           const radius = baseRadius + (row * rowSpacing);
           const rowLetter = String.fromCharCode(65 + row);
           const angleRange = section.endAngle - section.startAngle;
-          const seatsInRow = section.seatsPerRow + Math.floor(row * 0.3);
+          const seatsInRow = Math.floor((section.seatsPerRow + Math.floor(row * 0.3)) * 0.5);
           
           for (let seatNum = 0; seatNum < seatsInRow; seatNum++) {
             const angleOffset = seatsInRow > 1 ? (seatNum / (seatsInRow - 1)) * angleRange : angleRange / 2;
@@ -382,11 +388,12 @@ const AmphitheaterTickets = () => {
             <div className="sg-seating-wrapper" ref={containerRef}>
               <TransformWrapper
                 ref={transformRef}
-                initialScale={1.5}
-                minScale={0.8}
+                initialScale={2.0}
+                minScale={1.2}
                 maxScale={4}
                 centerOnInit={true}
-                wheel={{ step: 0.2 }}
+                wheel={{ step: 0.3, smoothStep: 0.01 }}
+                velocityAnimation={{ sensitivity: 0.8, animationTime: 200 }}
                 onTransformed={(ref) => setZoomLevel(ref.state.scale)}
                 limitToBounds={false}
                 centerZoomedOut={true}
@@ -427,8 +434,8 @@ const AmphitheaterTickets = () => {
                       );
                     })}
                     
-                    {/* Individual Seats - Progressive detail based on zoom */}
-                    {zoomLevel > 0.8 && allSeats.map(seat => {
+                    {/* Individual Seats - Only show for active section or at high zoom */}
+                    {(activeSection || zoomLevel > 2.0) && allSeats.map(seat => {
                       const isSelected = selectedSeats.find(s => s.id === seat.id);
                       const isHovered = hoveredSeat?.id === seat.id;
                       
@@ -437,9 +444,17 @@ const AmphitheaterTickets = () => {
                       if (zoomLevel > 2.5) seatSize = 6;
                       else if (zoomLevel > 1.8) seatSize = 5;
                       
-                      // Only show seats from active section or all if none selected
+                      // Only show seats from active section
                       const showSeat = !activeSection || seat.sectionId === activeSection;
                       if (!showSeat) return null;
+                      
+                      // Skip rendering if too far from center at low zoom
+                      if (!activeSection && zoomLevel < 2.5) {
+                        const dx = seat.x - 500;
+                        const dy = seat.y - 450;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist > 300) return null;
+                      }
                       
                       return (
                         <circle
