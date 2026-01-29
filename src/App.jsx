@@ -32,6 +32,7 @@ import BazaarVendor from './pages/BazaarVendor';
 import FoodVendor from './pages/FoodVendor';
 import Scanner from './pages/Scanner';
 import TicketSuccess from './pages/TicketSuccess';
+import OrderSuccess from './pages/OrderSuccess';
 import AdminDashboard from './pages/AdminDashboard';
 import VendorDashboard from './pages/VendorDashboard';
 import CoordinatorDashboard from './pages/CoordinatorDashboard';
@@ -129,6 +130,7 @@ const AppWithModal = () => {
             <Route path="/food-vendor" element={<FoodVendor />} />
             <Route path="/scanner" element={<Scanner />} />
             <Route path="/success" element={<TicketSuccess />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/vendor-dashboard" element={<VendorDashboard />} />
             <Route path="/coordinator" element={<CoordinatorDashboard />} />
