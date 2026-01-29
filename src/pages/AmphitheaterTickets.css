@@ -89,6 +89,11 @@
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 
+.sg-quantity-bar.mobile-left {
+  justify-content: flex-start;
+  padding-left: 16px;
+}
+
 .sg-quantity-label {
   font-size: 16px;
   font-weight: 600;

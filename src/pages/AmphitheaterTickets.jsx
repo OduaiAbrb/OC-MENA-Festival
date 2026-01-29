@@ -9,9 +9,9 @@ import './AmphitheaterTickets.css';
 
 const AmphitheaterTickets = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const [selectedDay, setSelectedDay] = useState('both'); // 'saturday', 'sunday', 'both'
+  const [selectedDay, setSelectedDay] = useState('both');
   const [ticketQuantity, setTicketQuantity] = useState(2);
-  const [zoomLevel, setZoomLevel] = useState(2.0);
+  const [zoomLevel, setZoomLevel] = useState(1.5);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [activeSection, setActiveSection] = useState(null);
   const [hoveredSeat, setHoveredSeat] = useState(null);
@@ -19,122 +19,96 @@ const AmphitheaterTickets = () => {
   const transformRef = useRef(null);
   const containerRef = useRef(null);
 
-  // Check for mobile on resize
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Pacific Amphitheatre configuration - ~8000 seats
-  // Pit (standing), Circle (premium seating), Sections 1-8 (main seating)
+  // Pacific Amphitheatre - Based on actual venue layout with ~8000 seats
+  // Sections: Pit (X1), Circle (X2,X3,X4), Orchestra (1,2,3), Terrace (4,5,6,7,8)
   const sectionsConfig = useMemo(() => [
-    // PIT - Standing room only (most expensive)
-    { id: 'pit', name: 'Pit', price: 299, color: '#dc2626', tier: 'pit', rows: 1, seatsPerRow: 200, capacity: 200 },
+    // PIT X1 - Standing room (Green in image)
+    { id: 'pit', name: 'Pit - X1', price: 299, color: '#10b981', tier: 'pit', rows: 1, seatsPerRow: 150, capacity: 150, type: 'standing' },
     
-    // CIRCLE - Premium seating around pit (second most expensive)
-    { id: 'circle', name: 'Circle', price: 249, color: '#7c3aed', tier: 'circle', startAngle: -60, endAngle: 60, rows: 8, seatsPerRow: 35 },
+    // CIRCLE - X2, X3, X4 (Blue accessible sections in image)
+    { id: 'circle-x2', name: 'Circle - X2', price: 249, color: '#3b82f6', tier: 'circle', startAngle: -55, endAngle: -20, rows: 4, seatsPerRow: 30, accessible: true },
+    { id: 'circle-x3', name: 'Circle - X3', price: 249, color: '#3b82f6', tier: 'circle', startAngle: -15, endAngle: 15, rows: 4, seatsPerRow: 25, accessible: true },
+    { id: 'circle-x4', name: 'Circle - X4', price: 249, color: '#3b82f6', tier: 'circle', startAngle: 20, endAngle: 55, rows: 4, seatsPerRow: 30, accessible: true },
     
-    // FRONT SECTIONS - Enlarged sections 1, 2, 3 (premium)
-    { id: 1, name: 'Section 1', price: 199, color: '#c2703a', tier: 'front', startAngle: -50, endAngle: -18, rows: 25, seatsPerRow: 28 },
-    { id: 2, name: 'Section 2', price: 229, color: '#1a6b8a', tier: 'front', startAngle: -15, endAngle: 15, rows: 25, seatsPerRow: 32 },
-    { id: 3, name: 'Section 3', price: 199, color: '#c2703a', tier: 'front', startAngle: 18, endAngle: 50, rows: 25, seatsPerRow: 28 },
+    // ORCHESTRA - Sections 1, 2, 3 (Dark red/brown in image)
+    { id: 'orch-1', name: 'Orchestra - 1', price: 199, color: '#991b1b', tier: 'orchestra', startAngle: -70, endAngle: -30, rows: 30, seatsPerRow: 35 },
+    { id: 'orch-2', name: 'Orchestra - 2', price: 229, color: '#7f1d1d', tier: 'orchestra', startAngle: -25, endAngle: 25, rows: 32, seatsPerRow: 40 },
+    { id: 'orch-3', name: 'Orchestra - 3', price: 199, color: '#991b1b', tier: 'orchestra', startAngle: 30, endAngle: 70, rows: 30, seatsPerRow: 35 },
     
-    // MID SECTIONS - 4, 5, 7, 8
-    { id: 4, name: 'Section 4', price: 149, color: '#d4913a', tier: 'mid', startAngle: 53, endAngle: 75, rows: 30, seatsPerRow: 32 },
-    { id: 5, name: 'Section 5', price: 139, color: '#d4913a', tier: 'mid', startAngle: 25, endAngle: 50, rows: 30, seatsPerRow: 35 },
-    { id: 7, name: 'Section 7', price: 139, color: '#d4913a', tier: 'mid', startAngle: -50, endAngle: -25, rows: 30, seatsPerRow: 35 },
-    { id: 8, name: 'Section 8', price: 149, color: '#d4913a', tier: 'mid', startAngle: -75, endAngle: -53, rows: 30, seatsPerRow: 32 },
-    
-    // BACK SECTION - 6 (largest, most affordable)
-    { id: 6, name: 'Section 6', price: 99, color: '#16a34a', tier: 'back', startAngle: -22, endAngle: 22, rows: 35, seatsPerRow: 45 },
+    // TERRACE - Sections 1, 4, 5, 6, 7, 8 (Orange/tan in image)
+    { id: 'terr-1', name: 'Terrace - 1', price: 149, color: '#d97706', tier: 'terrace', startAngle: -85, endAngle: -55, rows: 35, seatsPerRow: 32 },
+    { id: 'terr-4', name: 'Terrace - 4', price: 139, color: '#d97706', tier: 'terrace', startAngle: 55, endAngle: 85, rows: 35, seatsPerRow: 32 },
+    { id: 'terr-5', name: 'Terrace - 5', price: 139, color: '#d97706', tier: 'terrace', startAngle: 30, endAngle: 55, rows: 35, seatsPerRow: 30 },
+    { id: 'terr-6', name: 'Terrace - 6', price: 99, color: '#d97706', tier: 'terrace', startAngle: -25, endAngle: 25, rows: 40, seatsPerRow: 45 },
+    { id: 'terr-7', name: 'Terrace - 7', price: 139, color: '#d97706', tier: 'terrace', startAngle: -55, endAngle: -30, rows: 35, seatsPerRow: 30 },
+    { id: 'terr-8', name: 'Terrace - 8', price: 149, color: '#d97706', tier: 'terrace', startAngle: -100, endAngle: -85, rows: 35, seatsPerRow: 28 },
   ], []);
 
-  // Generate seats for all sections - ~8000 total seats
+  // Generate ~8000 seats matching amphitheater layout
   const allSeats = useMemo(() => {
     const seats = [];
     const centerX = 500;
-    const centerY = 450;
+    const centerY = 500;
     
     sectionsConfig.forEach(section => {
-      // PIT - Standing room (grid layout)
+      // PIT - Standing room (grid layout in front of stage)
       if (section.tier === 'pit') {
-        const pitWidth = 100;
+        const pitWidth = 120;
+        const pitHeight = 40;
         const pitX = centerX - pitWidth / 2;
-        const pitY = centerY + 20;
-        const colSpacing = 7;
-        const rowSpacing = 7;
+        const pitY = centerY - 80;
+        const cols = 15;
+        const rows = 10;
+        const colSpacing = pitWidth / cols;
+        const rowSpacing = pitHeight / rows;
         
-        // Reduce pit seats for performance
-        const pitSeats = Math.min(100, section.capacity);
-        for (let i = 0; i < pitSeats; i++) {
-          const col = i % 10;
-          const row = Math.floor(i / 10);
-          seats.push({
-            id: `pit-${i + 1}`,
-            sectionId: section.id,
-            sectionName: section.name,
-            row: 'GA',
-            number: i + 1,
-            x: pitX + (col * colSpacing),
-            y: pitY + (row * rowSpacing),
-            price: section.price,
-            color: section.color,
-            available: true,
-            tier: section.tier,
-            isPit: true
-          });
-        }
-      }
-      // CIRCLE - Curved seating around pit
-      else if (section.tier === 'circle') {
-        const baseRadius = 120;
-        const rowSpacing = 8;
-        
-        // Reduce circle rows for performance
-        const maxRows = Math.min(6, section.rows);
-        for (let row = 0; row < maxRows; row++) {
-          const radius = baseRadius + (row * rowSpacing);
-          const rowLetter = String.fromCharCode(65 + row);
-          const angleRange = section.endAngle - section.startAngle;
-          const seatsInRow = Math.floor((section.seatsPerRow + Math.floor(row * 0.4)) * 0.6);
-          
-          for (let seatNum = 0; seatNum < seatsInRow; seatNum++) {
-            const angleOffset = seatsInRow > 1 ? (seatNum / (seatsInRow - 1)) * angleRange : angleRange / 2;
-            const angle = (section.startAngle + angleOffset - 90) * (Math.PI / 180);
-            
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
             seats.push({
-              id: `circle-${rowLetter}-${seatNum + 1}`,
+              id: `${section.id}-${r}-${c}`,
               sectionId: section.id,
               sectionName: section.name,
-              row: rowLetter,
-              number: seatNum + 1,
-              x: centerX + radius * Math.cos(angle),
-              y: centerY + radius * Math.sin(angle),
+              row: 'GA',
+              number: r * cols + c + 1,
+              x: pitX + (c * colSpacing),
+              y: pitY + (r * rowSpacing),
               price: section.price,
               color: section.color,
-              available: true,
-              tier: section.tier
+              available: Math.random() > 0.1,
+              tier: section.tier,
+              isPit: true
             });
           }
         }
       }
-      // REGULAR SECTIONS
+      // CIRCLE & ORCHESTRA & TERRACE - Curved sections
       else {
-        let baseRadius;
-        if (section.tier === 'front') baseRadius = 190;
-        else if (section.tier === 'mid') baseRadius = 360;
-        else baseRadius = 520;
+        let baseRadius, rowSpacing;
         
-        const rowSpacing = section.tier === 'front' ? 10 : section.tier === 'mid' ? 9 : 8;
+        if (section.tier === 'circle') {
+          baseRadius = 140;
+          rowSpacing = 10;
+        } else if (section.tier === 'orchestra') {
+          baseRadius = 200;
+          rowSpacing = 8;
+        } else { // terrace
+          baseRadius = 380;
+          rowSpacing = 7;
+        }
         
-        // Reduce section rows for performance
-        const maxRows = Math.min(15, section.rows);
-        for (let row = 0; row < maxRows; row++) {
+        for (let row = 0; row < section.rows; row++) {
           const radius = baseRadius + (row * rowSpacing);
           const rowLetter = String.fromCharCode(65 + row);
           const angleRange = section.endAngle - section.startAngle;
-          const seatsInRow = Math.floor((section.seatsPerRow + Math.floor(row * 0.3)) * 0.5);
+          
+          // More seats in outer rows
+          const seatsInRow = Math.floor(section.seatsPerRow + (row * 0.5));
           
           for (let seatNum = 0; seatNum < seatsInRow; seatNum++) {
             const angleOffset = seatsInRow > 1 ? (seatNum / (seatsInRow - 1)) * angleRange : angleRange / 2;
@@ -150,8 +124,9 @@ const AmphitheaterTickets = () => {
               y: centerY + radius * Math.sin(angle),
               price: section.price,
               color: section.color,
-              available: true,
-              tier: section.tier
+              available: Math.random() > 0.15,
+              tier: section.tier,
+              accessible: section.accessible || false
             });
           }
         }
@@ -185,33 +160,33 @@ const AmphitheaterTickets = () => {
     }
   }, []);
 
-  // Handle section click - zoom to section on both desktop and mobile
+  // Handle section click - zoom to section
   const handleSectionClick = useCallback((sectionId) => {
     const section = sectionsConfig.find(s => s.id === sectionId);
     if (!section) return;
     
-    // Toggle section selection
     if (activeSection === sectionId) {
       clearSectionSelection();
     } else {
       setActiveSection(sectionId);
-      // Calculate center of section to zoom to
-      if (transformRef.current) {
+      if (transformRef.current && section.startAngle !== undefined) {
         const midAngle = ((section.startAngle + section.endAngle) / 2 - 90) * (Math.PI / 180);
-        const isFront = section.tier === 'front';
-        const radius = isFront ? 180 : 350;
-        const centerX = 500 + radius * Math.cos(midAngle);
-        const centerY = 520 + radius * Math.sin(midAngle);
+        let radius;
+        if (section.tier === 'circle') radius = 160;
+        else if (section.tier === 'orchestra') radius = 280;
+        else radius = 450;
         
-        // Zoom to section
+        const centerX = 500 + radius * Math.cos(midAngle);
+        const centerY = 500 + radius * Math.sin(midAngle);
+        
         transformRef.current.setTransform(
-          -centerX * 1.8 + 400,
-          -centerY * 1.8 + 250,
-          2.2
+          -centerX * 2.5 + (isMobile ? 200 : 400),
+          -centerY * 2.5 + 300,
+          2.8
         );
       }
     }
-  }, [activeSection, sectionsConfig, clearSectionSelection]);
+  }, [activeSection, sectionsConfig, clearSectionSelection, isMobile]);
 
   // Handle seat hover (desktop only)
   const handleSeatHover = useCallback((seat, e) => {
@@ -296,10 +271,27 @@ const AmphitheaterTickets = () => {
   // Generate section paths for background
   const generateSectionPath = useCallback((section) => {
     const centerX = 500;
-    const centerY = 520;
-    const isFront = section.tier === 'front';
-    const innerRadius = isFront ? 115 : 255;
-    const outerRadius = isFront ? 115 + (section.rows * 28) + 15 : 255 + (section.rows * 26) + 15;
+    const centerY = 500;
+    
+    if (section.tier === 'pit') {
+      const pitWidth = 120;
+      const pitHeight = 40;
+      const pitX = centerX - pitWidth / 2;
+      const pitY = centerY - 80;
+      return `M ${pitX} ${pitY} L ${pitX + pitWidth} ${pitY} L ${pitX + pitWidth} ${pitY + pitHeight} L ${pitX} ${pitY + pitHeight} Z`;
+    }
+    
+    let innerRadius, outerRadius;
+    if (section.tier === 'circle') {
+      innerRadius = 140;
+      outerRadius = 140 + (section.rows * 10);
+    } else if (section.tier === 'orchestra') {
+      innerRadius = 200;
+      outerRadius = 200 + (section.rows * 8);
+    } else {
+      innerRadius = 380;
+      outerRadius = 380 + (section.rows * 7);
+    }
     
     const startAngleRad = (section.startAngle - 90) * (Math.PI / 180);
     const endAngleRad = (section.endAngle - 90) * (Math.PI / 180);
@@ -313,7 +305,9 @@ const AmphitheaterTickets = () => {
     const x4 = centerX + innerRadius * Math.cos(endAngleRad);
     const y4 = centerY + innerRadius * Math.sin(endAngleRad);
     
-    return `M ${x1} ${y1} L ${x2} ${y2} A ${outerRadius} ${outerRadius} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${innerRadius} ${innerRadius} 0 0 0 ${x1} ${y1} Z`;
+    const largeArc = Math.abs(section.endAngle - section.startAngle) > 180 ? 1 : 0;
+    
+    return `M ${x1} ${y1} L ${x2} ${y2} A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${x3} ${y3} L ${x4} ${y4} A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${x1} ${y1} Z`;
   }, []);
 
   // Calculate total
@@ -362,8 +356,8 @@ const AmphitheaterTickets = () => {
               </div>
             </div>
 
-            {/* Ticket Quantity - Plus/Minus Style */}
-            <div className="sg-quantity-bar">
+            {/* Ticket Quantity - Mobile Left-Aligned */}
+            <div className={`sg-quantity-bar ${isMobile ? 'mobile-left' : ''}`}>
               <span className="sg-quantity-label">How many tickets?</span>
               <div className="sg-quantity-control">
                 <button 
@@ -388,8 +382,8 @@ const AmphitheaterTickets = () => {
             <div className="sg-seating-wrapper" ref={containerRef}>
               <TransformWrapper
                 ref={transformRef}
-                initialScale={2.0}
-                minScale={1.2}
+                initialScale={isMobile ? 1.2 : 1.5}
+                minScale={0.8}
                 maxScale={4}
                 centerOnInit={true}
                 wheel={{ step: 0.3, smoothStep: 0.01 }}
@@ -400,22 +394,22 @@ const AmphitheaterTickets = () => {
               >
                 <TransformComponent wrapperClass="sg-transform-wrapper" contentClass="sg-transform-content">
                   <svg 
-                    viewBox="-100 -50 1200 1100" 
+                    viewBox="0 0 1000 1100" 
                     className="sg-stadium-svg"
                     preserveAspectRatio="xMidYMid meet"
                   >
                     {/* Background */}
                     <defs>
-                      <radialGradient id="stadiumBg" cx="50%" cy="90%" r="80%">
-                        <stop offset="0%" stopColor="#2a2a4a" />
-                        <stop offset="100%" stopColor="#1a1a2e" />
+                      <radialGradient id="stadiumBg" cx="50%" cy="45%" r="70%">
+                        <stop offset="0%" stopColor="#1e293b" />
+                        <stop offset="100%" stopColor="#0f172a" />
                       </radialGradient>
                     </defs>
-                    <rect x="-100" y="-50" width="1200" height="1100" fill="url(#stadiumBg)" />
+                    <rect x="0" y="0" width="1000" height="1100" fill="url(#stadiumBg)" />
                     
                     {/* Stage */}
-                    <ellipse cx="500" cy="450" rx="120" ry="30" fill="#3a3a5a" stroke="#555" strokeWidth="2" />
-                    <text x="500" y="455" textAnchor="middle" fill="#aaa" fontSize="16" fontWeight="bold">STAGE</text>
+                    <rect x="380" y="350" width="240" height="60" fill="#1e1e2e" stroke="#444" strokeWidth="3" rx="5" />
+                    <text x="500" y="385" textAnchor="middle" fill="#888" fontSize="20" fontWeight="bold">STAGE</text>
                     
                     {/* Section Backgrounds - Clickable on both desktop and mobile */}
                     {sectionsConfig.map(section => {
@@ -541,16 +535,20 @@ const AmphitheaterTickets = () => {
             {/* Legend */}
             <div className="sg-legend">
               <div className="sg-legend-item">
-                <span className="sg-legend-dot" style={{ background: '#c2703a' }}></span>
-                <span>Front $179</span>
+                <span className="sg-legend-dot" style={{ background: '#10b981' }}></span>
+                <span>Pit $299</span>
               </div>
               <div className="sg-legend-item">
-                <span className="sg-legend-dot" style={{ background: '#1a6b8a' }}></span>
-                <span>Premium $199</span>
+                <span className="sg-legend-dot" style={{ background: '#3b82f6' }}></span>
+                <span>Circle $249</span>
               </div>
               <div className="sg-legend-item">
-                <span className="sg-legend-dot" style={{ background: '#d4913a' }}></span>
-                <span>Upper $99-129</span>
+                <span className="sg-legend-dot" style={{ background: '#991b1b' }}></span>
+                <span>Orchestra $199-229</span>
+              </div>
+              <div className="sg-legend-item">
+                <span className="sg-legend-dot" style={{ background: '#d97706' }}></span>
+                <span>Terrace $99-149</span>
               </div>
               <div className="sg-legend-item">
                 <span className="sg-legend-dot selected"></span>
