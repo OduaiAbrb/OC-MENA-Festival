@@ -38,7 +38,7 @@ import CoordinatorDashboard from './pages/CoordinatorDashboard';
 import CmsLogin from './pages/CmsLogin';
 import CmsDashboard from './pages/CmsDashboard';
 import GlobalTicketModal from './components/GlobalTicketModal';
-import AmphitheaterTickets from './pages/AmphitheaterTicketsNew';
+import AmphitheaterTickets from './pages/AmphitheaterTickets';
 import './App.css';
 
 const RouteChangeHandler = ({ setIsScanPage, setIsCmsPage }) => {
