@@ -148,10 +148,15 @@ def setup_amphitheater():
                 block, created = SeatBlock.objects.get_or_create(
                     section=section,
                     event_date=event_date,
+                    row_start='A',
+                    row_end='Z',
                     defaults={
+                        'seat_start': 1,
+                        'seat_end': 50,
                         'total_seats': section.capacity,
                         'available_seats': section.capacity,
                         'price_cents': section.base_price_cents,
+                        'is_active': True,
                     }
                 )
                 if created:
