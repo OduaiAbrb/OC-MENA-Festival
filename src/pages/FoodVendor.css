@@ -142,13 +142,12 @@
   display: flex;
   align-items: center;
   font-size: 13px;
-  font-weight: 400;
   color: #333333;
-  margin-bottom: 0;
   cursor: pointer;
-  line-height: 1.4;
   position: relative;
   padding-left: 30px;
+  user-select: none;
+  line-height: 1.5;
   min-height: 20px;
 }
 
@@ -168,7 +167,7 @@
   top: 0;
   width: 18px;
   height: 18px;
-  border: 2px solid #999999;
+  border: 2px solid #ddd;
   border-radius: 4px;
   background-color: white;
   transition: all 0.2s ease;
@@ -183,7 +182,7 @@
   content: '';
   position: absolute;
   left: 6px;
-  top: 3px;
+  top: 2px;
   width: 5px;
   height: 10px;
   border: solid white;
@@ -193,6 +192,62 @@
 
 .checkbox-group input[type="checkbox"]:focus + label:before {
   box-shadow: 0 0 0 3px rgba(169, 29, 58, 0.2);
+}
+
+/* ===== CHECKBOX LABEL (for terms acceptance) ===== */
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  font-size: 14px;
+  color: #333333;
+  cursor: pointer;
+  position: relative;
+  padding-left: 32px;
+  user-select: none;
+  line-height: 1.6;
+  margin: 12px 0;
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+  margin: 0;
+}
+
+.checkbox-custom {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+.checkbox-input:checked ~ .checkbox-custom {
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+.checkbox-input:checked ~ .checkbox-custom:after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-input:focus ~ .checkbox-custom {
+  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
 }
 
 /* ===== FORM TEXT ===== */
