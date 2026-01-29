@@ -459,7 +459,21 @@
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet: 2 columns */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .tickets-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .ticket-card {
+    min-height: 320px;
+  }
+}
+
+/* Mobile: 1 column */
 @media (max-width: 768px) {
   .hero-section {
     padding-top: 200px;
