@@ -1,42 +1,43 @@
 /**
- * Generate 8000+ amphitheater seats programmatically
+ * Generate amphitheater seats matching Pacific Amphitheatre layout
  * Sections: Pit (X1), Circle (X2-X4), Orchestra (1-3), Terrace (1,4-8)
+ * Based on exact reference image
  */
 
 const generateAmphitheaterSeats = () => {
   const seats = [];
   const centerX = 500;
-  const centerY = 500;
+  const centerY = 650; // Adjusted for proper stage positioning
   
-  // Section configurations matching venue layout
+  // Section configurations matching reference image exactly
   const sections = [
-    // PIT X1 - Standing room (150 spots in grid)
+    // PIT X1 - Green section at front (standing room)
     {
       id: 'pit-x1',
       name: 'Pit X1',
       type: 'standing',
       price: 299,
       tier: 'PIT',
-      rows: 10,
-      seatsPerRow: 15,
-      startX: centerX - 60,
-      startY: centerY - 80,
+      rows: 8,
+      seatsPerRow: 20,
+      startX: centerX - 80,
+      startY: centerY - 100,
       spacing: 8
     },
     
-    // CIRCLE - X2, X3, X4 (Premium accessible)
+    // CIRCLE - X2, X3, X4 (Blue accessible sections)
     {
       id: 'circle-x2',
       name: 'Circle X2',
       type: 'curved',
       price: 249,
       tier: 'CIRCLE',
-      rows: 4,
-      seatsPerRow: 20,
-      startAngle: -60,
-      endAngle: -25,
-      baseRadius: 140,
-      rowSpacing: 12,
+      rows: 3,
+      seatsPerRow: 22,
+      startAngle: -70,
+      endAngle: -30,
+      baseRadius: 120,
+      rowSpacing: 8,
       accessible: true
     },
     {
@@ -45,12 +46,12 @@ const generateAmphitheaterSeats = () => {
       type: 'curved',
       price: 249,
       tier: 'CIRCLE',
-      rows: 4,
-      seatsPerRow: 18,
-      startAngle: -18,
-      endAngle: 18,
-      baseRadius: 140,
-      rowSpacing: 12,
+      rows: 3,
+      seatsPerRow: 20,
+      startAngle: -22,
+      endAngle: 22,
+      baseRadius: 120,
+      rowSpacing: 8,
       accessible: true
     },
     {
@@ -59,28 +60,28 @@ const generateAmphitheaterSeats = () => {
       type: 'curved',
       price: 249,
       tier: 'CIRCLE',
-      rows: 4,
-      seatsPerRow: 20,
-      startAngle: 25,
-      endAngle: 60,
-      baseRadius: 140,
-      rowSpacing: 12,
+      rows: 3,
+      seatsPerRow: 22,
+      startAngle: 30,
+      endAngle: 70,
+      baseRadius: 120,
+      rowSpacing: 8,
       accessible: true
     },
     
-    // ORCHESTRA - Sections 1, 2, 3
+    // ORCHESTRA - Sections 1, 2, 3 (Dark red/brown)
     {
       id: 'orch-1',
       name: 'Orchestra 1',
       type: 'curved',
       price: 199,
       tier: 'ORCHESTRA',
-      rows: 25,
-      seatsPerRow: 28,
-      startAngle: -85,
-      endAngle: -55,
-      baseRadius: 200,
-      rowSpacing: 8
+      rows: 28,
+      seatsPerRow: 26,
+      startAngle: -90,
+      endAngle: -60,
+      baseRadius: 160,
+      rowSpacing: 6
     },
     {
       id: 'orch-2',
@@ -88,12 +89,12 @@ const generateAmphitheaterSeats = () => {
       type: 'curved',
       price: 229,
       tier: 'ORCHESTRA',
-      rows: 25,
-      seatsPerRow: 32,
-      startAngle: -25,
-      endAngle: 25,
-      baseRadius: 200,
-      rowSpacing: 8
+      rows: 30,
+      seatsPerRow: 35,
+      startAngle: -28,
+      endAngle: 28,
+      baseRadius: 160,
+      rowSpacing: 6
     },
     {
       id: 'orch-3',
@@ -101,66 +102,40 @@ const generateAmphitheaterSeats = () => {
       type: 'curved',
       price: 199,
       tier: 'ORCHESTRA',
-      rows: 25,
-      seatsPerRow: 28,
-      startAngle: 55,
-      endAngle: 85,
-      baseRadius: 200,
-      rowSpacing: 8
+      rows: 28,
+      seatsPerRow: 26,
+      startAngle: 60,
+      endAngle: 90,
+      baseRadius: 160,
+      rowSpacing: 6
     },
     
-    // TERRACE - Sections 1, 4, 5, 6, 7, 8
+    // TERRACE - Sections 1, 4, 5, 6, 7, 8 (Orange/tan)
+    {
+      id: 'terr-8',
+      name: 'Terrace 8',
+      type: 'curved',
+      price: 149,
+      tier: 'TERRACE',
+      rows: 32,
+      seatsPerRow: 24,
+      startAngle: -120,
+      endAngle: -95,
+      baseRadius: 340,
+      rowSpacing: 5.5
+    },
     {
       id: 'terr-1',
       name: 'Terrace 1',
       type: 'curved',
       price: 149,
       tier: 'TERRACE',
-      rows: 35,
-      seatsPerRow: 32,
-      startAngle: -85,
-      endAngle: -55,
-      baseRadius: 380,
-      rowSpacing: 7
-    },
-    {
-      id: 'terr-4',
-      name: 'Terrace 4',
-      type: 'curved',
-      price: 139,
-      tier: 'TERRACE',
-      rows: 35,
-      seatsPerRow: 32,
-      startAngle: 55,
-      endAngle: 85,
-      baseRadius: 380,
-      rowSpacing: 7
-    },
-    {
-      id: 'terr-5',
-      name: 'Terrace 5',
-      type: 'curved',
-      price: 139,
-      tier: 'TERRACE',
-      rows: 35,
-      seatsPerRow: 30,
-      startAngle: 30,
-      endAngle: 55,
-      baseRadius: 380,
-      rowSpacing: 7
-    },
-    {
-      id: 'terr-6',
-      name: 'Terrace 6',
-      type: 'curved',
-      price: 99,
-      tier: 'TERRACE',
-      rows: 40,
-      seatsPerRow: 45,
-      startAngle: -25,
-      endAngle: 25,
-      baseRadius: 380,
-      rowSpacing: 7
+      rows: 32,
+      seatsPerRow: 28,
+      startAngle: -95,
+      endAngle: -65,
+      baseRadius: 340,
+      rowSpacing: 5.5
     },
     {
       id: 'terr-7',
@@ -168,25 +143,51 @@ const generateAmphitheaterSeats = () => {
       type: 'curved',
       price: 139,
       tier: 'TERRACE',
-      rows: 35,
-      seatsPerRow: 30,
-      startAngle: -55,
-      endAngle: -30,
-      baseRadius: 380,
-      rowSpacing: 7
+      rows: 32,
+      seatsPerRow: 26,
+      startAngle: -65,
+      endAngle: -35,
+      baseRadius: 340,
+      rowSpacing: 5.5
     },
     {
-      id: 'terr-8',
-      name: 'Terrace 8',
+      id: 'terr-6',
+      name: 'Terrace 6',
       type: 'curved',
-      price: 149,
+      price: 99,
       tier: 'TERRACE',
-      rows: 35,
+      rows: 38,
+      seatsPerRow: 42,
+      startAngle: -32,
+      endAngle: 32,
+      baseRadius: 340,
+      rowSpacing: 5.5
+    },
+    {
+      id: 'terr-5',
+      name: 'Terrace 5',
+      type: 'curved',
+      price: 139,
+      tier: 'TERRACE',
+      rows: 32,
+      seatsPerRow: 26,
+      startAngle: 35,
+      endAngle: 65,
+      baseRadius: 340,
+      rowSpacing: 5.5
+    },
+    {
+      id: 'terr-4',
+      name: 'Terrace 4',
+      type: 'curved',
+      price: 139,
+      tier: 'TERRACE',
+      rows: 32,
       seatsPerRow: 28,
-      startAngle: -100,
-      endAngle: -85,
-      baseRadius: 380,
-      rowSpacing: 7
+      startAngle: 65,
+      endAngle: 95,
+      baseRadius: 340,
+      rowSpacing: 5.5
     }
   ];
   
