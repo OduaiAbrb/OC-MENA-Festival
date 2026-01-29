@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import AnnouncementBar from '../components/AnnouncementBar';
 import Footer from '../components/Footer';
 import SponsorsSection from '../components/SponsorsSection';
