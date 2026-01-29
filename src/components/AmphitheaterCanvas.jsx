@@ -15,9 +15,10 @@ const AmphitheaterCanvas = ({
   const stageRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 1000, height: 1000 });
   const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: 100, y: 50 }); // Center initial position
   const [hoveredSeat, setHoveredSeat] = useState(null);
   const [visibleSeats, setVisibleSeats] = useState([]);
+  const zoomTimeoutRef = useRef(null);
 
   // Viewport culling - only render seats in view
   const updateVisibleSeats = useCallback(() => {
@@ -65,7 +66,7 @@ const AmphitheaterCanvas = ({
   const handleWheel = (e) => {
     e.evt.preventDefault();
     
-    const scaleBy = 1.1;
+    const scaleBy = 1.05; // Smoother zoom
     const stage = stageRef.current;
     const oldScale = scale;
     const pointer = stage.getPointerPosition();
@@ -84,6 +85,12 @@ const AmphitheaterCanvas = ({
       x: pointer.x - mousePointTo.x * newScale,
       y: pointer.y - mousePointTo.y * newScale,
     });
+    
+    // Debounce viewport update for performance
+    if (zoomTimeoutRef.current) clearTimeout(zoomTimeoutRef.current);
+    zoomTimeoutRef.current = setTimeout(() => {
+      updateVisibleSeats();
+    }, 100);
   };
 
   const handleSeatClick = (seat) => {
@@ -131,12 +138,12 @@ const AmphitheaterCanvas = ({
         }}
       >
         <Layer>
-          {/* Stage */}
+          {/* Stage - moved back */}
           <Rect
             x={380}
-            y={350}
+            y={300}
             width={240}
-            height={60}
+            height={50}
             fill="#1e1e2e"
             stroke="#444"
             strokeWidth={3}
@@ -144,13 +151,46 @@ const AmphitheaterCanvas = ({
           />
           <Text
             x={500}
-            y={375}
+            y={318}
             text="STAGE"
-            fontSize={20}
+            fontSize={18}
             fill="#888"
             fontStyle="bold"
             align="center"
-            offsetX={30}
+            offsetX={27}
+          />
+          
+          {/* Section Labels */}
+          <Text x={500} y={420} text="PIT" fontSize={14} fill="#10b981" fontStyle="bold" align="center" offsetX={15} />
+          <Text x={350} y={460} text="Circle X2" fontSize={12} fill="#3b82f6" fontStyle="bold" />
+          <Text x={480} y={440} text="Circle X3" fontSize={12} fill="#3b82f6" fontStyle="bold" />
+          <Text x={580} y={460} text="Circle X4" fontSize={12} fill="#3b82f6" fontStyle="bold" />
+          <Text x={280} y={550} text="Orchestra 1" fontSize={12} fill="#991b1b" fontStyle="bold" />
+          <Text x={460} y={520} text="Orchestra 2" fontSize={12} fill="#991b1b" fontStyle="bold" />
+          <Text x={640} y={550} text="Orchestra 3" fontSize={12} fill="#991b1b" fontStyle="bold" />
+          <Text x={200} y={720} text="Terrace 1" fontSize={11} fill="#d97706" />
+          <Text x={450} y={680} text="Terrace 6" fontSize={11} fill="#d97706" />
+          <Text x={700} y={720} text="Terrace 4" fontSize={11} fill="#d97706" />
+          
+          {/* Accessible seating banner */}
+          <Rect
+            x={320}
+            y={450}
+            width={360}
+            height={25}
+            fill="#3b82f6"
+            opacity={0.3}
+            cornerRadius={3}
+          />
+          <Text
+            x={500}
+            y={458}
+            text="♿ ACCESSIBLE SEATING"
+            fontSize={11}
+            fill="#3b82f6"
+            fontStyle="bold"
+            align="center"
+            offsetX={80}
           />
 
           {/* Seats - only render visible ones */}
@@ -165,9 +205,11 @@ const AmphitheaterCanvas = ({
               strokeWidth={1}
               opacity={unavailableSeats.includes(seat.id) ? 0.3 : 1}
               onClick={() => handleSeatClick(seat)}
+              onTap={() => handleSeatClick(seat)}
               onMouseEnter={() => setHoveredSeat(seat)}
               onMouseLeave={() => setHoveredSeat(null)}
-              cursor={unavailableSeats.includes(seat.id) ? 'not-allowed' : 'pointer'}
+              listening={true}
+              perfectDrawEnabled={false}
             />
           ))}
 
@@ -236,7 +278,7 @@ const AmphitheaterCanvas = ({
         <button
           onClick={() => {
             setScale(1);
-            setPosition({ x: 0, y: 0 });
+            setPosition({ x: 100, y: 50 });
           }}
           style={{
             background: '#fff',

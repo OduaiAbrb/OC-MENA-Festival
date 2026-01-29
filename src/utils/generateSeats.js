@@ -32,11 +32,11 @@ const generateAmphitheaterSeats = () => {
       price: 249,
       tier: 'CIRCLE',
       rows: 4,
-      seatsPerRow: 30,
-      startAngle: -55,
-      endAngle: -20,
+      seatsPerRow: 20,
+      startAngle: -60,
+      endAngle: -25,
       baseRadius: 140,
-      rowSpacing: 10,
+      rowSpacing: 12,
       accessible: true
     },
     {
@@ -46,11 +46,11 @@ const generateAmphitheaterSeats = () => {
       price: 249,
       tier: 'CIRCLE',
       rows: 4,
-      seatsPerRow: 25,
-      startAngle: -15,
-      endAngle: 15,
+      seatsPerRow: 18,
+      startAngle: -18,
+      endAngle: 18,
       baseRadius: 140,
-      rowSpacing: 10,
+      rowSpacing: 12,
       accessible: true
     },
     {
@@ -60,11 +60,11 @@ const generateAmphitheaterSeats = () => {
       price: 249,
       tier: 'CIRCLE',
       rows: 4,
-      seatsPerRow: 30,
-      startAngle: 20,
-      endAngle: 55,
+      seatsPerRow: 20,
+      startAngle: 25,
+      endAngle: 60,
       baseRadius: 140,
-      rowSpacing: 10,
+      rowSpacing: 12,
       accessible: true
     },
     
