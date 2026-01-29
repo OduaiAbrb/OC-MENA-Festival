@@ -631,7 +631,7 @@
 
 .amphitheater-content {
   flex: 1;
-  padding: 32px;
+  padding: 24px 32px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -695,14 +695,14 @@
   color: #1a1a1a;
   padding: 12px 24px;
   border: 2px solid #1a1a1a;
-  border-radius: 25px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 15px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
-  align-self: center;
+  align-self: flex-start;
   width: auto;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .amphitheater-btn:hover {
