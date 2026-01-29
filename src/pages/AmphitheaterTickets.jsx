@@ -333,31 +333,36 @@ const AmphitheaterTickets = () => {
               ticketQuantity={ticketQuantity}
             />
 
-            {/* Legend */}
-            <div className="sg-legend">
-              <div className="sg-legend-item">
-                <span className="sg-legend-dot" style={{ background: '#10b981' }}></span>
-                <span>Pit $299</span>
-              </div>
-              <div className="sg-legend-item">
-                <span className="sg-legend-dot" style={{ background: '#3b82f6' }}></span>
-                <span>Circle $249</span>
-              </div>
-              <div className="sg-legend-item">
-                <span className="sg-legend-dot" style={{ background: '#991b1b' }}></span>
-                <span>Orchestra $199-229</span>
-              </div>
-              <div className="sg-legend-item">
-                <span className="sg-legend-dot" style={{ background: '#d97706' }}></span>
-                <span>Terrace $99-149</span>
-              </div>
-              <div className="sg-legend-item">
-                <span className="sg-legend-dot selected"></span>
-                <span>Selected</span>
-              </div>
-              <div className="sg-legend-item">
-                <span className="sg-legend-dot unavailable"></span>
-                <span>Sold</span>
+            {/* Legend - Matching reference image style */}
+            <div style={{
+              background: 'white',
+              padding: '16px 20px',
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              display: 'inline-block',
+              marginTop: '20px'
+            }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '16px', height: '16px', background: '#10b981', borderRadius: '2px' }}></div>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#1a1a1a' }}>- PIT - X1</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '16px', height: '16px', background: '#3b82f6', borderRadius: '2px' }}></div>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#1a1a1a' }}>- CIRCLE - X2,X3,X4</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '16px', height: '16px', background: '#991b1b', borderRadius: '2px' }}></div>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#1a1a1a' }}>- ORCHESTRA</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '16px', height: '16px', background: '#d97706', borderRadius: '2px' }}></div>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#1a1a1a' }}>- TERRACE</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '16px', height: '16px', background: '#3b82f6', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '10px' }}>♿</div>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#1a1a1a' }}>- ACCESSIBLE</span>
+                </div>
               </div>
             </div>
 
