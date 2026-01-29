@@ -54,16 +54,16 @@ const AmphitheaterTickets = () => {
   const allSeats = useMemo(() => {
     const seats = [];
     const centerX = 500;
-    const centerY = 520;
+    const centerY = 450;
     
     sectionsConfig.forEach(section => {
       // PIT - Standing room (grid layout)
       if (section.tier === 'pit') {
         const pitWidth = 100;
         const pitX = centerX - pitWidth / 2;
-        const pitY = centerY - 60;
-        const colSpacing = 5.5;
-        const rowSpacing = 5.5;
+        const pitY = centerY + 20;
+        const colSpacing = 7;
+        const rowSpacing = 7;
         
         for (let i = 0; i < section.capacity; i++) {
           const col = i % 18;
@@ -86,8 +86,8 @@ const AmphitheaterTickets = () => {
       }
       // CIRCLE - Curved seating around pit
       else if (section.tier === 'circle') {
-        const baseRadius = 105;
-        const rowSpacing = 7;
+        const baseRadius = 120;
+        const rowSpacing = 8;
         
         for (let row = 0; row < section.rows; row++) {
           const radius = baseRadius + (row * rowSpacing);
@@ -118,11 +118,11 @@ const AmphitheaterTickets = () => {
       // REGULAR SECTIONS
       else {
         let baseRadius;
-        if (section.tier === 'front') baseRadius = 165;
-        else if (section.tier === 'mid') baseRadius = 330;
-        else baseRadius = 490;
+        if (section.tier === 'front') baseRadius = 190;
+        else if (section.tier === 'mid') baseRadius = 360;
+        else baseRadius = 520;
         
-        const rowSpacing = section.tier === 'front' ? 9 : section.tier === 'mid' ? 8 : 7;
+        const rowSpacing = section.tier === 'front' ? 10 : section.tier === 'mid' ? 9 : 8;
         
         for (let row = 0; row < section.rows; row++) {
           const radius = baseRadius + (row * rowSpacing);
@@ -393,7 +393,7 @@ const AmphitheaterTickets = () => {
               >
                 <TransformComponent wrapperClass="sg-transform-wrapper" contentClass="sg-transform-content">
                   <svg 
-                    viewBox="0 0 1000 1000" 
+                    viewBox="-100 -50 1200 1100" 
                     className="sg-stadium-svg"
                     preserveAspectRatio="xMidYMid meet"
                   >
@@ -404,11 +404,11 @@ const AmphitheaterTickets = () => {
                         <stop offset="100%" stopColor="#1a1a2e" />
                       </radialGradient>
                     </defs>
-                    <rect x="0" y="0" width="1000" height="1000" fill="url(#stadiumBg)" />
+                    <rect x="-100" y="-50" width="1200" height="1100" fill="url(#stadiumBg)" />
                     
                     {/* Stage */}
-                    <ellipse cx="500" cy="520" rx="120" ry="30" fill="#3a3a5a" stroke="#555" strokeWidth="2" />
-                    <text x="500" y="525" textAnchor="middle" fill="#aaa" fontSize="16" fontWeight="bold">STAGE</text>
+                    <ellipse cx="500" cy="450" rx="120" ry="30" fill="#3a3a5a" stroke="#555" strokeWidth="2" />
+                    <text x="500" y="455" textAnchor="middle" fill="#aaa" fontSize="16" fontWeight="bold">STAGE</text>
                     
                     {/* Section Backgrounds - Clickable on both desktop and mobile */}
                     {sectionsConfig.map(section => {
