@@ -12,7 +12,6 @@ const AmphitheaterSeatingMap = ({
   ticketQuantity = 2,
 }) => {
   const svgRef = useRef(null);
-  const containerRef = useRef(null);
   const [hoveredSeat, setHoveredSeat] = useState(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
