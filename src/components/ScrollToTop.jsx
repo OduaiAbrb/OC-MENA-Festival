@@ -18,27 +18,10 @@ const ScrollToTop = () => {
   }, []);
 
   const scrollToTop = () => {
-    const startPosition = window.pageYOffset;
-    const startTime = performance.now();
-    const duration = 1200; // 1.2 seconds for cinematic effect
-    
-    const easeInOutCubic = (t) => {
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    };
-    
-    const animateScroll = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const easeProgress = easeInOutCubic(progress);
-      
-      window.scrollTo(0, startPosition * (1 - easeProgress));
-      
-      if (progress < 1) {
-        requestAnimationFrame(animateScroll);
-      }
-    };
-    
-    requestAnimationFrame(animateScroll);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   return (
