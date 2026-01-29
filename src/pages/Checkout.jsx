@@ -129,11 +129,28 @@ const CheckoutForm = () => {
         const idempotencyKey = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         
         // Map cart items for backend
-        const ticketItems = cartItems.map(item => ({
-          ...item,
-          ticket_type_id: item.ticket_type_id || item.id,
-          quantity: item.quantity || 1
-        }));
+        const ticketItems = cartItems.map(item => {
+          if (item.type === 'amphitheater') {
+            // Amphitheater tickets need hold_id, not ticket_type_id
+            return {
+              type: 'amphitheater',
+              hold_id: item.holdId,
+              quantity: item.quantity || 1,
+              event_date: item.day === 'saturday' ? '2026-08-15' : 
+                         item.day === 'sunday' ? '2026-08-16' : '2026-08-15',
+              metadata: {
+                section: item.section,
+                seats: item.seats,
+                day: item.day
+              }
+            };
+          }
+          return {
+            ...item,
+            ticket_type_id: item.ticket_type_id || item.id,
+            quantity: item.quantity || 1
+          };
+        });
         
         const sessionResponse = await api.createCheckoutSession(formData, ticketItems, idempotencyKey);
         
