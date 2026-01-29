@@ -251,6 +251,5 @@ const generateAmphitheaterSeats = () => {
   return seats;
 };
 
-// Generate and export
-const amphitheaterSeats = generateAmphitheaterSeats();
-export default amphitheaterSeats;
+// Export the generator function and pre-generated seats
+export default generateAmphitheaterSeats();
