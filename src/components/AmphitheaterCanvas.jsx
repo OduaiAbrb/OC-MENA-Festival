@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Stage, Layer, Circle, Rect, Text } from 'react-konva';
 import amphitheaterSeats from '../utils/generateSeats';
+import Quadtree from '../utils/quadtree';
 
 /**
  * High-performance Canvas-based amphitheater seating
@@ -13,18 +14,58 @@ const AmphitheaterCanvas = ({
   ticketQuantity = 1 
 }) => {
   const stageRef = useRef(null);
+  const quadtreeRef = useRef(null);
+  const hoverThrottleRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 1000, height: 1000 });
   const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 100, y: 50 }); // Center initial position
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [hoveredSeat, setHoveredSeat] = useState(null);
-  const [visibleSeats, setVisibleSeats] = useState([]);
+  const [visibleSeats, setVisibleSeats] = useState({ terrace: [], orchestra: [], circle: [], pit: [] });
   const zoomTimeoutRef = useRef(null);
 
-  // Viewport culling - only render seats in view
-  const updateVisibleSeats = useCallback(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
+  // Compute global bounds and build quadtree
+  const { bounds, quadtree } = useMemo(() => {
+    if (amphitheaterSeats.length === 0) {
+      return { bounds: { minX: 0, maxX: 1000, minY: 0, maxY: 1000, centerX: 500, centerY: 500 }, quadtree: null };
+    }
 
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    amphitheaterSeats.forEach(seat => {
+      minX = Math.min(minX, seat.x);
+      maxX = Math.max(maxX, seat.x);
+      minY = Math.min(minY, seat.y);
+      maxY = Math.max(maxY, seat.y);
+    });
+
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+    const width = maxX - minX + 100;
+    const height = maxY - minY + 100;
+
+    const qt = new Quadtree({ x: minX - 50, y: minY - 50, width, height });
+    amphitheaterSeats.forEach(seat => qt.insert(seat));
+
+    return {
+      bounds: { minX, maxX, minY, maxY, centerX, centerY, width, height },
+      quadtree: qt
+    };
+  }, []);
+
+  useEffect(() => {
+    quadtreeRef.current = quadtree;
+  }, [quadtree]);
+
+  // Initialize centered position
+  useEffect(() => {
+    if (dimensions.width > 0 && bounds) {
+      const offsetX = dimensions.width / 2 - bounds.centerX;
+      const offsetY = dimensions.height / 2 - bounds.centerY;
+      setPosition({ x: offsetX, y: offsetY });
+    }
+  }, [dimensions.width, dimensions.height, bounds]);
+
+  // Viewport culling - only render seats in view, grouped by tier for layering
+  const updateVisibleSeats = useCallback(() => {
     const viewport = {
       x: -position.x / scale,
       y: -position.y / scale,
@@ -32,12 +73,19 @@ const AmphitheaterCanvas = ({
       height: dimensions.height / scale
     };
 
-    const padding = 100; // Extra padding for smooth scrolling
-    const visible = amphitheaterSeats.filter(seat => {
-      return seat.x >= viewport.x - padding &&
-             seat.x <= viewport.x + viewport.width + padding &&
-             seat.y >= viewport.y - padding &&
-             seat.y <= viewport.y + viewport.height + padding;
+    const padding = 150;
+    const visible = { terrace: [], orchestra: [], circle: [], pit: [] };
+    
+    amphitheaterSeats.forEach(seat => {
+      if (seat.x >= viewport.x - padding &&
+          seat.x <= viewport.x + viewport.width + padding &&
+          seat.y >= viewport.y - padding &&
+          seat.y <= viewport.y + viewport.height + padding) {
+        const tier = seat.priceTier.toLowerCase();
+        if (visible[tier]) {
+          visible[tier].push(seat);
+        }
+      }
     });
 
     setVisibleSeats(visible);
@@ -133,10 +181,42 @@ const AmphitheaterCanvas = ({
     }, 100);
   };
 
-  const handleSeatClick = (seat) => {
-    if (unavailableSeats.includes(seat.id)) return;
-    onSeatSelect(seat);
+  const handleStageClick = (e) => {
+    const stage = e.target.getStage();
+    const pointerPos = stage.getPointerPosition();
+    
+    // Transform screen coords to world coords
+    const worldX = (pointerPos.x - position.x) / scale;
+    const worldY = (pointerPos.y - position.y) / scale;
+    
+    // Use quadtree for fast hit-testing
+    if (quadtreeRef.current) {
+      const clickedSeat = quadtreeRef.current.findNearest(worldX, worldY, 8 / scale);
+      if (clickedSeat && !unavailableSeats.includes(clickedSeat.id)) {
+        onSeatSelect(clickedSeat);
+      }
+    }
   };
+
+  const handleStageMouseMove = useCallback((e) => {
+    // Throttle hover to 30fps max
+    if (hoverThrottleRef.current) return;
+    
+    hoverThrottleRef.current = setTimeout(() => {
+      hoverThrottleRef.current = null;
+    }, 33); // ~30fps
+
+    const stage = e.target.getStage();
+    const pointerPos = stage.getPointerPosition();
+    
+    const worldX = (pointerPos.x - position.x) / scale;
+    const worldY = (pointerPos.y - position.y) / scale;
+    
+    if (quadtreeRef.current) {
+      const hoveredSeat = quadtreeRef.current.findNearest(worldX, worldY, 10 / scale);
+      setHoveredSeat(hoveredSeat);
+    }
+  }, [position, scale]);
 
   const getSeatColor = (seat) => {
     if (unavailableSeats.includes(seat.id)) return '#9ca3af';
@@ -170,6 +250,8 @@ const AmphitheaterCanvas = ({
         y={position.y}
         draggable
         onWheel={handleWheel}
+        onClick={handleStageClick}
+        onMouseMove={handleStageMouseMove}
         onDragEnd={(e) => {
           setPosition({
             x: e.target.x(),
@@ -177,64 +259,14 @@ const AmphitheaterCanvas = ({
           });
         }}
       >
+        {/* Layer 1: Background */}
         <Layer>
-          {/* Stage - moved back */}
-          <Rect
-            x={380}
-            y={300}
-            width={240}
-            height={50}
-            fill="#1e1e2e"
-            stroke="#444"
-            strokeWidth={3}
-            cornerRadius={5}
-          />
-          <Text
-            x={500}
-            y={318}
-            text="STAGE"
-            fontSize={18}
-            fill="#888"
-            fontStyle="bold"
-            align="center"
-            offsetX={27}
-          />
-          
-          {/* Section Labels */}
-          <Text x={500} y={420} text="PIT" fontSize={14} fill="#10b981" fontStyle="bold" align="center" offsetX={15} />
-          <Text x={350} y={460} text="Circle X2" fontSize={12} fill="#3b82f6" fontStyle="bold" />
-          <Text x={480} y={440} text="Circle X3" fontSize={12} fill="#3b82f6" fontStyle="bold" />
-          <Text x={580} y={460} text="Circle X4" fontSize={12} fill="#3b82f6" fontStyle="bold" />
-          <Text x={280} y={550} text="Orchestra 1" fontSize={12} fill="#991b1b" fontStyle="bold" />
-          <Text x={460} y={520} text="Orchestra 2" fontSize={12} fill="#991b1b" fontStyle="bold" />
-          <Text x={640} y={550} text="Orchestra 3" fontSize={12} fill="#991b1b" fontStyle="bold" />
-          <Text x={200} y={720} text="Terrace 1" fontSize={11} fill="#d97706" />
-          <Text x={450} y={680} text="Terrace 6" fontSize={11} fill="#d97706" />
-          <Text x={700} y={720} text="Terrace 4" fontSize={11} fill="#d97706" />
-          
-          {/* Accessible seating banner */}
-          <Rect
-            x={320}
-            y={450}
-            width={360}
-            height={25}
-            fill="#3b82f6"
-            opacity={0.3}
-            cornerRadius={3}
-          />
-          <Text
-            x={500}
-            y={458}
-            text="♿ ACCESSIBLE SEATING"
-            fontSize={11}
-            fill="#3b82f6"
-            fontStyle="bold"
-            align="center"
-            offsetX={80}
-          />
+          <Rect x={0} y={0} width={1000} height={1100} fill="#0f172a" listening={false} />
+        </Layer>
 
-          {/* Seats - only render visible ones */}
-          {visibleSeats.map(seat => (
+        {/* Layer 2: Terrace Seats (yellow - bottom layer) */}
+        <Layer>
+          {visibleSeats.terrace?.map(seat => (
             <Circle
               key={seat.id}
               x={seat.x}
@@ -244,34 +276,141 @@ const AmphitheaterCanvas = ({
               stroke={hoveredSeat?.id === seat.id ? '#fff' : 'transparent'}
               strokeWidth={1}
               opacity={unavailableSeats.includes(seat.id) ? 0.3 : 1}
-              onClick={() => handleSeatClick(seat)}
-              onTap={() => handleSeatClick(seat)}
-              onMouseEnter={() => setHoveredSeat(seat)}
-              onMouseLeave={() => setHoveredSeat(null)}
-              listening={true}
+              listening={false}
               perfectDrawEnabled={false}
             />
           ))}
+        </Layer>
+
+        {/* Layer 3: Orchestra Seats (red) */}
+        <Layer>
+          {visibleSeats.orchestra?.map(seat => (
+            <Circle
+              key={seat.id}
+              x={seat.x}
+              y={seat.y}
+              radius={getSeatRadius(seat)}
+              fill={getSeatColor(seat)}
+              stroke={hoveredSeat?.id === seat.id ? '#fff' : 'transparent'}
+              strokeWidth={1}
+              opacity={unavailableSeats.includes(seat.id) ? 0.3 : 1}
+              listening={false}
+              perfectDrawEnabled={false}
+            />
+          ))}
+        </Layer>
+
+        {/* Layer 4: Circle Seats (blue) */}
+        <Layer>
+          {visibleSeats.circle?.map(seat => (
+            <Circle
+              key={seat.id}
+              x={seat.x}
+              y={seat.y}
+              radius={getSeatRadius(seat)}
+              fill={getSeatColor(seat)}
+              stroke={hoveredSeat?.id === seat.id ? '#fff' : 'transparent'}
+              strokeWidth={1}
+              opacity={unavailableSeats.includes(seat.id) ? 0.3 : 1}
+              listening={false}
+              perfectDrawEnabled={false}
+            />
+          ))}
+        </Layer>
+
+        {/* Layer 5: Pit Seats (green - top seat layer) */}
+        <Layer>
+          {visibleSeats.pit?.map(seat => (
+            <Circle
+              key={seat.id}
+              x={seat.x}
+              y={seat.y}
+              radius={getSeatRadius(seat)}
+              fill={getSeatColor(seat)}
+              stroke={hoveredSeat?.id === seat.id ? '#fff' : 'transparent'}
+              strokeWidth={1}
+              opacity={unavailableSeats.includes(seat.id) ? 0.3 : 1}
+              listening={false}
+              perfectDrawEnabled={false}
+            />
+          ))}
+        </Layer>
+
+        {/* Layer 6: Overlays (Stage, Labels, ADA Banner, Tooltip) */}
+        <Layer>
+          {/* Stage */}
+          <Rect
+            x={bounds.centerX - 120}
+            y={bounds.minY + 50}
+            width={240}
+            height={50}
+            fill="#1e1e2e"
+            stroke="#444"
+            strokeWidth={3}
+            cornerRadius={5}
+            listening={false}
+          />
+          <Text
+            x={bounds.centerX}
+            y={bounds.minY + 68}
+            text="STAGE"
+            fontSize={18}
+            fill="#888"
+            fontStyle="bold"
+            align="center"
+            offsetX={27}
+            listening={false}
+          />
+          
+          {/* ADA Banner - High Contrast */}
+          <Rect
+            x={bounds.centerX - 180}
+            y={bounds.minY + 200}
+            width={360}
+            height={35}
+            fill="#1e40af"
+            opacity={0.9}
+            cornerRadius={6}
+            listening={false}
+          />
+          <Text
+            x={bounds.centerX}
+            y={bounds.minY + 209}
+            text="♿ ACCESSIBLE SEATING AVAILABLE"
+            fontSize={13}
+            fill="#fff"
+            fontStyle="bold"
+            align="center"
+            offsetX={110}
+            listening={false}
+          />
+
+          {/* Section Labels with Pills */}
+          <Rect x={bounds.centerX - 25} y={bounds.minY + 170} width={50} height={20} fill="#10b981" opacity={0.8} cornerRadius={10} listening={false} />
+          <Text x={bounds.centerX} y={bounds.minY + 174} text="PIT" fontSize={12} fill="#fff" fontStyle="bold" align="center" offsetX={12} listening={false} />
 
           {/* Hover tooltip */}
           {hoveredSeat && (
             <>
               <Rect
                 x={hoveredSeat.x + 10}
-                y={hoveredSeat.y - 30}
-                width={120}
-                height={50}
+                y={hoveredSeat.y - 35}
+                width={130}
+                height={55}
                 fill="#1a1a1a"
-                cornerRadius={4}
+                cornerRadius={6}
                 opacity={0.95}
+                shadowColor="#000"
+                shadowBlur={10}
+                shadowOpacity={0.5}
               />
               <Text
                 x={hoveredSeat.x + 15}
-                y={hoveredSeat.y - 25}
+                y={hoveredSeat.y - 28}
                 text={`${hoveredSeat.sectionName}\nRow ${hoveredSeat.row}, Seat ${hoveredSeat.number}\n$${hoveredSeat.price}`}
                 fontSize={11}
                 fill="#fff"
-                lineHeight={1.4}
+                lineHeight={1.5}
               />
             </>
           )}
@@ -331,7 +470,9 @@ const AmphitheaterCanvas = ({
           <button
             onClick={() => {
               setScale(1);
-              setPosition({ x: 100, y: 50 });
+              const offsetX = dimensions.width / 2 - bounds.centerX;
+              const offsetY = dimensions.height / 2 - bounds.centerY;
+              setPosition({ x: offsetX, y: offsetY });
             }}
             style={{
               background: '#dc2626',
@@ -459,7 +600,7 @@ const AmphitheaterCanvas = ({
         borderRadius: '4px',
         fontSize: '11px'
       }}>
-        Rendering {visibleSeats.length} / {amphitheaterSeats.length} seats
+        Rendering {Object.values(visibleSeats).reduce((sum, arr) => sum + arr.length, 0)} / {amphitheaterSeats.length} seats
       </div>
     </div>
   );
